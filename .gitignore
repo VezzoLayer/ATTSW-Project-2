@@ -1,15 +1,21 @@
 HELP.md
+
+# Maven output folder
 target/
-.mvn/wrapper/maven-wrapper.jar
+# Backup files generati automaticamente da editors
+*~
+# Eccezione per non ignorare il jar del Maven Wrapper
+!.mvn/wrapper/maven-wrapper.jar
+# Eccezione per non ignorare eventuali cartelle target dentro ai path specificati
 !**/src/main/**/target/
 !**/src/test/**/target/
 
 ### STS ###
 .apt_generated
-.classpath
+#.classpath
 .factorypath
-.project
-.settings
+#.project
+#.settings
 .springBeans
 .sts4-cache
 
