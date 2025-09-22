@@ -153,6 +153,7 @@
 					<configuration>
 						<excludes>
 							<exclude>**/EcommerceManagerApplication.*</exclude>
+							<exclude>**/model/*</exclude>
 						</excludes>
 					</configuration>
 					<executions>				        	
