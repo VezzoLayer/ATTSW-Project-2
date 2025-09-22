@@ -84,7 +84,5 @@ public class User {
 		User other = (User) obj;
 		return balance == other.balance && Objects.equals(email, other.email) && Objects.equals(id, other.id)
 				&& Objects.equals(name, other.name) && Objects.equals(username, other.username);
-	}
-	
-	
+	}	
 }
