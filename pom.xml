@@ -101,6 +101,7 @@
 						<configuration>
 							<sources>
 								<source>src/it/java</source>
+								<source>src/e2e/java</source>
 							</sources>
 						</configuration>
 					</execution>
@@ -130,6 +131,22 @@
 								<include>**/*ApplicationTests.java</include>
 								<include>**/*IT.java</include>
 							</includes>
+						</configuration>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+					<execution>
+					<id>e2e-tests</id>
+						<configuration>
+							<includes>
+								<include>**/*E2E.java</include>
+							</includes>
+							<excludes>
+								<exclude>**/*ApplicationTests.java</exclude>
+								<exclude>**/*IT.java</exclude>
+							</excludes>
 						</configuration>
 						<goals>
 							<goal>integration-test</goal>
