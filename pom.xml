@@ -152,7 +152,7 @@
 					<version>0.8.13</version>
 					<configuration>
 						<excludes>
-							<exclude>**/ECommerceManagerApplication.*</exclude>
+							<exclude>**/EcommerceManagerApplication.*</exclude>
 						</excludes>
 					</configuration>
 					<executions>				        	
