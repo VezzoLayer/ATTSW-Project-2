@@ -173,7 +173,7 @@
 							<exclude>**/model/*</exclude>
 						</excludes>
 					</configuration>
-					<executions>				        	
+					<executions>
 						<execution>
 						<goals>
 							<goal>prepare-agent</goal>
