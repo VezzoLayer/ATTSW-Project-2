@@ -14,7 +14,7 @@ public class Order {
 
 	@Id
 	@GeneratedValue
-	private Long orderId;
+	private Long id;
 	private Item item;
 	private long price;
 
@@ -27,17 +27,17 @@ public class Order {
 	}
 
 	public Order(Long id, Item item, long price) {
-		this.orderId = id;
+		this.id = id;
 		this.item = item;
 		this.price = price;
 	}
 
 	public Long getId() {
-		return orderId;
+		return id;
 	}
 
 	public void setId(Long id) {
-		this.orderId = id;
+		this.id = id;
 	}
 
 	public Item getItem() {
@@ -58,12 +58,12 @@ public class Order {
 
 	@Override
 	public String toString() {
-		return "Order [id=" + orderId + ", item=" + item + ", price=" + price + "]";
+		return "Order [id=" + id + ", item=" + item + ", price=" + price + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(orderId, item, price);
+		return Objects.hash(id, item, price);
 	}
 
 	@Override
@@ -75,6 +75,6 @@ public class Order {
 		if (getClass() != obj.getClass())
 			return false;
 		Order other = (Order) obj;
-		return Objects.equals(orderId, other.orderId) && item == other.item && price == other.price;
+		return Objects.equals(id, other.id) && item == other.item && price == other.price;
 	}
 }

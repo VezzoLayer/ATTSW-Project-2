@@ -15,7 +15,7 @@ public class User {
 
 	@Id
 	@GeneratedValue
-	private Long userId;
+	private Long id;
 	private String username;
 	private String name;
 	private String email;
@@ -29,7 +29,7 @@ public class User {
 	}
 
 	public User(Long id, String username, String name, String email, long balance) {
-		this.userId = id;
+		this.id = id;
 		this.username = username;
 		this.name = name;
 		this.email = email;
@@ -37,11 +37,11 @@ public class User {
 	}
 
 	public Long getId() {
-		return userId;
+		return id;
 	}
 
 	public void setId(Long id) {
-		this.userId = id;
+		this.id = id;
 	}
 
 	public String getUsername() {
@@ -78,13 +78,13 @@ public class User {
 
 	@Override
 	public String toString() {
-		return "User [id=" + userId + ", username=" + username + ", name=" + name + ", email=" + email + ", balance="
+		return "User [id=" + id + ", username=" + username + ", name=" + name + ", email=" + email + ", balance="
 				+ balance + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(balance, email, userId, name, username);
+		return Objects.hash(balance, email, id, name, username);
 	}
 
 	@Override
@@ -96,7 +96,7 @@ public class User {
 		if (getClass() != obj.getClass())
 			return false;
 		User other = (User) obj;
-		return balance == other.balance && Objects.equals(email, other.email) && Objects.equals(userId, other.userId)
+		return balance == other.balance && Objects.equals(email, other.email) && Objects.equals(id, other.id)
 				&& Objects.equals(name, other.name) && Objects.equals(username, other.username);
 	}
 }
