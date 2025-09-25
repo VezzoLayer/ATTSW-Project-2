@@ -39,4 +39,12 @@ public class UserRepositoryTest {
 		User userFound = repository.findByUsername("AAA");
 		assertThat(userFound).isEqualTo(userShouldBeFound);
 	}
+
+	@Test
+	public void testFindUserByName() {
+		User userShouldBeFound = entityManager.persistFlushFind(new User(null, "test", "ABC", "test", 4000));
+
+		User userFound = repository.findByName("ABC");
+		assertThat(userFound).isEqualTo(userShouldBeFound);
+	}
 }
