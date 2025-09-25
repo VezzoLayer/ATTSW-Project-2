@@ -10,6 +10,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.ecommerce.manager.model.Item;
+import com.ecommerce.manager.model.Order;
 import com.ecommerce.manager.model.User;
 
 @DataJpaTest
@@ -34,5 +36,20 @@ public class EntitiesJpaTest {
 
 		// Per vedere identifier generato
 		LoggerFactory.getLogger(EntitiesJpaTest.class).info("Saved: {}", savedUser);
+	}
+	
+	@Test
+	public void testOrderJpaMapping() {
+		Order savedOrder = entityManager.persistFlushFind(new Order(null, Item.BOX1, 700));
+
+		assertThat(savedOrder.getItem()).isEqualTo(Item.BOX1);
+		assertThat(savedOrder.getPrice()).isEqualTo(700);
+		assertThat(savedOrder.getUser()).isNull();
+
+		assertThat(savedOrder.getId()).isNotNull();
+		assertThat(savedOrder.getId()).isPositive();
+
+		// Per vedere identifier generato
+		LoggerFactory.getLogger(EntitiesJpaTest.class).info("Saved: {}", savedOrder);
 	}
 }

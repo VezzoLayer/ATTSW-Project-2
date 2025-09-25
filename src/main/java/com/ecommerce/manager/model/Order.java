@@ -58,6 +58,14 @@ public class Order {
 		this.price = price;
 	}
 
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
 	@Override
 	public String toString() {
 		return "Order [id=" + id + ", item=" + item + ", price=" + price + "]";
