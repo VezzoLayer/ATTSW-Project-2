@@ -3,6 +3,7 @@ package com.ecommerce.manager.repositories;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,5 +55,16 @@ public class UserRepositoryTest {
 
 		User userFound = repository.findByEmail("xyz@edu.unifi.it");
 		assertThat(userFound).isEqualTo(userShouldBeFound);
+	}
+	
+	@Test
+	public void testFindAllUsersWithLowBalance() {
+		User user1 = entityManager.persistFlushFind(new User(null, "test", "test", "test", 500));
+		User user2 = entityManager.persistFlushFind(new User(null, "test", "test", "test", 800));
+		entityManager.persistFlushFind(new User(null, "Should Not Be Found", "Should Not Be Found", "Should Not Be Found", 1300));
+		entityManager.persistFlushFind(new User(null, "Should Not Be Found", "Should Not Be Found", "Should Not Be Found", 1001));
+		
+		List<User> found = repository.findAllUsersWithLowBalance(1000L);
+		assertThat(found).containsExactly(user1, user2);
 	}
 }
