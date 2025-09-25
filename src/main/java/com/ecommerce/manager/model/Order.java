@@ -3,33 +3,41 @@ package com.ecommerce.manager.model;
 import java.util.Objects;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Order {
-	
-	@Id @GeneratedValue
-	private Long id;
+
+	@Id
+	@GeneratedValue
+	private Long orderId;
 	private Item item;
 	private long price;
-	
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id")
+	private User user;
+
 	public Order() {
 		// required for serialization/deserialization
 	}
 
 	public Order(Long id, Item item, long price) {
-		this.id = id;
+		this.orderId = id;
 		this.item = item;
 		this.price = price;
 	}
 
 	public Long getId() {
-		return id;
+		return orderId;
 	}
 
 	public void setId(Long id) {
-		this.id = id;
+		this.orderId = id;
 	}
 
 	public Item getItem() {
@@ -50,12 +58,12 @@ public class Order {
 
 	@Override
 	public String toString() {
-		return "Order [id=" + id + ", item=" + item + ", price=" + price + "]";
+		return "Order [id=" + orderId + ", item=" + item + ", price=" + price + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, item, price);
+		return Objects.hash(orderId, item, price);
 	}
 
 	@Override
@@ -67,6 +75,6 @@ public class Order {
 		if (getClass() != obj.getClass())
 			return false;
 		Order other = (Order) obj;
-		return Objects.equals(id, other.id) && item == other.item && price == other.price;
-	}	
+		return Objects.equals(orderId, other.orderId) && item == other.item && price == other.price;
+	}
 }
