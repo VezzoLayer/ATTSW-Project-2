@@ -6,4 +6,6 @@ import com.ecommerce.manager.model.User;
 
 public interface UserRepository extends JpaRepository<User, Long>{
 
+	User findByUsername(String username);
+
 }
