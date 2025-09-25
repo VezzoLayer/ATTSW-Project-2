@@ -9,8 +9,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "users") // Plurale per evitare conflitti
 public class User {
 
 	@Id
@@ -74,6 +76,14 @@ public class User {
 
 	public void setBalance(long balance) {
 		this.balance = balance;
+	}
+
+	public List<Order> getOrders() {
+		return orders;
+	}
+
+	public void setOrders(List<Order> orders) {
+		this.orders = orders;
 	}
 
 	@Override
