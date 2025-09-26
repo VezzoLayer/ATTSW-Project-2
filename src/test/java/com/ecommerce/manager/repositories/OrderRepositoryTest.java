@@ -31,4 +31,14 @@ public class OrderRepositoryTest {
 		Collection<Order> orders = repository.findAll();
 		assertThat(orders).containsExactly(orderSaved);
 	}
+
+	@Test
+	public void testFindOrdersByItem() {
+		Order order1 = entityManager.persistFlushFind(new Order(null, Item.BOX1, 500));
+		Order order2 = entityManager.persistFlushFind(new Order(null, Item.BOX1, 1000));
+		entityManager.persistFlushFind(new Order(null, Item.BOX2, 500)); // Should not be found
+
+		Collection<Order> orders = repository.findByItem(Item.BOX1);
+		assertThat(orders).containsExactly(order1, order2);
+	}
 }
