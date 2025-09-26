@@ -11,4 +11,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
 	List<Order> findByItem(Item item);
 
+	List<Order> findByPrice(long l);
+
 }
