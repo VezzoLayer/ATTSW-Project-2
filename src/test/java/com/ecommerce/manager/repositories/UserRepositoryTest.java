@@ -110,7 +110,7 @@ public class UserRepositoryTest {
 		entityManager.persistFlushFind(
 				new User(null, "Should Not Be Found", "Should Not Be Found", "Should Not Be Found", 1300));
 		entityManager.persistFlushFind(
-				new User(null, "Should Not Be Found", "Should Not Be Found", "Should Not Be Found", 1001));
+				new User(null, "Should Not Be Found", "Should Not Be Found", "Should Not Be Found", 1000));
 
 		List<User> found = repository.findAllUsersWithLowBalance(1000L);
 		assertThat(found).containsExactly(user1, user2);
