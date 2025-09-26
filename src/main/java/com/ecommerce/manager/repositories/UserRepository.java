@@ -22,6 +22,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	List<User> findByNameOrEmail(String name, String email);
 
+	List<User> findByUsernameOrNameOrEmail(String username, String name, String email);
+
 	@Query("Select u from User u where u.balance < :threshold")
 	List<User> findAllUsersWithLowBalance(@Param("threshold") long threshold);
 }

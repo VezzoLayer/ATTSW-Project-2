@@ -92,6 +92,18 @@ public class UserRepositoryTest {
 	}
 
 	@Test
+	public void testFindUserByUsernameOrNameOrEmail() {
+		User user1 = entityManager.persistFlushFind(new User(null, "username", "test", "test", 2000));
+		User user2 = entityManager.persistFlushFind(new User(null, "test", "name", "test", 500));
+		User user3 = entityManager.persistFlushFind(new User(null, "test", "test", "email", 1000));
+		entityManager.persistFlushFind(
+				new User(null, "Should Not Be Found", "Should Not Be Found", "Should Not Be Found", 800));
+
+		List<User> found = repository.findByUsernameOrNameOrEmail("username", "name", "email");
+		assertThat(found).containsExactly(user1, user2, user3);
+	}
+
+	@Test
 	public void testFindAllUsersWithLowBalance() {
 		User user1 = entityManager.persistFlushFind(new User(null, "test", "test", "test", 500));
 		User user2 = entityManager.persistFlushFind(new User(null, "test", "test", "test", 800));
