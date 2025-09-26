@@ -3,6 +3,7 @@ package com.ecommerce.manager.repositories;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,7 +39,7 @@ public class OrderRepositoryTest {
 		Order order2 = entityManager.persistFlushFind(new Order(null, Item.BOX1, 1000));
 		entityManager.persistFlushFind(new Order(null, Item.BOX2, 500)); // Should not be found
 
-		Collection<Order> orders = repository.findByItem(Item.BOX1);
+		List<Order> orders = repository.findByItem(Item.BOX1);
 		assertThat(orders).containsExactly(order1, order2);
 	}
 }
