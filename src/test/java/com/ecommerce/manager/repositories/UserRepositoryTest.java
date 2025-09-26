@@ -26,8 +26,7 @@ public class UserRepositoryTest {
 
 	@Test
 	public void testRepositoryContainsExactlyOneUser() {
-		User user = new User(null, "test", "test", "test", 4000);
-		User userSaved = entityManager.persistFlushFind(user);
+		User userSaved = entityManager.persistFlushFind(new User(null, "test", "test", "test", 4000));
 
 		Collection<User> users = repository.findAll();
 		assertThat(users).containsExactly(userSaved);

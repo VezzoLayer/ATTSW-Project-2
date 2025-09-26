@@ -26,8 +26,7 @@ public class OrderRepositoryTest {
 
 	@Test
 	public void testRepositoryContainsExactlyOneOrder() {
-		Order order = new Order(null, Item.BOX1, 500);
-		Order orderSaved = entityManager.persistFlushFind(order);
+		Order orderSaved = entityManager.persistFlushFind(new Order(null, Item.BOX1, 500));
 
 		Collection<Order> orders = repository.findAll();
 		assertThat(orders).containsExactly(orderSaved);
