@@ -51,7 +51,6 @@ public class EntitiesJpaTest {
 		List<Order> orders = new ArrayList<>();
 		orders.add(order1);
 		orders.add(order2);
-
 		user.setOrders(orders);
 
 		User savedUser = entityManager.persistFlushFind(user);

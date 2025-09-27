@@ -14,6 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.ecommerce.manager.model.Item;
 import com.ecommerce.manager.model.Order;
+import com.ecommerce.manager.model.User;
 
 @DataJpaTest
 @RunWith(SpringRunner.class)
@@ -42,7 +43,7 @@ public class OrderRepositoryTest {
 		List<Order> orders = repository.findByItem(Item.BOX1);
 		assertThat(orders).containsExactly(order1, order2);
 	}
-	
+
 	@Test
 	public void testFindOrdersByPrice() {
 		Order order1 = entityManager.persistFlushFind(new Order(null, Item.BOX1, 700));
@@ -52,7 +53,7 @@ public class OrderRepositoryTest {
 		List<Order> orders = repository.findByPrice(700L);
 		assertThat(orders).containsExactly(order1, order2);
 	}
-	
+
 	@Test
 	public void testFindAllOrdersWithHighPrice() {
 		Order order1 = entityManager.persistFlushFind(new Order(null, Item.BOX1, 1501));
@@ -60,6 +61,20 @@ public class OrderRepositoryTest {
 		entityManager.persistFlushFind(new Order(null, Item.BOX3, 1300)); // Should not be found
 
 		List<Order> orders = repository.findAllOrdersWithHighPrice(1500L);
+		assertThat(orders).containsExactly(order1, order2);
+	}
+
+	@Test
+	public void testFindOrdersByUser() {
+		User userMatch = entityManager.persistFlushFind(new User(null, "test", "test", "test", 4000));
+
+		Order order1 = entityManager.persistFlushFind(new Order(null, Item.BOX1, 700, userMatch));
+		Order order2 = entityManager.persistFlushFind(new Order(null, Item.BOX2, 1300, userMatch));
+
+		User userNotMatch = entityManager.persistFlushFind(new User(null, "not", "not", "not", 500));
+		entityManager.persistFlushFind(new Order(null, Item.BOX3, 500, userNotMatch)); // Should not be found
+
+		List<Order> orders = repository.findByUser(userMatch);
 		assertThat(orders).containsExactly(order1, order2);
 	}
 }
