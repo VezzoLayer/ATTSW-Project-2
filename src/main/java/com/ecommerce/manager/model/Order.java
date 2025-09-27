@@ -33,6 +33,13 @@ public class Order {
 		this.item = item;
 		this.price = price;
 	}
+	
+	public Order(Long id, Item item, long price, User user) {
+		this.id = id;
+		this.item = item;
+		this.price = price;
+		this.user = user;
+	}
 
 	public Long getId() {
 		return id;

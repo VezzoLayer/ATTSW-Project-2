@@ -45,10 +45,8 @@ public class EntitiesJpaTest {
 	public void testUserJpaMappingWithOrders() {
 		User user = new User(null, "withOrders", "test", "test@test.com", 2000);
 
-		Order order1 = new Order(null, Item.BOX1, 500);
-		order1.setUser(user);
-		Order order2 = new Order(null, Item.BOX3, 900);
-		order2.setUser(user);
+		Order order1 = new Order(null, Item.BOX1, 500, user);
+		Order order2 = new Order(null, Item.BOX3, 900, user);
 
 		List<Order> orders = new ArrayList<>();
 		orders.add(order1);
@@ -62,7 +60,7 @@ public class EntitiesJpaTest {
 		assertThat(savedUser.getName()).isEqualTo("test");
 		assertThat(savedUser.getEmail()).isEqualTo("test@test.com");
 		assertThat(savedUser.getBalance()).isEqualTo(2000);
-		assertThat(savedUser.getOrders()).hasSize(2);
+		assertThat(savedUser.getOrders()).containsExactly(order1, order2);
 
 		assertThat(savedUser.getId()).isNotNull();
 		assertThat(savedUser.getId()).isPositive();
