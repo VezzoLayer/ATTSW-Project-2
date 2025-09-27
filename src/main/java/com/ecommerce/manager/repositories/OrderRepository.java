@@ -20,6 +20,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
 	List<Order> findByItemOrPrice(Item item, long price);
 
+	List<Order> findByItemAndUser(Item item, User user);
+
 	@Query("Select o from Order o where o.price > :threshold")
 	List<Order> findAllOrdersWithHighPrice(@Param("threshold") long threshold);
 

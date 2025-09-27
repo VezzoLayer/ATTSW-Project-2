@@ -79,6 +79,21 @@ public class OrderRepositoryTest {
 	}
 
 	@Test
+	public void testFindOrdersByItemAndUser() {
+		User userMatch = entityManager.persistFlushFind(new User(null, "test", "test", "test", 4000));
+
+		entityManager.persistFlushFind(new Order(null, Item.BOX1, 700, userMatch)); // Should not be found
+		Order order2 = entityManager.persistFlushFind(new Order(null, Item.BOX2, 1300, userMatch));
+		Order order3 = entityManager.persistFlushFind(new Order(null, Item.BOX2, 1000, userMatch));
+
+		User userNotMatch = entityManager.persistFlushFind(new User(null, "not", "not", "not", 500));
+		entityManager.persistFlushFind(new Order(null, Item.BOX2, 500, userNotMatch)); // Should not be found
+
+		List<Order> orders = repository.findByItemAndUser(Item.BOX2, userMatch);
+		assertThat(orders).containsExactly(order2, order3);
+	}
+
+	@Test
 	public void testFindAllOrdersWithHighPrice() {
 		Order order1 = entityManager.persistFlushFind(new Order(null, Item.BOX1, 1501));
 		Order order2 = entityManager.persistFlushFind(new Order(null, Item.BOX2, 1700));
