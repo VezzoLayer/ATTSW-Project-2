@@ -86,16 +86,13 @@ public class EntitiesJpaTest {
 
 	@Test
 	public void testOrderJpaMappingWithUser() {
-		User savedUser = entityManager.persistFlushFind(new User(null, "test", "test", "test", 1500));
+		User user = entityManager.persistFlushFind(new User(null, "test", "test", "test", 1500));
 
-		Order order = new Order(null, Item.BOX1, 700);
-		order.setUser(savedUser);
-
-		Order savedOrder = entityManager.persistFlushFind(order);
+		Order savedOrder = entityManager.persistFlushFind(new Order(null, Item.BOX1, 700, user));
 
 		assertThat(savedOrder.getItem()).isEqualTo(Item.BOX1);
 		assertThat(savedOrder.getPrice()).isEqualTo(700);
-		assertThat(savedOrder.getUser()).isEqualTo(savedUser);
+		assertThat(savedOrder.getUser()).isEqualTo(user);
 
 		assertThat(savedOrder.getId()).isNotNull();
 		assertThat(savedOrder.getId()).isPositive();
