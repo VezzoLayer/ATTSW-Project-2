@@ -38,7 +38,7 @@ public class UserJpaTest {
 		assertThat(savedUser.getId()).isPositive();
 
 		// Per vedere identifier generato
-		LoggerFactory.getLogger(OrderJpaTest.class).info("Saved: {}", savedUser);
+		LoggerFactory.getLogger(UserJpaTest.class).info("Saved: {}", savedUser);
 	}
 
 	@Test
@@ -65,6 +65,6 @@ public class UserJpaTest {
 		assertThat(savedUser.getId()).isPositive();
 
 		// Per vedere identifier generato
-		LoggerFactory.getLogger(OrderJpaTest.class).info("Saved: {}", savedUser);
+		LoggerFactory.getLogger(UserJpaTest.class).info("Saved: {}", savedUser);
 	}
 }
