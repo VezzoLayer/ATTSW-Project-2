@@ -28,7 +28,9 @@ public class OrderRepositoryTest {
 
 	@Test
 	public void testRepositoryContainsExactlyOneOrder() {
-		Order orderSaved = entityManager.persistFlushFind(new Order(null, Item.BOX1, 500));
+		User user = entityManager.persistFlushFind(new User(null, "test", "test", "test", 4000));
+
+		Order orderSaved = entityManager.persistFlushFind(new Order(null, Item.BOX1, 500, user));
 
 		Collection<Order> orders = repository.findAll();
 		assertThat(orders).containsExactly(orderSaved);
@@ -36,9 +38,11 @@ public class OrderRepositoryTest {
 
 	@Test
 	public void testFindOrdersByItem() {
-		Order order1 = entityManager.persistFlushFind(new Order(null, Item.BOX1, 500));
-		Order order2 = entityManager.persistFlushFind(new Order(null, Item.BOX1, 1000));
-		entityManager.persistFlushFind(new Order(null, Item.BOX2, 500)); // Should not be found
+		User user = entityManager.persistFlushFind(new User(null, "test", "test", "test", 4000));
+
+		Order order1 = entityManager.persistFlushFind(new Order(null, Item.BOX1, 500, user));
+		Order order2 = entityManager.persistFlushFind(new Order(null, Item.BOX1, 1000, user));
+		entityManager.persistFlushFind(new Order(null, Item.BOX2, 500, user)); // Should not be found
 
 		List<Order> orders = repository.findByItem(Item.BOX1);
 		assertThat(orders).containsExactly(order1, order2);
@@ -46,9 +50,11 @@ public class OrderRepositoryTest {
 
 	@Test
 	public void testFindOrdersByPrice() {
-		Order order1 = entityManager.persistFlushFind(new Order(null, Item.BOX1, 700));
-		Order order2 = entityManager.persistFlushFind(new Order(null, Item.BOX2, 700));
-		entityManager.persistFlushFind(new Order(null, Item.BOX3, 500)); // Should not be found
+		User user = entityManager.persistFlushFind(new User(null, "test", "test", "test", 4000));
+
+		Order order1 = entityManager.persistFlushFind(new Order(null, Item.BOX1, 700, user));
+		Order order2 = entityManager.persistFlushFind(new Order(null, Item.BOX2, 700, user));
+		entityManager.persistFlushFind(new Order(null, Item.BOX3, 500, user)); // Should not be found
 
 		List<Order> orders = repository.findByPrice(700L);
 		assertThat(orders).containsExactly(order1, order2);
@@ -70,9 +76,11 @@ public class OrderRepositoryTest {
 
 	@Test
 	public void testFindOrdersByItemOrPrice() {
-		Order order1 = entityManager.persistFlushFind(new Order(null, Item.BOX1, 700));
-		Order order2 = entityManager.persistFlushFind(new Order(null, Item.BOX3, 1000));
-		entityManager.persistFlushFind(new Order(null, Item.BOX2, 500)); // Should not be found
+		User user = entityManager.persistFlushFind(new User(null, "test", "test", "test", 4000));
+
+		Order order1 = entityManager.persistFlushFind(new Order(null, Item.BOX1, 700, user));
+		Order order2 = entityManager.persistFlushFind(new Order(null, Item.BOX3, 1000, user));
+		entityManager.persistFlushFind(new Order(null, Item.BOX2, 500, user)); // Should not be found
 
 		List<Order> orders = repository.findByItemOrPrice(Item.BOX1, 1000L);
 		assertThat(orders).containsExactly(order1, order2);
@@ -95,9 +103,11 @@ public class OrderRepositoryTest {
 
 	@Test
 	public void testFindAllOrdersWithHighPrice() {
-		Order order1 = entityManager.persistFlushFind(new Order(null, Item.BOX1, 1501));
-		Order order2 = entityManager.persistFlushFind(new Order(null, Item.BOX2, 1700));
-		entityManager.persistFlushFind(new Order(null, Item.BOX3, 1300)); // Should not be found
+		User user = entityManager.persistFlushFind(new User(null, "test", "test", "test", 4000));
+
+		Order order1 = entityManager.persistFlushFind(new Order(null, Item.BOX1, 1501, user));
+		Order order2 = entityManager.persistFlushFind(new Order(null, Item.BOX2, 1700, user));
+		entityManager.persistFlushFind(new Order(null, Item.BOX3, 1300, user)); // Should not be found
 
 		List<Order> orders = repository.findAllOrdersWithHighPrice(1500L);
 		assertThat(orders).containsExactly(order1, order2);
