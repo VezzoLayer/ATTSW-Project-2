@@ -22,7 +22,7 @@ public class OrderJpaTest {
 	private TestEntityManager entityManager;
 
 	@Test
-	public void testOrderJpaMappingWithUser() {
+	public void testOrderJpaMapping() {
 		User user = entityManager.persistFlushFind(new User(null, "test", "test", "test", 1500));
 
 		Order savedOrder = entityManager.persistFlushFind(new Order(null, Item.BOX1, 700, user));

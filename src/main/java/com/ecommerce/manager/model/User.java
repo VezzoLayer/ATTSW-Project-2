@@ -1,14 +1,10 @@
 package com.ecommerce.manager.model;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -22,9 +18,6 @@ public class User {
 	private String name;
 	private String email;
 	private long balance;
-
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Order> orders = new ArrayList<>();
 
 	public User() {
 		// required for serialization/deserialization
@@ -76,14 +69,6 @@ public class User {
 
 	public void setBalance(long balance) {
 		this.balance = balance;
-	}
-
-	public List<Order> getOrders() {
-		return orders;
-	}
-
-	public void setOrders(List<Order> orders) {
-		this.orders = orders;
 	}
 
 	@Override
