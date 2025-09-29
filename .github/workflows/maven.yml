@@ -31,11 +31,12 @@ jobs:
         java-version: ${{ matrix.java }}
         distribution: temurin
 
-    - name: Cache Maven
+    - name: Cache Maven and SonarCloud packages
       uses: actions/cache@v3
       with:
         path: |
           ~/.m2
+          ~/.sonar/cache
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml', '**/*.yml') }}
         restore-keys: ${{ runner.os }}-m2-
 
@@ -50,6 +51,13 @@ jobs:
       run: >
         mvn surefire-report:report-only site:site -DgenerateReports=false
       working-directory: ${{ env.workdir }}
+
+    - name: SonarCloud
+      run: >
+        mvn sonar:sonar
+      env: 
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
     - name: Archive JUnit Report
       if: ${{ failure() }}
