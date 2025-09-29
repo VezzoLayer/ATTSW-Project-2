@@ -8,8 +8,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "orders") // Plurale per evitare conflitti
 public class Order {
 
 	@Id
@@ -26,10 +28,11 @@ public class Order {
 		// required for serialization/deserialization
 	}
 
-	public Order(Long id, Item item, long price) {
+	public Order(Long id, Item item, long price, User user) {
 		this.id = id;
 		this.item = item;
 		this.price = price;
+		this.user = user;
 	}
 
 	public Long getId() {
@@ -54,6 +57,14 @@ public class Order {
 
 	public void setPrice(long price) {
 		this.price = price;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	@Override
