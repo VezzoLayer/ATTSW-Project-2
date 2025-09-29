@@ -58,7 +58,7 @@
 		<!-- Esclude Model e Application -->
 		<sonar.coverage.exclusions>
 			**/model/*,
-			**/BookmanagerApplication.*
+			**/EcommerceManagerApplication.*
 		</sonar.coverage.exclusions>
 		
 	</properties>
