@@ -22,21 +22,6 @@ public class OrderJpaTest {
 	private TestEntityManager entityManager;
 
 	@Test
-	public void testOrderJpaMappingWithNoUser() {
-		Order savedOrder = entityManager.persistFlushFind(new Order(null, Item.BOX1, 700));
-
-		assertThat(savedOrder.getItem()).isEqualTo(Item.BOX1);
-		assertThat(savedOrder.getPrice()).isEqualTo(700);
-		assertThat(savedOrder.getUser()).isNull();
-
-		assertThat(savedOrder.getId()).isNotNull();
-		assertThat(savedOrder.getId()).isPositive();
-
-		// Per vedere identifier generato
-		LoggerFactory.getLogger(OrderJpaTest.class).info("Saved: {}", savedOrder);
-	}
-
-	@Test
 	public void testOrderJpaMappingWithUser() {
 		User user = entityManager.persistFlushFind(new User(null, "test", "test", "test", 1500));
 

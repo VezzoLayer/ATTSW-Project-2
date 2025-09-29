@@ -28,12 +28,6 @@ public class Order {
 		// required for serialization/deserialization
 	}
 
-	public Order(Long id, Item item, long price) {
-		this.id = id;
-		this.item = item;
-		this.price = price;
-	}
-	
 	public Order(Long id, Item item, long price, User user) {
 		this.id = id;
 		this.item = item;
