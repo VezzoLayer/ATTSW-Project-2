@@ -2,6 +2,7 @@ package com.ecommerce.manager.services;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -41,5 +42,12 @@ public class UserServiceWithMockitoTest {
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
 		assertThat(userService.getUserById(1)).isSameAs(user);
+	}
+
+	@Test
+	public void testGetUserByIdNotFound() {
+		when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+		assertThat(userService.getUserById(1)).isNull();
 	}
 }

@@ -1,7 +1,6 @@
 package com.ecommerce.manager.services;
 
 import java.util.List;
-import java.util.function.IntPredicate;
 
 import org.springframework.stereotype.Service;
 
