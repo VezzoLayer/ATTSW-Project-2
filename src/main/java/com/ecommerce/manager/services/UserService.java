@@ -28,4 +28,9 @@ public class UserService {
 		user.setId(null);
 		return userRepository.save(user);
 	}
+
+	public User updateUserById(long id, User replacement) {
+		replacement.setId(id);
+		return userRepository.save(replacement);
+	}
 }

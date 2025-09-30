@@ -70,4 +70,20 @@ public class UserServiceWithMockitoTest {
 		inOrder.verify(userToSave).setId(null);
 		inOrder.verify(userRepository).save(userToSave);
 	}
+
+	@Test
+	public void testUpdateUserByIdSetsIdToArgumentAndReturnsSavedUser() {
+		User replacement = spy(new User(null, "replacement", "replacement", "replacement", 2000));
+		User replaced = new User(1L, "username", "name", "email", 3000);
+
+		when(userRepository.save(any(User.class))).thenReturn(replaced);
+
+		User result = userService.updateUserById(1L, replacement);
+
+		assertThat(result).isSameAs(replaced);
+
+		InOrder inOrder = inOrder(replacement, userRepository);
+		inOrder.verify(replacement).setId(1L);
+		inOrder.verify(userRepository).save(replacement);
+	}
 }
