@@ -31,8 +31,8 @@ public class UserServiceWithMockitoTest {
 
 	@Test
 	public void GetAllUsers() {
-		User user1 = new User(null, "test", "test", "test", 5000);
-		User user2 = new User(null, "test", "test", "test", 4000);
+		User user1 = new User(1L, "test", "test", "test", 5000);
+		User user2 = new User(2L, "test", "test", "test", 4000);
 
 		when(userRepository.findAll()).thenReturn(asList(user1, user2));
 

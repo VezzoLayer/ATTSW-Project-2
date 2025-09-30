@@ -28,10 +28,10 @@ public class OrderServiceWithMockitoTest {
 
 	@Test
 	public void GetAllOrders() {
-		User user = new User(null, "test", "test", "test", 5000);
+		User user = new User(1L, "test", "test", "test", 5000);
 
-		Order order1 = new Order(null, Item.BOX1, 700, user);
-		Order order2 = new Order(null, Item.BOX2, 900, user);
+		Order order1 = new Order(1L, Item.BOX1, 700, user);
+		Order order2 = new Order(2L, Item.BOX2, 900, user);
 
 		when(orderRepository.findAll()).thenReturn(asList(order1, order2));
 
