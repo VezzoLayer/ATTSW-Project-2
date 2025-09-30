@@ -20,4 +20,8 @@ public class OrderService {
 		return orderRepository.findAll();
 	}
 
+	public Order getOrderById(long id) {
+		return orderRepository.findById(id).orElse(null);
+	}
+
 }

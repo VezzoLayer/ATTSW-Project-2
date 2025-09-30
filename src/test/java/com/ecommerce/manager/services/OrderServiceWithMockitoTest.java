@@ -4,6 +4,8 @@ import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
+import java.util.Optional;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -34,5 +36,14 @@ public class OrderServiceWithMockitoTest {
 		when(orderRepository.findAll()).thenReturn(asList(order1, order2));
 
 		assertThat(orderService.getAllOrders()).containsExactly(order1, order2);
+	}
+
+	@Test
+	public void testGetOrderByIdCorrectlyFound() {
+		Order order = new Order(1L, Item.BOX1, 700, new User(1L, "test", "test", "test", 5000));
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+
+		assertThat(orderService.getOrderById(1)).isSameAs(order);
 	}
 }
