@@ -2,13 +2,17 @@ package com.ecommerce.manager.services;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -49,5 +53,21 @@ public class UserServiceWithMockitoTest {
 		when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
 		assertThat(userService.getUserById(1)).isNull();
+	}
+
+	@Test
+	public void testInsertNewUserShouldSetIdToNullAndReturnsSavedUser() {
+		User userToSave = spy(new User(70L, "", "", "", 0));
+		User savedUser = new User(1L, "saved", "saved", "saved", 3000);
+
+		when(userRepository.save(any(User.class))).thenReturn(savedUser);
+
+		User result = userService.insertNewUser(userToSave);
+
+		assertThat(result).isSameAs(savedUser);
+
+		InOrder inOrder = inOrder(userToSave, userRepository);
+		inOrder.verify(userToSave).setId(null);
+		inOrder.verify(userRepository).save(userToSave);
 	}
 }

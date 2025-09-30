@@ -23,4 +23,9 @@ public class UserService {
 	public User getUserById(long id) {
 		return userRepository.findById(id).orElse(null);
 	}
+
+	public User insertNewUser(User user) {
+		user.setId(null);
+		return userRepository.save(user);
+	}
 }
