@@ -1,6 +1,7 @@
 package com.ecommerce.manager.services;
 
 import java.util.List;
+import java.util.function.IntPredicate;
 
 import org.springframework.stereotype.Service;
 
@@ -18,5 +19,9 @@ public class UserService {
 
 	public List<User> getAllUsers() {
 		return userRepository.findAll();
+	}
+
+	public User getUserById(long id) {
+		return userRepository.findById(id).orElse(null);
 	}
 }

@@ -4,6 +4,8 @@ import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
+import java.util.Optional;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -30,5 +32,14 @@ public class UserServiceWithMockitoTest {
 		when(userRepository.findAll()).thenReturn(asList(user1, user2));
 
 		assertThat(userService.getAllUsers()).containsExactly(user1, user2);
+	}
+
+	@Test
+	public void testGetUserByIdCorrectlyFound() {
+		User user = new User(1L, "test", "test", "test", 5000);
+
+		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+		assertThat(userService.getUserById(1)).isSameAs(user);
 	}
 }
