@@ -235,6 +235,31 @@
 					</executions>
 				</plugin>
 				<plugin>
+					<groupId>org.pitest</groupId>
+					<artifactId>pitest-maven</artifactId>
+					<version>1.15.0</version>
+					<configuration>
+						<targetClasses>
+							<param>com.ecommerce.manager.services*</param>
+						</targetClasses>
+						<targetTests>
+							<param>com.ecommerce.manager.services*</param>
+						</targetTests>
+						<mutators>
+							<mutator>STRONGER</mutator>
+						</mutators>
+						<mutationThreshold>100</mutationThreshold>
+					</configuration>
+					<executions>
+						<execution>
+							<goals>
+								<goal>mutationCoverage</goal>
+							</goals>
+							<phase>verify</phase>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
 					<groupId>org.eluder.coveralls</groupId>
 					<artifactId>coveralls-maven-plugin</artifactId>
 					<version>4.3.0</version>
@@ -257,6 +282,18 @@
 	</build>
 
 	<profiles>
+		<profile>
+			<id>mutation-testing</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.pitest</groupId>
+						<artifactId>pitest-maven</artifactId>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
 		<!-- Profilo che lega l'esecuzione di jacoco e coveralls perché coveralls richiede i report di jacoco -->
 		<profile>
 			<id>coveralls</id>
