@@ -1,0 +1,38 @@
+package com.ecommerce.manager.services;
+
+import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import com.ecommerce.manager.model.Item;
+import com.ecommerce.manager.model.Order;
+import com.ecommerce.manager.model.User;
+import com.ecommerce.manager.repositories.OrderRepository;
+
+@RunWith(MockitoJUnitRunner.class)
+public class OrderServiceWithMockitoTest {
+
+	@Mock
+	private OrderRepository orderRepository;
+
+	@InjectMocks
+	private OrderService orderService;
+
+	@Test
+	public void GetAllOrders() {
+		User user = new User(null, "test", "test", "test", 5000);
+
+		Order order1 = new Order(null, Item.BOX1, 700, user);
+		Order order2 = new Order(null, Item.BOX2, 900, user);
+
+		when(orderRepository.findAll()).thenReturn(asList(order1, order2));
+
+		assertThat(orderService.getAllOrders()).containsExactly(order1, order2);
+	}
+}

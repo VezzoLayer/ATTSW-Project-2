@@ -30,7 +30,7 @@ public class UserServiceWithMockitoTest {
 	private UserService userService;
 
 	@Test
-	public void GetAllUser() {
+	public void GetAllUsers() {
 		User user1 = new User(null, "test", "test", "test", 5000);
 		User user2 = new User(null, "test", "test", "test", 4000);
 
