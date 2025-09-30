@@ -76,4 +76,22 @@ public class OrderServiceWithMockitoTest {
 		inOrder.verify(orderToSave).setId(null);
 		inOrder.verify(orderRepository).save(orderToSave);
 	}
+
+	@Test
+	public void testUpdateOrderByIdSetsIdToArgumentAndReturnsSavedOrder() {
+		User user = new User(1L, "test", "test", "test", 5000);
+
+		Order replacement = spy(new Order(null, Item.BOX1, 500, user));
+		Order replaced = new Order(1L, Item.BOX2, 700, user);
+
+		when(orderRepository.save(any(Order.class))).thenReturn(replaced);
+
+		Order result = orderService.updateOrderById(1L, replacement);
+
+		assertThat(result).isSameAs(replaced);
+
+		InOrder inOrder = inOrder(replacement, orderRepository);
+		inOrder.verify(replacement).setId(1L);
+		inOrder.verify(orderRepository).save(replacement);
+	}
 }

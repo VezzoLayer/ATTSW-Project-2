@@ -29,4 +29,9 @@ public class OrderService {
 		return orderRepository.save(order);
 	}
 
+	public Order updateOrderById(long id, Order replacement) {
+		replacement.setId(id);
+		return orderRepository.save(replacement);
+	}
+
 }
