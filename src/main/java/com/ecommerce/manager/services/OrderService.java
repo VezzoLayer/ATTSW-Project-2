@@ -24,4 +24,9 @@ public class OrderService {
 		return orderRepository.findById(id).orElse(null);
 	}
 
+	public Order insertNewOrder(Order order) {
+		order.setId(null);
+		return orderRepository.save(order);
+	}
+
 }
