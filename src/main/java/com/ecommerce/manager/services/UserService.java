@@ -33,4 +33,11 @@ public class UserService {
 		replacement.setId(id);
 		return userRepository.save(replacement);
 	}
+
+	public User deposit(long id, long amount) {
+		User user = userRepository.findById(id).orElse(null);
+		user.setBalance(user.getBalance() + amount);
+
+		return userRepository.save(user);
+	}
 }
