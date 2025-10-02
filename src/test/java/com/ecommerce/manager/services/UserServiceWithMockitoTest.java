@@ -2,10 +2,12 @@ package com.ecommerce.manager.services;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -101,5 +103,14 @@ public class UserServiceWithMockitoTest {
 		InOrder inOrder = inOrder(user, userRepository);
 		inOrder.verify(user).setBalance(2500L);
 		inOrder.verify(userRepository).save(user);
+	}
+
+	@Test
+	public void testDepositWhenAmountIsNegativeShouldThrowException() {
+		IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+				() -> userService.deposit(1L, -500L));
+
+		assertThat(ex.getMessage()).isEqualTo("Deposit amount cannot be negative");
+		verifyNoInteractions(userRepository);
 	}
 }
