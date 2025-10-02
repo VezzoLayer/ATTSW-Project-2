@@ -113,4 +113,11 @@ public class UserServiceWithMockitoTest {
 		assertThat(ex.getMessage()).isEqualTo("Deposit amount cannot be negative");
 		verifyNoInteractions(userRepository);
 	}
+
+	@Test
+	public void testDepositWhenUserNotFoundShouldReturnNull() {
+		when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+		assertThat(userService.deposit(1L, 500L)).isNull();
+	}
 }

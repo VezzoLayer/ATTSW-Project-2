@@ -40,8 +40,12 @@ public class UserService {
 		}
 
 		User user = userRepository.findById(id).orElse(null);
-		user.setBalance(user.getBalance() + amount);
 
-		return userRepository.save(user);
+		if (user != null) {
+			user.setBalance(user.getBalance() + amount);
+			userRepository.save(user);
+		}
+
+		return user;
 	}
 }
