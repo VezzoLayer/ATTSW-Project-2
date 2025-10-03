@@ -197,4 +197,20 @@ public class UserServiceWithMockitoTest {
 		assertThat(ex.getMessage()).isEqualTo("Not enough balance to perform withdraw");
 		verify(userRepository, never()).save(any());
 	}
+
+	@Test
+	public void testWithdrawWhenAmountIsExactlyTheBalanceShouldBeAllowed() {
+		User user = spy(new User(1L, "test", "test", "test", 2000));
+
+		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+		when(userRepository.save(any(User.class))).thenReturn(user);
+
+		User result = userService.withdraw(1L, 2000L);
+
+		assertThat(result.getBalance()).isEqualTo(0L);
+
+		InOrder inOrder = inOrder(user, userRepository);
+		inOrder.verify(user).setBalance(0L);
+		inOrder.verify(userRepository).save(user);
+	}
 }
