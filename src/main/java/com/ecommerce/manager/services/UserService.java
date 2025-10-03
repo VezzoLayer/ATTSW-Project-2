@@ -19,4 +19,52 @@ public class UserService {
 	public List<User> getAllUsers() {
 		return userRepository.findAll();
 	}
+
+	public User getUserById(long id) {
+		return userRepository.findById(id).orElse(null);
+	}
+
+	public User insertNewUser(User user) {
+		user.setId(null);
+		return userRepository.save(user);
+	}
+
+	public User updateUserById(long id, User replacement) {
+		replacement.setId(id);
+		return userRepository.save(replacement);
+	}
+
+	public void deposit(long id, long amount) {
+		if (amount < 0) {
+			throw new IllegalArgumentException("Deposit amount cannot be negative");
+		}
+
+		User user = userRepository.findById(id).orElse(null);
+
+		if (user == null) {
+			throw new IllegalStateException("User not found");
+		}
+
+		user.setBalance(user.getBalance() + amount);
+		userRepository.save(user);
+	}
+
+	public void withdraw(long id, long amount) {
+		if (amount < 0) {
+			throw new IllegalArgumentException("Withdraw amount cannot be negative");
+		}
+
+		User user = userRepository.findById(id).orElse(null);
+
+		if (user == null) {
+			throw new IllegalStateException("User not found");
+		}
+
+		if (user.getBalance() - amount < 0) {
+			throw new IllegalStateException("Not enough balance to perform withdraw");
+		}
+
+		user.setBalance(user.getBalance() - amount);
+		userRepository.save(user);
+	}
 }
