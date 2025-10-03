@@ -34,19 +34,19 @@ public class UserService {
 		return userRepository.save(replacement);
 	}
 
-	public User deposit(long id, long amount) {
+	public void deposit(long id, long amount) {
 		if (amount < 0) {
 			throw new IllegalArgumentException("Deposit amount cannot be negative");
 		}
 
 		User user = userRepository.findById(id).orElse(null);
 
-		if (user != null) {
-			user.setBalance(user.getBalance() + amount);
-			userRepository.save(user);
+		if (user == null) {
+			throw new IllegalStateException("User not found");
 		}
 
-		return user;
+		user.setBalance(user.getBalance() + amount);
+		userRepository.save(user);
 	}
 
 	public User withdraw(long id, long amount) {

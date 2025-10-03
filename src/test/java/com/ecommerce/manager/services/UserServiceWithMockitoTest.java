@@ -98,9 +98,7 @@ public class UserServiceWithMockitoTest {
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 		when(userRepository.save(any(User.class))).thenReturn(user);
 
-		User result = userService.deposit(1L, 500L);
-
-		assertThat(result.getBalance()).isEqualTo(2500L);
+		userService.deposit(1L, 500L);
 
 		InOrder inOrder = inOrder(user, userRepository);
 		inOrder.verify(user).setBalance(2500L);
@@ -114,9 +112,7 @@ public class UserServiceWithMockitoTest {
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 		when(userRepository.save(any(User.class))).thenReturn(user);
 
-		User result = userService.deposit(1L, 0L);
-
-		assertThat(result.getBalance()).isEqualTo(2000L);
+		userService.deposit(1L, 0L);
 
 		InOrder inOrder = inOrder(user, userRepository);
 		inOrder.verify(user).setBalance(2000L);
@@ -136,7 +132,9 @@ public class UserServiceWithMockitoTest {
 	public void testDepositWhenUserNotFoundShouldReturnNull() {
 		when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-		assertThat(userService.deposit(1L, 500L)).isNull();
+		IllegalStateException ex = assertThrows(IllegalStateException.class, () -> userService.deposit(1L, 500L));
+
+		assertThat(ex.getMessage()).isEqualTo("User not found");
 	}
 
 	@Test

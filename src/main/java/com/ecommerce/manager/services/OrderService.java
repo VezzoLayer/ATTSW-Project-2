@@ -29,9 +29,7 @@ public class OrderService {
 	public Order insertNewOrder(Order order) {
 		order.setId(null);
 
-		if (order.getUser() != null) {
-			userService.withdraw(order.getUser().getId(), order.getPrice());
-		}
+		userService.withdraw(order.getUser().getId(), order.getPrice());
 
 		return orderRepository.save(order);
 	}
