@@ -14,18 +14,26 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
+
 import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 import com.ecommerce.manager.model.User;
 import com.ecommerce.manager.repositories.UserRepository;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(JUnitParamsRunner.class)
 public class UserServiceWithMockitoTest {
+
+	@Rule
+	public MockitoRule mockitoRule = MockitoJUnit.rule();
 
 	@Mock
 	private UserRepository userRepository;
@@ -138,30 +146,17 @@ public class UserServiceWithMockitoTest {
 	}
 
 	@Test
-	public void testWithdrawWhenAmountIsCorrectShouldDecrementBalance() {
+	@Parameters({ "2000, 0", "500, 1500", "0, 2000" })
+	public void testWithdrawShouldUpdateBalanceCorrectlyWithParameters(long amount, long expectedBalance) {
 		User user = spy(new User(1L, "test", "test", "test", 2000));
 
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 		when(userRepository.save(any(User.class))).thenReturn(user);
 
-		userService.withdraw(1L, 500L);
+		userService.withdraw(1L, amount);
 
 		InOrder inOrder = inOrder(user, userRepository);
-		inOrder.verify(user).setBalance(1500L);
-		inOrder.verify(userRepository).save(user);
-	}
-
-	@Test
-	public void testWithdrawWhenAmountIsZeroShouldBeAllowed() {
-		User user = spy(new User(1L, "test", "test", "test", 2000));
-
-		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-		when(userRepository.save(any(User.class))).thenReturn(user);
-
-		userService.withdraw(1L, 0L);
-
-		InOrder inOrder = inOrder(user, userRepository);
-		inOrder.verify(user).setBalance(2000L);
+		inOrder.verify(user).setBalance(expectedBalance);
 		inOrder.verify(userRepository).save(user);
 	}
 
@@ -192,19 +187,5 @@ public class UserServiceWithMockitoTest {
 		IllegalStateException ex = assertThrows(IllegalStateException.class, () -> userService.withdraw(1L, 500L));
 		assertThat(ex.getMessage()).isEqualTo("Not enough balance to perform withdraw");
 		verify(userRepository, never()).save(any());
-	}
-
-	@Test
-	public void testWithdrawWhenAmountIsExactlyTheBalanceShouldBeAllowed() {
-		User user = spy(new User(1L, "test", "test", "test", 2000));
-
-		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-		when(userRepository.save(any(User.class))).thenReturn(user);
-
-		userService.withdraw(1L, 2000L);
-
-		InOrder inOrder = inOrder(user, userRepository);
-		inOrder.verify(user).setBalance(0L);
-		inOrder.verify(userRepository).save(user);
 	}
 }
