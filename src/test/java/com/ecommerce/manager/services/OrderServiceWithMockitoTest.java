@@ -28,6 +28,9 @@ public class OrderServiceWithMockitoTest {
 	@Mock
 	private OrderRepository orderRepository;
 
+	@Mock
+	private UserService userService;
+
 	@InjectMocks
 	private OrderService orderService;
 
@@ -72,8 +75,9 @@ public class OrderServiceWithMockitoTest {
 
 		assertThat(result).isSameAs(savedOrder);
 
-		InOrder inOrder = inOrder(orderToSave, orderRepository);
+		InOrder inOrder = inOrder(orderToSave, userService, orderRepository);
 		inOrder.verify(orderToSave).setId(null);
+		inOrder.verify(userService).withdraw(1L, 700L);
 		inOrder.verify(orderRepository).save(orderToSave);
 	}
 

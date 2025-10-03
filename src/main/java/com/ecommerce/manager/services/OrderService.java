@@ -11,9 +11,11 @@ import com.ecommerce.manager.repositories.OrderRepository;
 public class OrderService {
 
 	private OrderRepository orderRepository;
+	private UserService userService;
 
-	public OrderService(OrderRepository orderRepository) {
+	public OrderService(OrderRepository orderRepository, UserService userService) {
 		this.orderRepository = orderRepository;
+		this.userService = userService;
 	}
 
 	public List<Order> getAllOrders() {
@@ -26,6 +28,11 @@ public class OrderService {
 
 	public Order insertNewOrder(Order order) {
 		order.setId(null);
+
+		if (order.getUser() != null) {
+			userService.withdraw(order.getUser().getId(), order.getPrice());
+		}
+
 		return orderRepository.save(order);
 	}
 
