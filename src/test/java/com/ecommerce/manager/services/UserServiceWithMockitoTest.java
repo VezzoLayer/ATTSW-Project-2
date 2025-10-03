@@ -106,6 +106,22 @@ public class UserServiceWithMockitoTest {
 	}
 
 	@Test
+	public void testDepositWhenAmountIsZeroShouldBeAllowed() {
+		User user = spy(new User(1L, "test", "test", "test", 2000));
+
+		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+		when(userRepository.save(any(User.class))).thenReturn(user);
+
+		User result = userService.deposit(1L, 0L);
+
+		assertThat(result.getBalance()).isEqualTo(2000L);
+
+		InOrder inOrder = inOrder(user, userRepository);
+		inOrder.verify(user).setBalance(2000L);
+		inOrder.verify(userRepository).save(user);
+	}
+
+	@Test
 	public void testDepositWhenAmountIsNegativeShouldThrowException() {
 		IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
 				() -> userService.deposit(1L, -500L));

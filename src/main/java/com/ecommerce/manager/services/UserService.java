@@ -35,7 +35,7 @@ public class UserService {
 	}
 
 	public User deposit(long id, long amount) {
-		if (amount <= 0) {
+		if (amount < 0) {
 			throw new IllegalArgumentException("Deposit amount cannot be negative");
 		}
 
