@@ -48,4 +48,15 @@ public class UserService {
 
 		return user;
 	}
+
+	public User withdraw(long id, long amount) {
+		User user = userRepository.findById(id).orElse(null);
+
+		if (user != null) {
+			user.setBalance(user.getBalance() - amount);
+			userRepository.save(user);
+		}
+
+		return user;
+	}
 }

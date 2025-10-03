@@ -136,4 +136,20 @@ public class UserServiceWithMockitoTest {
 
 		assertThat(userService.deposit(1L, 500L)).isNull();
 	}
+
+	@Test
+	public void testWithdrawWhenAmountIsCorrectShouldDecrementBalance() {
+		User user = spy(new User(1L, "test", "test", "test", 2000));
+
+		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+		when(userRepository.save(any(User.class))).thenReturn(user);
+
+		User result = userService.withdraw(1L, 500L);
+
+		assertThat(result.getBalance()).isEqualTo(1500L);
+
+		InOrder inOrder = inOrder(user, userRepository);
+		inOrder.verify(user).setBalance(1500L);
+		inOrder.verify(userRepository).save(user);
+	}
 }
