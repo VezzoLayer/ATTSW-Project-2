@@ -49,22 +49,22 @@ public class UserService {
 		userRepository.save(user);
 	}
 
-	public User withdraw(long id, long amount) {
+	public void withdraw(long id, long amount) {
 		if (amount < 0) {
 			throw new IllegalArgumentException("Withdraw amount cannot be negative");
 		}
 
 		User user = userRepository.findById(id).orElse(null);
 
-		if (user != null) {
-			if (user.getBalance() - amount < 0) {
-				throw new IllegalStateException("Not enough balance to perform withdraw");
-			}
-
-			user.setBalance(user.getBalance() - amount);
-			userRepository.save(user);
+		if (user == null) {
+			throw new IllegalStateException("User not found");
 		}
 
-		return user;
+		if (user.getBalance() - amount < 0) {
+			throw new IllegalStateException("Not enough balance to perform withdraw");
+		}
+
+		user.setBalance(user.getBalance() - amount);
+		userRepository.save(user);
 	}
 }

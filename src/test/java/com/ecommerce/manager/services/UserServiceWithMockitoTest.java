@@ -129,7 +129,7 @@ public class UserServiceWithMockitoTest {
 	}
 
 	@Test
-	public void testDepositWhenUserNotFoundShouldReturnNull() {
+	public void testDepositWhenUserNotFoundShouldThrowException() {
 		when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
 		IllegalStateException ex = assertThrows(IllegalStateException.class, () -> userService.deposit(1L, 500L));
@@ -144,9 +144,7 @@ public class UserServiceWithMockitoTest {
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 		when(userRepository.save(any(User.class))).thenReturn(user);
 
-		User result = userService.withdraw(1L, 500L);
-
-		assertThat(result.getBalance()).isEqualTo(1500L);
+		userService.withdraw(1L, 500L);
 
 		InOrder inOrder = inOrder(user, userRepository);
 		inOrder.verify(user).setBalance(1500L);
@@ -160,9 +158,7 @@ public class UserServiceWithMockitoTest {
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 		when(userRepository.save(any(User.class))).thenReturn(user);
 
-		User result = userService.withdraw(1L, 0L);
-
-		assertThat(result.getBalance()).isEqualTo(2000L);
+		userService.withdraw(1L, 0L);
 
 		InOrder inOrder = inOrder(user, userRepository);
 		inOrder.verify(user).setBalance(2000L);
@@ -179,10 +175,12 @@ public class UserServiceWithMockitoTest {
 	}
 
 	@Test
-	public void testWithdrawWhenUserNotFoundShouldReturnNull() {
+	public void testWithdrawWhenUserNotFoundShouldThrowException() {
 		when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-		assertThat(userService.withdraw(1L, 500L)).isNull();
+		IllegalStateException ex = assertThrows(IllegalStateException.class, () -> userService.deposit(1L, 500L));
+
+		assertThat(ex.getMessage()).isEqualTo("User not found");
 	}
 
 	@Test
@@ -203,9 +201,7 @@ public class UserServiceWithMockitoTest {
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 		when(userRepository.save(any(User.class))).thenReturn(user);
 
-		User result = userService.withdraw(1L, 2000L);
-
-		assertThat(result.getBalance()).isEqualTo(0L);
+		userService.withdraw(1L, 2000L);
 
 		InOrder inOrder = inOrder(user, userRepository);
 		inOrder.verify(user).setBalance(0L);
