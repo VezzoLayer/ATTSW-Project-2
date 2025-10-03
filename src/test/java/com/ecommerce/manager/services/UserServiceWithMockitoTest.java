@@ -168,4 +168,13 @@ public class UserServiceWithMockitoTest {
 		inOrder.verify(user).setBalance(2000L);
 		inOrder.verify(userRepository).save(user);
 	}
+
+	@Test
+	public void testWithdrawWhenAmountIsNegativeShouldThrowException() {
+		IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+				() -> userService.withdraw(1L, -500L));
+
+		assertThat(ex.getMessage()).isEqualTo("Withdraw amount cannot be negative");
+		verifyNoInteractions(userRepository);
+	}
 }

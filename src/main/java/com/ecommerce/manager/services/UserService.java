@@ -50,6 +50,10 @@ public class UserService {
 	}
 
 	public User withdraw(long id, long amount) {
+		if (amount < 0) {
+			throw new IllegalArgumentException("Withdraw amount cannot be negative");
+		}
+
 		User user = userRepository.findById(id).orElse(null);
 
 		if (user != null) {
