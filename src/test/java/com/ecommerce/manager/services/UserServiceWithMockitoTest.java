@@ -6,7 +6,9 @@ import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
@@ -183,5 +185,16 @@ public class UserServiceWithMockitoTest {
 		when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
 		assertThat(userService.withdraw(1L, 500L)).isNull();
+	}
+
+	@Test
+	public void testWithdrawWhenBalanceIsNotEnoughShouldThrowException() {
+		User user = new User(1L, "test", "test", "test", 300);
+
+		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+		IllegalStateException ex = assertThrows(IllegalStateException.class, () -> userService.withdraw(1L, 500L));
+		assertThat(ex.getMessage()).isEqualTo("Not enough balance to perform withdraw");
+		verify(userRepository, never()).save(any());
 	}
 }

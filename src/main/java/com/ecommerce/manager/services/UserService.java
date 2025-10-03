@@ -57,6 +57,10 @@ public class UserService {
 		User user = userRepository.findById(id).orElse(null);
 
 		if (user != null) {
+			if (user.getBalance() - amount < 0) {
+				throw new IllegalStateException("Not enough balance to perform withdraw");
+			}
+
 			user.setBalance(user.getBalance() - amount);
 			userRepository.save(user);
 		}
