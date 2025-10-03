@@ -177,4 +177,11 @@ public class UserServiceWithMockitoTest {
 		assertThat(ex.getMessage()).isEqualTo("Withdraw amount cannot be negative");
 		verifyNoInteractions(userRepository);
 	}
+
+	@Test
+	public void testWithdrawWhenUserNotFoundShouldReturnNull() {
+		when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+		assertThat(userService.withdraw(1L, 500L)).isNull();
+	}
 }
