@@ -35,7 +35,7 @@ public class OrderServiceWithMockitoTest {
 	private OrderService orderService;
 
 	@Test
-	public void GetAllOrders() {
+	public void testGetAllOrders() {
 		User user = new User(1L, "test", "test", "test", 5000);
 
 		Order order1 = new Order(1L, Item.BOX1, 700, user);

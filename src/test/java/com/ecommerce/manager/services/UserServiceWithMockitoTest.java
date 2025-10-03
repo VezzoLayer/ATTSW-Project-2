@@ -34,7 +34,7 @@ public class UserServiceWithMockitoTest {
 	private UserService userService;
 
 	@Test
-	public void GetAllUsers() {
+	public void testGetAllUsers() {
 		User user1 = new User(1L, "test", "test", "test", 5000);
 		User user2 = new User(2L, "test", "test", "test", 4000);
 
@@ -178,7 +178,7 @@ public class UserServiceWithMockitoTest {
 	public void testWithdrawWhenUserNotFoundShouldThrowException() {
 		when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-		IllegalStateException ex = assertThrows(IllegalStateException.class, () -> userService.deposit(1L, 500L));
+		IllegalStateException ex = assertThrows(IllegalStateException.class, () -> userService.withdraw(1L, 500L));
 
 		assertThat(ex.getMessage()).isEqualTo("User not found");
 	}
