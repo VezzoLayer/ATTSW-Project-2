@@ -100,30 +100,18 @@ public class UserServiceWithMockitoTest {
 	}
 
 	@Test
-	public void testDepositWhenAmountIsCorrectShouldIncreaseBalance() {
+	@Parameters({ "500, 2500", "0, 2000" })
+	public void testDepositwWhenParameterizedAmountIsCorrectShouldCorrectlyUpdateBalance(long amount,
+			long expectedBalance) {
 		User user = spy(new User(1L, "test", "test", "test", 2000));
 
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 		when(userRepository.save(any(User.class))).thenReturn(user);
 
-		userService.deposit(1L, 500L);
+		userService.deposit(1L, amount);
 
 		InOrder inOrder = inOrder(user, userRepository);
-		inOrder.verify(user).setBalance(2500L);
-		inOrder.verify(userRepository).save(user);
-	}
-
-	@Test
-	public void testDepositWhenAmountIsZeroShouldBeAllowed() {
-		User user = spy(new User(1L, "test", "test", "test", 2000));
-
-		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-		when(userRepository.save(any(User.class))).thenReturn(user);
-
-		userService.deposit(1L, 0L);
-
-		InOrder inOrder = inOrder(user, userRepository);
-		inOrder.verify(user).setBalance(2000L);
+		inOrder.verify(user).setBalance(expectedBalance);
 		inOrder.verify(userRepository).save(user);
 	}
 
@@ -147,7 +135,8 @@ public class UserServiceWithMockitoTest {
 
 	@Test
 	@Parameters({ "2000, 0", "500, 1500", "0, 2000" })
-	public void testWithdrawShouldUpdateBalanceCorrectlyWithParameters(long amount, long expectedBalance) {
+	public void testWithdrawWhenParameterizedAmountIsCorrectShouldCorrectlyUpdateBalance(long amount,
+			long expectedBalance) {
 		User user = spy(new User(1L, "test", "test", "test", 2000));
 
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -174,7 +163,6 @@ public class UserServiceWithMockitoTest {
 		when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
 		IllegalStateException ex = assertThrows(IllegalStateException.class, () -> userService.withdraw(1L, 500L));
-
 		assertThat(ex.getMessage()).isEqualTo("User not found");
 	}
 
