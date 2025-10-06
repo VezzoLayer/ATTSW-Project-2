@@ -23,6 +23,8 @@ public class UserRestController {
 
 	private UserService userService;
 
+	private static final String MESSAGE = "message";
+
 	public UserRestController(UserService userService) {
 		this.userService = userService;
 	}
@@ -61,15 +63,15 @@ public class UserRestController {
 
 	@ExceptionHandler(IllegalArgumentException.class)
 	public ResponseEntity<Map<String, String>> handleIllegalArgument(IllegalArgumentException ex) {
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", ex.getMessage()));
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(MESSAGE, ex.getMessage()));
 	}
 
 	@ExceptionHandler(IllegalStateException.class)
 	public ResponseEntity<Map<String, String>> handleIllegalState(IllegalStateException ex) {
 		if (ex.getMessage().contains("Not enough balance to perform withdraw")) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", ex.getMessage()));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(MESSAGE, ex.getMessage()));
 		}
-		
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", ex.getMessage()));
+
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(MESSAGE, ex.getMessage()));
 	}
 }
