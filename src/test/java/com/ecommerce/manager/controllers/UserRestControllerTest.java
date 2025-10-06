@@ -82,4 +82,18 @@ public class UserRestControllerTest {
 				.andExpect(jsonPath("$.username", is("username"))).andExpect(jsonPath("$.name", is("new user")))
 				.andExpect(jsonPath("$.email", is("email"))).andExpect(jsonPath("$.balance", is(4000)));
 	}
+
+	@Test
+	public void testUpdateUser() throws Exception {
+		User requestBodyUser = new User(null, "username", "new user", "email", 4000);
+
+		when(userService.updateUserById(1L, requestBodyUser))
+				.thenReturn(new User(1L, "username", "new user", "email", 4000));
+
+		this.mvc.perform(post("/api/users/update/1").contentType(MediaType.APPLICATION_JSON)
+				.content("{\"username\":\"username\", \"name\":\"new user\", \"email\":\"email\", \"balance\":4000}")
+				.accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andExpect(jsonPath("$.id", is(1)))
+				.andExpect(jsonPath("$.username", is("username"))).andExpect(jsonPath("$.name", is("new user")))
+				.andExpect(jsonPath("$.email", is("email"))).andExpect(jsonPath("$.balance", is(4000)));
+	}
 }
