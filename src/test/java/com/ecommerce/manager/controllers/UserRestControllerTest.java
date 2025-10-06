@@ -41,6 +41,7 @@ public class UserRestControllerTest {
 	public void testAllUsersWhenThereIsSome() throws Exception {
 		when(userService.getAllUsers()).thenReturn(
 				asList(new User(1L, "user 1", "test", "test", 3000), new User(2L, "user 2", "test", "test", 4000)));
+
 		this.mvc.perform(get("/api/users").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
 				.andExpect(jsonPath("$[0].id", is(1))).andExpect(jsonPath("$[0].username", is("user 1")))
 				.andExpect(jsonPath("$[0].name", is("test"))).andExpect(jsonPath("$[0].email", is("test")))
@@ -52,9 +53,18 @@ public class UserRestControllerTest {
 	@Test
 	public void testOneUserByIdWithExistingUser() throws Exception {
 		when(userService.getUserById(anyLong())).thenReturn(new User(1L, "user 1", "test", "test", 3000));
+
 		this.mvc.perform(get("/api/users/1").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
 				.andExpect(jsonPath("$.id", is(1))).andExpect(jsonPath("$.username", is("user 1")))
 				.andExpect(jsonPath("$.name", is("test"))).andExpect(jsonPath("$.email", is("test")))
 				.andExpect(jsonPath("$.balance", is(3000)));
+	}
+
+	@Test
+	public void testOneUserByIdWithNotFoundUser() throws Exception {
+		when(userService.getUserById(anyLong())).thenReturn(null);
+
+		this.mvc.perform(get("/api/users/1").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+				.andExpect(content().string(""));
 	}
 }
