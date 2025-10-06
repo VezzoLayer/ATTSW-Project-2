@@ -2,6 +2,7 @@ package com.ecommerce.manager.controllers;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -46,5 +47,14 @@ public class UserRestControllerTest {
 				.andExpect(jsonPath("$[0].balance", is(3000))).andExpect(jsonPath("$[1].id", is(2)))
 				.andExpect(jsonPath("$[1].username", is("user 2"))).andExpect(jsonPath("$[1].name", is("test")))
 				.andExpect(jsonPath("$[1].email", is("test"))).andExpect(jsonPath("$[1].balance", is(4000)));
+	}
+
+	@Test
+	public void testOneUserByIdWithExistingUser() throws Exception {
+		when(userService.getUserById(anyLong())).thenReturn(new User(1L, "user 1", "test", "test", 3000));
+		this.mvc.perform(get("/api/users/1").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+				.andExpect(jsonPath("$.id", is(1))).andExpect(jsonPath("$.username", is("user 1")))
+				.andExpect(jsonPath("$.name", is("test"))).andExpect(jsonPath("$.email", is("test")))
+				.andExpect(jsonPath("$.balance", is(3000)));
 	}
 }
