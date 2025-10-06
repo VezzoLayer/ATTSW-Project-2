@@ -248,9 +248,11 @@
 					<configuration>
 						<targetClasses>
 							<param>com.ecommerce.manager.services*</param>
+							<param>com.ecommerce.manager.controllers*</param>
 						</targetClasses>
 						<targetTests>
 							<param>com.ecommerce.manager.services*</param>
+							<param>com.ecommerce.manager.controllers*</param>
 						</targetTests>
 						<mutators>
 							<mutator>STRONGER</mutator>
