@@ -3,6 +3,7 @@ package com.ecommerce.manager.controllers;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,4 +25,8 @@ public class OrderRestController {
 		return orderService.getAllOrders();
 	}
 
+	@GetMapping("/{id}")
+	public Order oneOrder(@PathVariable long id) {
+		return orderService.getOrderById(id);
+	}
 }

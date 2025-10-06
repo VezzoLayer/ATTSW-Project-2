@@ -2,6 +2,7 @@ package com.ecommerce.manager.controllers;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -54,5 +55,17 @@ public class OrderRestControllerTest {
 				.andExpect(jsonPath("$[1].user.id", is(1))).andExpect(jsonPath("$[1].user.username", is("user 1")))
 				.andExpect(jsonPath("$[1].user.name", is("test"))).andExpect(jsonPath("$[1].user.email", is("test")))
 				.andExpect(jsonPath("$[1].user.balance", is(3000)));
+	}
+
+	@Test
+	public void testOneOrderByIdWithExistingOrder() throws Exception {
+		when(orderService.getOrderById(anyLong()))
+				.thenReturn(new Order(1L, Item.BOX1, 800, new User(1L, "user 1", "test", "test", 3000)));
+
+		this.mvc.perform(get("/api/orders/1").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+				.andExpect(jsonPath("$.id", is(1))).andExpect(jsonPath("$.item", is("BOX1")))
+				.andExpect(jsonPath("$.price", is(800))).andExpect(jsonPath("$.user.username", is("user 1")))
+				.andExpect(jsonPath("$.user.name", is("test"))).andExpect(jsonPath("$.user.email", is("test")))
+				.andExpect(jsonPath("$.user.balance", is(3000)));
 	}
 }
