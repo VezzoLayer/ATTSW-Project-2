@@ -2,6 +2,7 @@ package com.ecommerce.manager.controllers;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,5 +42,11 @@ public class UserRestController {
 	@PutMapping("/update/{id}")
 	public User updateUser(@PathVariable long id, @RequestBody User user) {
 		return userService.updateUserById(id, user);
+	}
+
+	@PostMapping("/{id}/deposit")
+	public ResponseEntity<Void> deposit(@PathVariable long id, @RequestBody long amount) {
+		userService.deposit(id, amount);
+		return ResponseEntity.noContent().build();
 	}
 }

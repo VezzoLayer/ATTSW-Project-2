@@ -3,6 +3,7 @@ package com.ecommerce.manager.controllers;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -96,5 +97,13 @@ public class UserRestControllerTest {
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andExpect(jsonPath("$.id", is(1)))
 				.andExpect(jsonPath("$.username", is("username"))).andExpect(jsonPath("$.name", is("new user")))
 				.andExpect(jsonPath("$.email", is("email"))).andExpect(jsonPath("$.balance", is(4000)));
+	}
+
+	@Test
+	public void testDepositSuccess() throws Exception {
+		doNothing().when(userService).deposit(1L, 500L);
+
+		this.mvc.perform(post("/api/users/1/deposit").contentType(MediaType.APPLICATION_JSON).content("500")
+				.accept(MediaType.APPLICATION_JSON)).andExpect(status().isNoContent());
 	}
 }
