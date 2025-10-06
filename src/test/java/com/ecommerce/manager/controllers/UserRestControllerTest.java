@@ -144,7 +144,18 @@ public class UserRestControllerTest {
 	public void testWithdrawWithUserNotFoundReturns404() throws Exception {
 		doThrow(new IllegalStateException("User not found")).when(userService).withdraw(anyLong(), anyLong());
 
-		this.mvc.perform(post("/api/users/1/withdraw").contentType(MediaType.APPLICATION_JSON).content("500"))
-				.andExpect(status().isNotFound()).andExpect(jsonPath("$.message", is("User not found")));
+		this.mvc.perform(post("/api/users/1/withdraw").contentType(MediaType.APPLICATION_JSON).content("500")
+				.accept(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound())
+				.andExpect(jsonPath("$.message", is("User not found")));
+	}
+
+	@Test
+	public void testWithdrawWhenBalanceNotEnoughReturns400() throws Exception {
+		doThrow(new IllegalStateException("Not enough balance to perform withdraw")).when(userService)
+				.withdraw(anyLong(), anyLong());
+
+		this.mvc.perform(post("/api/users/1/withdraw").contentType(MediaType.APPLICATION_JSON).content("500")
+				.accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.message", is("Not enough balance to perform withdraw")));
 	}
 }
