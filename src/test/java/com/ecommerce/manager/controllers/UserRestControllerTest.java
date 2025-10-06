@@ -123,4 +123,10 @@ public class UserRestControllerTest {
 		this.mvc.perform(post("/api/users/1/deposit").contentType(MediaType.APPLICATION_JSON).content("500"))
 				.andExpect(status().isNotFound()).andExpect(jsonPath("$.message", is("User not found")));
 	}
+
+	@Test
+	public void testWithdrawSuccessReturns204() throws Exception {
+		this.mvc.perform(post("/api/users/1/withdraw").contentType(MediaType.APPLICATION_JSON).content("500")
+				.accept(MediaType.APPLICATION_JSON)).andExpect(status().isNoContent());
+	}
 }

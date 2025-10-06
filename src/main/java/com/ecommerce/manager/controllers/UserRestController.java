@@ -53,6 +53,12 @@ public class UserRestController {
 		return ResponseEntity.noContent().build();
 	}
 
+	@PostMapping("/{id}/withdraw")
+	public ResponseEntity<Void> withdraw(@PathVariable long id, @RequestBody long amount) {
+		userService.deposit(id, amount);
+		return ResponseEntity.noContent().build();
+	}
+
 	@ExceptionHandler(IllegalArgumentException.class)
 	public ResponseEntity<Map<String, String>> handleIllegalArgument(IllegalArgumentException ex) {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", ex.getMessage()));
