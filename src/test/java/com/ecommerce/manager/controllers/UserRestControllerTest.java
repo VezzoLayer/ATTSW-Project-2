@@ -129,4 +129,14 @@ public class UserRestControllerTest {
 		this.mvc.perform(post("/api/users/1/withdraw").contentType(MediaType.APPLICATION_JSON).content("500")
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().isNoContent());
 	}
+
+	@Test
+	public void testWithdrawWithNegativeAmountReturns400() throws Exception {
+		doThrow(new IllegalArgumentException("Withdraw amount cannot be negative")).when(userService).deposit(anyLong(),
+				eq(-500L));
+
+		this.mvc.perform(post("/api/users/1/deposit").contentType(MediaType.APPLICATION_JSON).content("-500")
+				.accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.message", is("Withdraw amount cannot be negative")));
+	}
 }
