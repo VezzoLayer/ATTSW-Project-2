@@ -68,4 +68,12 @@ public class OrderRestControllerTest {
 				.andExpect(jsonPath("$.user.name", is("test"))).andExpect(jsonPath("$.user.email", is("test")))
 				.andExpect(jsonPath("$.user.balance", is(3000)));
 	}
+
+	@Test
+	public void testOneOrderByIdWithNotFoundOrder() throws Exception {
+		when(orderService.getOrderById(anyLong())).thenReturn(null);
+
+		this.mvc.perform(get("/api/orders/1").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+				.andExpect(content().string(""));
+	}
 }
