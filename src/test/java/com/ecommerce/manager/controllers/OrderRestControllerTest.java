@@ -5,6 +5,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -75,5 +76,22 @@ public class OrderRestControllerTest {
 
 		this.mvc.perform(get("/api/orders/1").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
 				.andExpect(content().string(""));
+	}
+
+	@Test
+	public void testPostOrder() throws Exception {
+		User user = new User(1L, "user 1", "test", "test", 3000);
+
+		Order requestBodyOrder = new Order(null, Item.BOX1, 800, user);
+
+		when(orderService.insertNewOrder(requestBodyOrder)).thenReturn(new Order(1L, Item.BOX1, 800, user));
+
+		this.mvc.perform(post("/api/orders/new").contentType(MediaType.APPLICATION_JSON).content(
+				"{\"item\":\"BOX1\", \"price\":800, \"user\":{\"id\":1, \"username\":\"user 1\", \"name\":\"test\", \"email\":\"test\", \"balance\":3000}}")
+				.accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andExpect(jsonPath("$.id", is(1)))
+				.andExpect(jsonPath("$.item", is("BOX1"))).andExpect(jsonPath("$.price", is(800)))
+				.andExpect(jsonPath("$.user.id", is(1))).andExpect(jsonPath("$.user.username", is("user 1")))
+				.andExpect(jsonPath("$.user.name", is("test"))).andExpect(jsonPath("$.user.email", is("test")))
+				.andExpect(jsonPath("$.user.balance", is(3000)));
 	}
 }

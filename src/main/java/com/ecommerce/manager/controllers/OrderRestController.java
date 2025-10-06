@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,5 +30,10 @@ public class OrderRestController {
 	@GetMapping("/{id}")
 	public Order oneOrder(@PathVariable long id) {
 		return orderService.getOrderById(id);
+	}
+
+	@PostMapping("/new")
+	public Order newOrder(@RequestBody Order order) {
+		return orderService.insertNewOrder(order);
 	}
 }
