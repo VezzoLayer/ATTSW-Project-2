@@ -132,11 +132,19 @@ public class UserRestControllerTest {
 
 	@Test
 	public void testWithdrawWithNegativeAmountReturns400() throws Exception {
-		doThrow(new IllegalArgumentException("Withdraw amount cannot be negative")).when(userService).deposit(anyLong(),
-				eq(-500L));
+		doThrow(new IllegalArgumentException("Withdraw amount cannot be negative")).when(userService)
+				.withdraw(anyLong(), eq(-500L));
 
-		this.mvc.perform(post("/api/users/1/deposit").contentType(MediaType.APPLICATION_JSON).content("-500")
+		this.mvc.perform(post("/api/users/1/withdraw").contentType(MediaType.APPLICATION_JSON).content("-500")
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.message", is("Withdraw amount cannot be negative")));
+	}
+
+	@Test
+	public void testWithdrawWithUserNotFoundReturns404() throws Exception {
+		doThrow(new IllegalStateException("User not found")).when(userService).withdraw(anyLong(), anyLong());
+
+		this.mvc.perform(post("/api/users/1/withdraw").contentType(MediaType.APPLICATION_JSON).content("500"))
+				.andExpect(status().isNotFound()).andExpect(jsonPath("$.message", is("User not found")));
 	}
 }

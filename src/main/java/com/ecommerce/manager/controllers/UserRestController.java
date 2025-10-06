@@ -55,7 +55,7 @@ public class UserRestController {
 
 	@PostMapping("/{id}/withdraw")
 	public ResponseEntity<Void> withdraw(@PathVariable long id, @RequestBody long amount) {
-		userService.deposit(id, amount);
+		userService.withdraw(id, amount);
 		return ResponseEntity.noContent().build();
 	}
 
