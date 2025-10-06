@@ -3,7 +3,7 @@ package com.ecommerce.manager.controllers;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -100,10 +100,18 @@ public class UserRestControllerTest {
 	}
 
 	@Test
-	public void testDepositSuccess() throws Exception {
-		doNothing().when(userService).deposit(1L, 500L);
-
+	public void testDepositSuccessReturns204() throws Exception {
 		this.mvc.perform(post("/api/users/1/deposit").contentType(MediaType.APPLICATION_JSON).content("500")
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().isNoContent());
+	}
+
+	@Test
+	public void testDepositWithNegativeAmountReturns400() throws Exception {
+		doThrow(new IllegalArgumentException("Deposit amount cannot be negative")).when(userService).deposit(anyLong(),
+				anyLong());
+
+		this.mvc.perform(post("/api/users/1/deposit").contentType(MediaType.APPLICATION_JSON).content("-500")
+				.accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.message", is("Deposit amount cannot be negative")));
 	}
 }
