@@ -3,6 +3,7 @@ package com.ecommerce.manager.controllers;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -108,10 +109,18 @@ public class UserRestControllerTest {
 	@Test
 	public void testDepositWithNegativeAmountReturns400() throws Exception {
 		doThrow(new IllegalArgumentException("Deposit amount cannot be negative")).when(userService).deposit(anyLong(),
-				anyLong());
+				eq(-500L));
 
 		this.mvc.perform(post("/api/users/1/deposit").contentType(MediaType.APPLICATION_JSON).content("-500")
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.message", is("Deposit amount cannot be negative")));
+	}
+
+	@Test
+	public void testDepositWithUserNotFoundReturns404() throws Exception {
+		doThrow(new IllegalStateException("User not found")).when(userService).deposit(anyLong(), anyLong());
+
+		this.mvc.perform(post("/api/users/1/deposit").contentType(MediaType.APPLICATION_JSON).content("500"))
+				.andExpect(status().isNotFound()).andExpect(jsonPath("$.message", is("User not found")));
 	}
 }
