@@ -5,6 +5,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -66,5 +67,19 @@ public class UserRestControllerTest {
 
 		this.mvc.perform(get("/api/users/1").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
 				.andExpect(content().string(""));
+	}
+
+	@Test
+	public void testPostUser() throws Exception {
+		User requestBodyUser = new User(null, "username", "new user", "email", 4000);
+
+		when(userService.insertNewUser(requestBodyUser))
+				.thenReturn(new User(1L, "username", "new user", "email", 4000));
+
+		this.mvc.perform(post("/api/users/new").contentType(MediaType.APPLICATION_JSON)
+				.content("{\"username\":\"username\", \"name\":\"new user\", \"email\":\"email\", \"balance\":4000}")
+				.accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andExpect(jsonPath("$.id", is(1)))
+				.andExpect(jsonPath("$.username", is("username"))).andExpect(jsonPath("$.name", is("new user")))
+				.andExpect(jsonPath("$.email", is("email"))).andExpect(jsonPath("$.balance", is(4000)));
 	}
 }
