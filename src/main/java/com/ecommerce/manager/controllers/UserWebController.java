@@ -54,7 +54,13 @@ public class UserWebController {
 
 	@PostMapping("/save")
 	public String saveUser(User user) {
-		userService.insertNewUser(user);
+		final Long id = user.getId();
+
+		if (id == null) {
+			userService.insertNewUser(user);
+		} else {
+			userService.updateUserById(id, user);
+		}
 
 		return "redirect:/";
 	}

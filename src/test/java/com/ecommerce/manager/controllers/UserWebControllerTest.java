@@ -99,4 +99,12 @@ public class UserWebControllerTest {
 
 		verify(userService).insertNewUser(new User(null, "test username", "test name", "test email", 2000));
 	}
+
+	@Test
+	public void testPostUserWithIdShouldUpdateExistingUser() throws Exception {
+		mvc.perform(post("/save").param("id", "1").param("username", "test username").param("name", "test name")
+				.param("email", "test email").param("balance", "2000")).andExpect(view().name("redirect:/"));
+
+		verify(userService).updateUserById(1L, new User(1L, "test username", "test name", "test email", 2000));
+	}
 }
