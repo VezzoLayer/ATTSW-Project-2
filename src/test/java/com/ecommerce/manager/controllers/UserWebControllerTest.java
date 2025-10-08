@@ -2,6 +2,7 @@ package com.ecommerce.manager.controllers;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -79,5 +80,13 @@ public class UserWebControllerTest {
 		mvc.perform(get("/edit/1")).andExpect(view().name("edit_user"))
 				.andExpect(model().attribute("User", nullValue()))
 				.andExpect(model().attribute("message", "No user found with id: 1"));
+	}
+
+	@Test
+	public void testEditNewUser() throws Exception {
+		mvc.perform(get("/new")).andExpect(view().name("edit_user")).andExpect(model().attribute("user", new User()))
+				.andExpect(model().attribute("message", ""));
+
+		verifyNoMoreInteractions(userService);
 	}
 }

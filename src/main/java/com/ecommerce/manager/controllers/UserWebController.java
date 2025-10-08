@@ -42,4 +42,12 @@ public class UserWebController {
 
 		return "edit_user";
 	}
+
+	@GetMapping("/new")
+	public String newUser(Model model) {
+		model.addAttribute(USER_ATTRIBUTE, new User());
+		model.addAttribute(MESSAGE_ATTRIBUTE, "");
+
+		return "edit_user";
+	}
 }
