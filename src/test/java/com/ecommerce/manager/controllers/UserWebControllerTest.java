@@ -107,4 +107,14 @@ public class UserWebControllerTest {
 
 		verify(userService).updateUserById(1L, new User(1L, "test username", "test name", "test email", 2000));
 	}
+
+	@Test
+	public void testHandleBalanceWhenTheUserIsFound() throws Exception {
+		User user = new User(1L, "test", "test", "test", 1000);
+
+		when(userService.getUserById(1L)).thenReturn(user);
+
+		mvc.perform(get("/1/deposit")).andExpect(view().name("handle_balance"))
+				.andExpect(model().attribute("user", user)).andExpect(model().attribute("message", ""));
+	}
 }
