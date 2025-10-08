@@ -68,10 +68,10 @@ public class UserWebController {
 	@GetMapping("/{id}/deposit")
 	public String deposit(@PathVariable long id, Model model) {
 		User UserById = userService.getUserById(id);
-		
+
 		model.addAttribute(USER_ATTRIBUTE, UserById);
 		model.addAttribute(MESSAGE_ATTRIBUTE, UserById == null ? "No user found with id: " + id : "");
-		
+
 		return "handle_balance";
 	}
 }
