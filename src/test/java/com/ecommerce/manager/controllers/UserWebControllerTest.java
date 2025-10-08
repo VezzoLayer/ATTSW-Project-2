@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
@@ -42,11 +43,21 @@ public class UserWebControllerTest {
 	}
 
 	@Test
-	public void testHomeViewShowsUsers() throws Exception {
+	public void testHomeViewShowsUsersWhenThereAreUsers() throws Exception {
 		List<User> users = asList(new User(1L, "test", "test", "test", 1000));
 
 		when(userService.getAllUsers()).thenReturn(users);
 
-		mvc.perform(get("/")).andExpect(view().name("index")).andExpect(model().attribute("users", users));
+		mvc.perform(get("/")).andExpect(view().name("index")).andExpect(model().attribute("users", users))
+				.andExpect(model().attribute("message", ""));
+	}
+
+	@Test
+	public void testHomeViewShowsMessageWhenThereAreNoUsers() throws Exception {
+		when(userService.getAllUsers()).thenReturn(Collections.emptyList());
+
+		mvc.perform(get("/")).andExpect(view().name("index"))
+				.andExpect(model().attribute("users", Collections.emptyList()))
+				.andExpect(model().attribute("message", "No user to show"));
 	}
 }
