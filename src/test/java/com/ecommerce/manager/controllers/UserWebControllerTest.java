@@ -60,4 +60,14 @@ public class UserWebControllerTest {
 				.andExpect(model().attribute("users", Collections.emptyList()))
 				.andExpect(model().attribute("message", "No user to show"));
 	}
+
+	@Test
+	public void testEditUserWhenTheUserIsFound() throws Exception {
+		User user = new User(1L, "test", "test", "test", 1000);
+
+		when(userService.getUserById(1L)).thenReturn(user);
+
+		mvc.perform(get("/edit/1")).andExpect(view().name("edit_user")).andExpect(model().attribute("user", user))
+				.andExpect(model().attribute("message", ""));
+	}
 }
