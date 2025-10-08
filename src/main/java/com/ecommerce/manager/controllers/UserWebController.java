@@ -41,7 +41,7 @@ public class UserWebController {
 		model.addAttribute(USER_ATTRIBUTE, UserById);
 		model.addAttribute(MESSAGE_ATTRIBUTE, UserById == null ? "No user found with id: " + id : "");
 
-		return "edit_user";
+		return "edit-user";
 	}
 
 	@GetMapping("/new")
@@ -49,7 +49,7 @@ public class UserWebController {
 		model.addAttribute(USER_ATTRIBUTE, new User());
 		model.addAttribute(MESSAGE_ATTRIBUTE, "");
 
-		return "edit_user";
+		return "edit-user";
 	}
 
 	@PostMapping("/save")

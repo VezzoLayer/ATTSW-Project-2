@@ -71,7 +71,7 @@ public class UserWebControllerTest {
 
 		when(userService.getUserById(1L)).thenReturn(user);
 
-		mvc.perform(get("/edit/1")).andExpect(view().name("edit_user")).andExpect(model().attribute("user", user))
+		mvc.perform(get("/edit/1")).andExpect(view().name("edit-user")).andExpect(model().attribute("user", user))
 				.andExpect(model().attribute("message", ""));
 	}
 
@@ -79,14 +79,14 @@ public class UserWebControllerTest {
 	public void testEditUserWhenUserIsNotFound() throws Exception {
 		when(userService.getUserById(1L)).thenReturn(null);
 
-		mvc.perform(get("/edit/1")).andExpect(view().name("edit_user"))
+		mvc.perform(get("/edit/1")).andExpect(view().name("edit-user"))
 				.andExpect(model().attribute("User", nullValue()))
 				.andExpect(model().attribute("message", "No user found with id: 1"));
 	}
 
 	@Test
 	public void testEditNewUser() throws Exception {
-		mvc.perform(get("/new")).andExpect(view().name("edit_user")).andExpect(model().attribute("user", new User()))
+		mvc.perform(get("/new")).andExpect(view().name("edit-user")).andExpect(model().attribute("user", new User()))
 				.andExpect(model().attribute("message", ""));
 
 		verifyNoMoreInteractions(userService);
