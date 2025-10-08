@@ -2,9 +2,11 @@ package com.ecommerce.manager.controllers;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
@@ -88,5 +90,13 @@ public class UserWebControllerTest {
 				.andExpect(model().attribute("message", ""));
 
 		verifyNoMoreInteractions(userService);
+	}
+
+	@Test
+	public void testPostUserWithoutIdShouldInsertNewUser() throws Exception {
+		mvc.perform(post("/save").param("username", "test username").param("name", "test name")
+				.param("email", "test email").param("balance", "2000")).andExpect(view().name("redirect:/"));
+
+		verify(userService).insertNewUser(new User(null, "test username", "test name", "test email", 2000));
 	}
 }

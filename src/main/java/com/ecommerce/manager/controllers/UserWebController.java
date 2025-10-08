@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import com.ecommerce.manager.model.User;
 import com.ecommerce.manager.services.UserService;
@@ -49,5 +50,12 @@ public class UserWebController {
 		model.addAttribute(MESSAGE_ATTRIBUTE, "");
 
 		return "edit_user";
+	}
+
+	@PostMapping("/save")
+	public String saveUser(User user) {
+		userService.insertNewUser(user);
+
+		return "redirect:/";
 	}
 }
