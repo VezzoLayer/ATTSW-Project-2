@@ -126,4 +126,11 @@ public class UserWebControllerTest {
 				.andExpect(model().attribute("User", nullValue()))
 				.andExpect(model().attribute("message", "No user found with id: 1"));
 	}
+
+	@Test
+	public void testDepositWhenAmountIsCorrect() throws Exception {
+		mvc.perform(post("/1/deposit").param("amount", "500")).andExpect(view().name("redirect:/"));
+
+		verify(userService).deposit(1L, 500);
+	}
 }
