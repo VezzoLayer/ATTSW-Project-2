@@ -114,7 +114,7 @@ public class UserWebControllerTest {
 
 		when(userService.getUserById(1L)).thenReturn(user);
 
-		mvc.perform(get("/1/deposit")).andExpect(view().name("handle_balance"))
+		mvc.perform(get("/1/handle_balance")).andExpect(view().name("handle_balance"))
 				.andExpect(model().attribute("user", user)).andExpect(model().attribute("message", ""));
 	}
 
@@ -122,7 +122,7 @@ public class UserWebControllerTest {
 	public void testHandleBalanceWhenUserIsNotFound() throws Exception {
 		when(userService.getUserById(1L)).thenReturn(null);
 
-		mvc.perform(get("/1/deposit")).andExpect(view().name("handle_balance"))
+		mvc.perform(get("/1/handle_balance")).andExpect(view().name("handle_balance"))
 				.andExpect(model().attribute("User", nullValue()))
 				.andExpect(model().attribute("message", "No user found with id: 1"));
 	}

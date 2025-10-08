@@ -65,7 +65,7 @@ public class UserWebController {
 		return "redirect:/";
 	}
 
-	@GetMapping("/{id}/deposit")
+	@GetMapping("/{id}/handle_balance")
 	public String deposit(@PathVariable long id, Model model) {
 		User UserById = userService.getUserById(id);
 
