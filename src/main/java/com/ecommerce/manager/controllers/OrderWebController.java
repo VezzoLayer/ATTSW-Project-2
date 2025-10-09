@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import com.ecommerce.manager.model.Order;
 import com.ecommerce.manager.services.OrderService;
@@ -28,4 +29,13 @@ public class OrderWebController {
 		return "orders";
 	}
 
+	@GetMapping("/editOrder/{id}")
+	public String editOrder(@PathVariable long id, Model model) {
+		Order OrderById = orderService.getOrderById(id);
+
+		model.addAttribute("order", OrderById);
+		model.addAttribute("message", OrderById == null ? "No order found with id: " + id : "");
+
+		return "edit-order";
+	}
 }

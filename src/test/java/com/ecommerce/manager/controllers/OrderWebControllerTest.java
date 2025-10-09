@@ -50,4 +50,14 @@ public class OrderWebControllerTest {
 				.andExpect(model().attribute("orders", Collections.emptyList()))
 				.andExpect(model().attribute("message", "No order to show"));
 	}
+
+	@Test
+	public void testEditOrderWhenTheOrderIsFound() throws Exception {
+		Order order = new Order(1L, Item.BOX1, 700, new User(1L, "test", "test", "test", 1000));
+
+		when(orderService.getOrderById(1L)).thenReturn(order);
+
+		mvc.perform(get("/editOrder/1")).andExpect(view().name("edit-order"))
+				.andExpect(model().attribute("order", order)).andExpect(model().attribute("message", ""));
+	}
 }
