@@ -19,6 +19,8 @@ public class UserWebController {
 	private static final String ERROR_ATTRIBUTE = "error";
 	private static final String USERS_ATTRIBUTE = "users";
 	private static final String USER_ATTRIBUTE = "user";
+	private static final String REDIRECT_PAGE = "redirect:/";
+	private static final String HANDLE_BALANCE_PAGE = "handle-balance";
 
 	private UserService userService;
 
@@ -64,7 +66,7 @@ public class UserWebController {
 			userService.updateUserById(id, user);
 		}
 
-		return "redirect:/";
+		return REDIRECT_PAGE;
 	}
 
 	@GetMapping("/{id}/handle_balance")
@@ -74,7 +76,7 @@ public class UserWebController {
 		model.addAttribute(USER_ATTRIBUTE, userById);
 		model.addAttribute(MESSAGE_ATTRIBUTE, userById == null ? "No user found with id: " + id : "");
 
-		return "handle-balance";
+		return HANDLE_BALANCE_PAGE;
 	}
 
 	@PostMapping("/{id}/deposit")
@@ -82,11 +84,11 @@ public class UserWebController {
 		if (amount < 0) {
 			model.addAttribute(ERROR_ATTRIBUTE, "Importo negativo non ammesso");
 			model.addAttribute(USER_ATTRIBUTE, userService.getUserById(id));
-			return "handle-balance";
+			return HANDLE_BALANCE_PAGE;
 		}
 
 		userService.deposit(id, amount);
-		return "redirect:/";
+		return REDIRECT_PAGE;
 	}
 
 	@PostMapping("/{id}/withdraw")
@@ -96,16 +98,16 @@ public class UserWebController {
 		if (amount < 0) {
 			model.addAttribute(ERROR_ATTRIBUTE, "Importo negativo non ammesso");
 			model.addAttribute(USER_ATTRIBUTE, userById);
-			return "handle-balance";
+			return HANDLE_BALANCE_PAGE;
 		}
 
 		if (userById.getBalance() - amount < 0) {
 			model.addAttribute(ERROR_ATTRIBUTE, "Saldo insufficiente");
 			model.addAttribute(USER_ATTRIBUTE, userById);
-			return "handle-balance";
+			return HANDLE_BALANCE_PAGE;
 		}
 
 		userService.withdraw(id, amount);
-		return "redirect:/";
+		return REDIRECT_PAGE;
 	}
 }
