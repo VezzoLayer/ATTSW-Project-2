@@ -157,6 +157,8 @@ public class UserWebControllerTest {
 
 	@Test
 	public void testWithdrawWhenAmountIsCorrect() throws Exception {
+		when(userService.getUserById(1L)).thenReturn(new User(1L, "test", "test", "test", 1000));
+
 		mvc.perform(post("/1/withdraw").param("amount", "500")).andExpect(view().name("redirect:/"));
 
 		verify(userService).withdraw(1L, 500);
@@ -164,6 +166,8 @@ public class UserWebControllerTest {
 
 	@Test
 	public void testWithdrawWhenAmountIsZero() throws Exception {
+		when(userService.getUserById(1L)).thenReturn(new User(1L, "test", "test", "test", 1000));
+
 		mvc.perform(post("/1/withdraw").param("amount", "0")).andExpect(view().name("redirect:/"));
 
 		verify(userService).withdraw(1L, 0);
@@ -177,6 +181,20 @@ public class UserWebControllerTest {
 
 		mvc.perform(post("/1/withdraw").param("amount", "-500")).andExpect(view().name("handle-balance"))
 				.andExpect(model().attribute("error", "Importo negativo non ammesso"))
+				.andExpect(model().attribute("user", user));
+
+		verify(userService).getUserById(1L);
+		verifyNoMoreInteractions(userService);
+	}
+
+	@Test
+	public void testWithdrawWhenBalanceIsNotEnough() throws Exception {
+		User user = new User(1L, "test", "test", "test", 300);
+
+		when(userService.getUserById(1L)).thenReturn(user);
+
+		mvc.perform(post("/1/withdraw").param("amount", "500")).andExpect(view().name("handle-balance"))
+				.andExpect(model().attribute("error", "Saldo insufficiente"))
 				.andExpect(model().attribute("user", user));
 
 		verify(userService).getUserById(1L);
