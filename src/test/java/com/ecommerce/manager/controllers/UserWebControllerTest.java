@@ -154,4 +154,11 @@ public class UserWebControllerTest {
 		verify(userService).getUserById(1L);
 		verifyNoMoreInteractions(userService);
 	}
+
+	@Test
+	public void testWithdrawWhenAmountIsCorrect() throws Exception {
+		mvc.perform(post("/1/withdraw").param("amount", "500")).andExpect(view().name("redirect:/"));
+
+		verify(userService).withdraw(1L, 500);
+	}
 }

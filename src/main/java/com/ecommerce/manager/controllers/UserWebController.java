@@ -88,4 +88,11 @@ public class UserWebController {
 		userService.deposit(id, amount);
 		return "redirect:/";
 	}
+
+	@PostMapping("/{id}/withdraw")
+	public String withdraw(@PathVariable long id, @RequestParam long amount) {
+		userService.withdraw(id, amount);
+
+		return "redirect:/";
+	}
 }
