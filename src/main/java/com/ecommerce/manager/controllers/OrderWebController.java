@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import com.ecommerce.manager.model.Order;
 import com.ecommerce.manager.services.OrderService;
@@ -45,5 +46,12 @@ public class OrderWebController {
 		model.addAttribute("message", "");
 
 		return "edit-order";
+	}
+
+	@PostMapping("/saveOrder")
+	public String saveOrder(Order order) {
+		orderService.insertNewOrder(order);
+
+		return "orders";
 	}
 }

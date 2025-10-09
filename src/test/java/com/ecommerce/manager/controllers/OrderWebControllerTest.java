@@ -2,9 +2,11 @@ package com.ecommerce.manager.controllers;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
@@ -78,5 +80,15 @@ public class OrderWebControllerTest {
 				.andExpect(model().attribute("order", new Order())).andExpect(model().attribute("message", ""));
 
 		verifyNoMoreInteractions(orderService);
+	}
+
+	@Test
+	public void testPostOrderWithoutIdShouldInsertNewOrder() throws Exception {
+		mvc.perform(post("/saveOrder").param("item", "BOX1").param("price", "700").param("user.name", "test")
+				.param("user.surname", "test").param("user.email", "test").param("user.balance", "2000"))
+				.andExpect(view().name("orders"));
+
+		verify(orderService)
+				.insertNewOrder(new Order(null, Item.BOX1, 700, new User(1L, "test", "test", "test", 2000)));
 	}
 }
