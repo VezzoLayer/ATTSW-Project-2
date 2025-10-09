@@ -69,6 +69,16 @@ public class UserWebController {
 		return REDIRECT_PAGE;
 	}
 
+	@GetMapping("/user/{id}/orders")
+	public String userOrders(@PathVariable long id, Model model) {
+		User userById = userService.getUserById(id);
+
+		model.addAttribute("user", userById);
+		model.addAttribute("message", userById == null ? "No user found with id: " + id : "");
+
+		return "all-orders";
+	}
+
 	@GetMapping("/{id}/handle_balance")
 	public String handleBalance(@PathVariable long id, Model model) {
 		User userById = userService.getUserById(id);
