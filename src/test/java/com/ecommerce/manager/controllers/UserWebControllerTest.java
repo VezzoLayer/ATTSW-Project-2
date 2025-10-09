@@ -71,7 +71,7 @@ public class UserWebControllerTest {
 
 		when(userService.getUserById(1L)).thenReturn(user);
 
-		mvc.perform(get("/edit/1")).andExpect(view().name("edit-user")).andExpect(model().attribute("user", user))
+		mvc.perform(get("/editUser/1")).andExpect(view().name("edit-user")).andExpect(model().attribute("user", user))
 				.andExpect(model().attribute("message", ""));
 	}
 
@@ -79,14 +79,14 @@ public class UserWebControllerTest {
 	public void testEditUserWhenUserIsNotFound() throws Exception {
 		when(userService.getUserById(1L)).thenReturn(null);
 
-		mvc.perform(get("/edit/1")).andExpect(view().name("edit-user"))
+		mvc.perform(get("/editUser/1")).andExpect(view().name("edit-user"))
 				.andExpect(model().attribute("User", nullValue()))
 				.andExpect(model().attribute("message", "No user found with id: 1"));
 	}
 
 	@Test
 	public void testEditNewUser() throws Exception {
-		mvc.perform(get("/new")).andExpect(view().name("edit-user")).andExpect(model().attribute("user", new User()))
+		mvc.perform(get("/newUser")).andExpect(view().name("edit-user")).andExpect(model().attribute("user", new User()))
 				.andExpect(model().attribute("message", ""));
 
 		verifyNoMoreInteractions(userService);
@@ -94,7 +94,7 @@ public class UserWebControllerTest {
 
 	@Test
 	public void testPostUserWithoutIdShouldInsertNewUser() throws Exception {
-		mvc.perform(post("/save").param("username", "test username").param("name", "test name")
+		mvc.perform(post("/saveUser").param("username", "test username").param("name", "test name")
 				.param("email", "test email").param("balance", "2000")).andExpect(view().name("redirect:/"));
 
 		verify(userService).insertNewUser(new User(null, "test username", "test name", "test email", 2000));
@@ -102,7 +102,7 @@ public class UserWebControllerTest {
 
 	@Test
 	public void testPostUserWithIdShouldUpdateExistingUser() throws Exception {
-		mvc.perform(post("/save").param("id", "1").param("username", "test username").param("name", "test name")
+		mvc.perform(post("/saveUser").param("id", "1").param("username", "test username").param("name", "test name")
 				.param("email", "test email").param("balance", "2000")).andExpect(view().name("redirect:/"));
 
 		verify(userService).updateUserById(1L, new User(1L, "test username", "test name", "test email", 2000));

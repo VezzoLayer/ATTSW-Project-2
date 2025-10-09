@@ -38,7 +38,7 @@ public class UserWebController {
 		return "index";
 	}
 
-	@GetMapping("/edit/{id}")
+	@GetMapping("/editUser/{id}")
 	public String editUser(@PathVariable long id, Model model) {
 		User userById = userService.getUserById(id);
 
@@ -48,7 +48,7 @@ public class UserWebController {
 		return "edit-user";
 	}
 
-	@GetMapping("/new")
+	@GetMapping("/newUser")
 	public String newUser(Model model) {
 		model.addAttribute(USER_ATTRIBUTE, new User());
 		model.addAttribute(MESSAGE_ATTRIBUTE, "");
@@ -56,7 +56,7 @@ public class UserWebController {
 		return "edit-user";
 	}
 
-	@PostMapping("/save")
+	@PostMapping("/saveUser")
 	public String saveUser(User user) {
 		final Long id = user.getId();
 
