@@ -174,6 +174,15 @@ public class UserWebControllerTest {
 	}
 
 	@Test
+	public void testWithdrawWhenAmountIsExactlyTheBalance() throws Exception {
+		when(userService.getUserById(1L)).thenReturn(new User(1L, "test", "test", "test", 1000));
+
+		mvc.perform(post("/1/withdraw").param("amount", "1000")).andExpect(view().name("redirect:/"));
+
+		verify(userService).withdraw(1L, 1000);
+	}
+
+	@Test
 	public void testWithdrawWhenAmountIsIsNotCorrect() throws Exception {
 		User user = new User(1L, "test", "test", "test", 1000);
 
