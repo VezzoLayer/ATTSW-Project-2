@@ -78,12 +78,14 @@ public class UserWebControllerTest {
 	}
 
 	@Test
-	public void testEditUserWhenTheUserIsFound() throws Exception {
+	@Parameters({ "/editUser/1, edit-user", "/user/1/orders, all-orders", "/1/handle_balance, handle-balance" })
+	public void testParameterizedMappingNameWhenTheUserIsFound(String mappingName, String expectedView)
+			throws Exception {
 		User user = new User(1L, "test", "test", "test", 1000);
 
 		when(userService.getUserById(1L)).thenReturn(user);
 
-		mvc.perform(get("/editUser/1")).andExpect(view().name("edit-user")).andExpect(model().attribute("user", user))
+		mvc.perform(get(mappingName)).andExpect(view().name(expectedView)).andExpect(model().attribute("user", user))
 				.andExpect(model().attribute("message", ""));
 	}
 
@@ -121,32 +123,12 @@ public class UserWebControllerTest {
 	}
 
 	@Test
-	public void testAllOrdersWhenTheUserIsFound() throws Exception {
-		User user = new User(1L, "test", "test", "test", 1000);
-
-		when(userService.getUserById(1L)).thenReturn(user);
-
-		mvc.perform(get("/user/1/orders")).andExpect(view().name("all-orders"))
-				.andExpect(model().attribute("user", user)).andExpect(model().attribute("message", ""));
-	}
-
-	@Test
 	public void testAllOrdersWhenUserIsNotFound() throws Exception {
 		when(userService.getUserById(1L)).thenReturn(null);
 
 		mvc.perform(get("/user/1/orders")).andExpect(view().name("all-orders"))
 				.andExpect(model().attribute("user", nullValue()))
 				.andExpect(model().attribute("message", "No user found with id: 1"));
-	}
-
-	@Test
-	public void testHandleBalanceWhenTheUserIsFound() throws Exception {
-		User user = new User(1L, "test", "test", "test", 1000);
-
-		when(userService.getUserById(1L)).thenReturn(user);
-
-		mvc.perform(get("/1/handle_balance")).andExpect(view().name("handle-balance"))
-				.andExpect(model().attribute("user", user)).andExpect(model().attribute("message", ""));
 	}
 
 	@Test
