@@ -31,7 +31,7 @@ public class OrderWebController {
 		model.addAttribute(ORDERS_ATTRIBUTE, orderService.getAllOrders());
 		model.addAttribute(MESSAGE_ATTRIBUTE, allOrders.isEmpty() ? "No order to show" : "");
 
-		return "orders";
+		return "all-orders";
 	}
 
 	@GetMapping("/editOrder/{id}")
@@ -62,6 +62,6 @@ public class OrderWebController {
 			orderService.updateOrderById(id, order);
 		}
 
-		return "orders";
+		return "all-orders";
 	}
 }

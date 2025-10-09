@@ -42,7 +42,7 @@ public class OrderWebControllerTest {
 
 		when(orderService.getAllOrders()).thenReturn(orders);
 
-		mvc.perform(get("/orders")).andExpect(view().name("orders")).andExpect(model().attribute("orders", orders))
+		mvc.perform(get("/orders")).andExpect(view().name("all-orders")).andExpect(model().attribute("orders", orders))
 				.andExpect(model().attribute("message", ""));
 	}
 
@@ -50,7 +50,7 @@ public class OrderWebControllerTest {
 	public void testOrdersViewShowsMessageWhenThereAreNoOrders() throws Exception {
 		when(orderService.getAllOrders()).thenReturn(Collections.emptyList());
 
-		mvc.perform(get("/orders")).andExpect(view().name("orders"))
+		mvc.perform(get("/orders")).andExpect(view().name("all-orders"))
 				.andExpect(model().attribute("orders", Collections.emptyList()))
 				.andExpect(model().attribute("message", "No order to show"));
 	}
@@ -86,7 +86,7 @@ public class OrderWebControllerTest {
 	public void testPostOrderWithoutIdShouldInsertNewOrder() throws Exception {
 		mvc.perform(post("/saveOrder").param("item", "BOX1").param("price", "700").param("user.name", "test")
 				.param("user.surname", "test").param("user.email", "test").param("user.balance", "2000"))
-				.andExpect(view().name("orders"));
+				.andExpect(view().name("all-orders"));
 
 		verify(orderService)
 				.insertNewOrder(new Order(null, Item.BOX1, 700, new User(1L, "test", "test", "test", 2000)));
@@ -97,7 +97,7 @@ public class OrderWebControllerTest {
 	public void testPostOrderWithIdShouldUpdateExistingOrder() throws Exception {
 		mvc.perform(post("/saveOrder").param("id", "1").param("item", "BOX1").param("price", "700")
 				.param("user.name", "test").param("user.surname", "test").param("user.email", "test")
-				.param("user.balance", "2000")).andExpect(view().name("orders"));
+				.param("user.balance", "2000")).andExpect(view().name("all-orders"));
 
 		verify(orderService).updateOrderById(1L,
 				new Order(1L, Item.BOX1, 700, new User(1L, "test", "test", "test", 2000)));
