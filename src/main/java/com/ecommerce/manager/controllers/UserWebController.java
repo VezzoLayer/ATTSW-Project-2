@@ -38,10 +38,10 @@ public class UserWebController {
 
 	@GetMapping("/edit/{id}")
 	public String editUser(@PathVariable long id, Model model) {
-		User UserById = userService.getUserById(id);
+		User userById = userService.getUserById(id);
 
-		model.addAttribute(USER_ATTRIBUTE, UserById);
-		model.addAttribute(MESSAGE_ATTRIBUTE, UserById == null ? "No user found with id: " + id : "");
+		model.addAttribute(USER_ATTRIBUTE, userById);
+		model.addAttribute(MESSAGE_ATTRIBUTE, userById == null ? "No user found with id: " + id : "");
 
 		return "edit-user";
 	}
@@ -69,10 +69,10 @@ public class UserWebController {
 
 	@GetMapping("/{id}/handle_balance")
 	public String handleBalance(@PathVariable long id, Model model) {
-		User UserById = userService.getUserById(id);
+		User userById = userService.getUserById(id);
 
-		model.addAttribute(USER_ATTRIBUTE, UserById);
-		model.addAttribute(MESSAGE_ATTRIBUTE, UserById == null ? "No user found with id: " + id : "");
+		model.addAttribute(USER_ATTRIBUTE, userById);
+		model.addAttribute(MESSAGE_ATTRIBUTE, userById == null ? "No user found with id: " + id : "");
 
 		return "handle-balance";
 	}
@@ -91,17 +91,17 @@ public class UserWebController {
 
 	@PostMapping("/{id}/withdraw")
 	public String withdraw(@PathVariable long id, @RequestParam long amount, Model model) {
-		User user = userService.getUserById(id);
+		User userById = userService.getUserById(id);
 
 		if (amount < 0) {
 			model.addAttribute(ERROR_ATTRIBUTE, "Importo negativo non ammesso");
-			model.addAttribute(USER_ATTRIBUTE, user);
+			model.addAttribute(USER_ATTRIBUTE, userById);
 			return "handle-balance";
 		}
 
-		if (user.getBalance() - amount < 0) {
+		if (userById.getBalance() - amount < 0) {
 			model.addAttribute(ERROR_ATTRIBUTE, "Saldo insufficiente");
-			model.addAttribute(USER_ATTRIBUTE, user);
+			model.addAttribute(USER_ATTRIBUTE, userById);
 			return "handle-balance";
 		}
 
