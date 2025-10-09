@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
@@ -39,5 +40,14 @@ public class OrderWebControllerTest {
 
 		mvc.perform(get("/orders")).andExpect(view().name("orders")).andExpect(model().attribute("orders", orders))
 				.andExpect(model().attribute("message", ""));
+	}
+
+	@Test
+	public void testOrdersViewShowsMessageWhenThereAreNoOrders() throws Exception {
+		when(orderService.getAllOrders()).thenReturn(Collections.emptyList());
+
+		mvc.perform(get("/orders")).andExpect(view().name("orders"))
+				.andExpect(model().attribute("orders", Collections.emptyList()))
+				.andExpect(model().attribute("message", "No order to show"));
 	}
 }
