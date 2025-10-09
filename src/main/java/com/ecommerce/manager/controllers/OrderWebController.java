@@ -50,7 +50,13 @@ public class OrderWebController {
 
 	@PostMapping("/saveOrder")
 	public String saveOrder(Order order) {
-		orderService.insertNewOrder(order);
+		final Long id = order.getId();
+
+		if (id == null) {
+			orderService.insertNewOrder(order);
+		} else {
+			orderService.updateOrderById(id, order);
+		}
 
 		return "orders";
 	}

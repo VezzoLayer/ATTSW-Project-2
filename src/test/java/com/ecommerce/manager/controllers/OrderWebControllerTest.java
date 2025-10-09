@@ -91,4 +91,15 @@ public class OrderWebControllerTest {
 		verify(orderService)
 				.insertNewOrder(new Order(null, Item.BOX1, 700, new User(1L, "test", "test", "test", 2000)));
 	}
+
+	@Test
+
+	public void testPostOrderWithIdShouldUpdateExistingOrder() throws Exception {
+		mvc.perform(post("/saveOrder").param("id", "1").param("item", "BOX1").param("price", "700")
+				.param("user.name", "test").param("user.surname", "test").param("user.email", "test")
+				.param("user.balance", "2000")).andExpect(view().name("orders"));
+
+		verify(orderService).updateOrderById(1L,
+				new Order(1L, Item.BOX1, 700, new User(1L, "test", "test", "test", 2000)));
+	}
 }
