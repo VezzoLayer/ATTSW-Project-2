@@ -135,6 +135,13 @@ public class UserWebControllerTest {
 	}
 
 	@Test
+	public void testDepositWhenAmountIsZero() throws Exception {
+		mvc.perform(post("/1/deposit").param("amount", "0")).andExpect(view().name("redirect:/"));
+
+		verify(userService).deposit(1L, 0);
+	}
+
+	@Test
 	public void testDepositWhenAmountIsNotCorrect() throws Exception {
 		User user = new User(1L, "test", "test", "test", 1000);
 
