@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.ecommerce.manager.model.User;
 import com.ecommerce.manager.services.UserService;
@@ -15,6 +16,7 @@ import com.ecommerce.manager.services.UserService;
 public class UserWebController {
 
 	private static final String MESSAGE_ATTRIBUTE = "message";
+	private static final String ERROR_ATTRIBUTE = "error";
 	private static final String USERS_ATTRIBUTE = "users";
 	private static final String USER_ATTRIBUTE = "user";
 
@@ -76,9 +78,14 @@ public class UserWebController {
 	}
 
 	@PostMapping("/{id}/deposit")
-	public String deposit(@PathVariable long id, long amount) {
-		userService.deposit(id, amount);
+	public String deposit(@PathVariable long id, @RequestParam long amount, Model model) {
+		if (amount < 0) {
+			model.addAttribute(ERROR_ATTRIBUTE, "Importo negativo non ammesso");
+			model.addAttribute(USER_ATTRIBUTE, userService.getUserById(id));
+			return "handle-balance";
+		}
 
+		userService.deposit(id, amount);
 		return "redirect:/";
 	}
 }
