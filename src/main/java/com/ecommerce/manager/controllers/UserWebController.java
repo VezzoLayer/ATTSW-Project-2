@@ -21,6 +21,7 @@ public class UserWebController {
 	private static final String USER_ATTRIBUTE = "user";
 	private static final String REDIRECT_PAGE = "redirect:/";
 	private static final String HANDLE_BALANCE_PAGE = "handle-balance";
+	private static final String NO_USER_FOUND_MESSAGE = "No user found with id: ";
 
 	private UserService userService;
 
@@ -43,7 +44,7 @@ public class UserWebController {
 		User userById = userService.getUserById(id);
 
 		model.addAttribute(USER_ATTRIBUTE, userById);
-		model.addAttribute(MESSAGE_ATTRIBUTE, userById == null ? "No user found with id: " + id : "");
+		model.addAttribute(MESSAGE_ATTRIBUTE, userById == null ? NO_USER_FOUND_MESSAGE + id : "");
 
 		return "edit-user";
 	}
@@ -73,8 +74,8 @@ public class UserWebController {
 	public String userOrders(@PathVariable long id, Model model) {
 		User userById = userService.getUserById(id);
 
-		model.addAttribute("user", userById);
-		model.addAttribute("message", userById == null ? "No user found with id: " + id : "");
+		model.addAttribute(USER_ATTRIBUTE, userById);
+		model.addAttribute(MESSAGE_ATTRIBUTE, userById == null ? NO_USER_FOUND_MESSAGE + id : "");
 
 		return "all-orders";
 	}
@@ -84,7 +85,7 @@ public class UserWebController {
 		User userById = userService.getUserById(id);
 
 		model.addAttribute(USER_ATTRIBUTE, userById);
-		model.addAttribute(MESSAGE_ATTRIBUTE, userById == null ? "No user found with id: " + id : "");
+		model.addAttribute(MESSAGE_ATTRIBUTE, userById == null ? NO_USER_FOUND_MESSAGE + id : "");
 
 		return HANDLE_BALANCE_PAGE;
 	}
