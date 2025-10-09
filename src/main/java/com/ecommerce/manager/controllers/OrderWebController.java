@@ -38,4 +38,12 @@ public class OrderWebController {
 
 		return "edit-order";
 	}
+
+	@GetMapping("/newOrder")
+	public String newOrder(Model model) {
+		model.addAttribute("order", new Order());
+		model.addAttribute("message", "");
+
+		return "edit-order";
+	}
 }
