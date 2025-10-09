@@ -162,30 +162,13 @@ public class UserWebControllerTest {
 	}
 
 	@Test
-	public void testWithdrawWhenAmountIsCorrect() throws Exception {
-		when(userService.getUserById(1L)).thenReturn(new User(1L, "test", "test", "test", 1000));
+	@Parameters({ "500, 1000", "0, 1000", "1000, 1000" })
+	public void testWithdrawWhenParameterizedAmountIsAllowed(long amount, long initialBalance) throws Exception {
+		when(userService.getUserById(1L)).thenReturn(new User(1L, "test", "test", "test", initialBalance));
 
-		mvc.perform(post("/1/withdraw").param("amount", "500")).andExpect(view().name("redirect:/"));
+		mvc.perform(post("/1/withdraw").param("amount", Long.toString(amount))).andExpect(view().name("redirect:/"));
 
-		verify(userService).withdraw(1L, 500);
-	}
-
-	@Test
-	public void testWithdrawWhenAmountIsZero() throws Exception {
-		when(userService.getUserById(1L)).thenReturn(new User(1L, "test", "test", "test", 1000));
-
-		mvc.perform(post("/1/withdraw").param("amount", "0")).andExpect(view().name("redirect:/"));
-
-		verify(userService).withdraw(1L, 0);
-	}
-
-	@Test
-	public void testWithdrawWhenAmountIsExactlyTheBalance() throws Exception {
-		when(userService.getUserById(1L)).thenReturn(new User(1L, "test", "test", "test", 1000));
-
-		mvc.perform(post("/1/withdraw").param("amount", "1000")).andExpect(view().name("redirect:/"));
-
-		verify(userService).withdraw(1L, 1000);
+		verify(userService).withdraw(1L, amount);
 	}
 
 	@Test
