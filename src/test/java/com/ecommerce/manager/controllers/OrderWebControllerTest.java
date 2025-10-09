@@ -1,6 +1,7 @@
 package com.ecommerce.manager.controllers;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -59,5 +60,14 @@ public class OrderWebControllerTest {
 
 		mvc.perform(get("/editOrder/1")).andExpect(view().name("edit-order"))
 				.andExpect(model().attribute("order", order)).andExpect(model().attribute("message", ""));
+	}
+
+	@Test
+	public void testEditOrderWhenOrderIsNotFound() throws Exception {
+		when(orderService.getOrderById(1L)).thenReturn(null);
+
+		mvc.perform(get("/editOrder/1")).andExpect(view().name("edit-order"))
+				.andExpect(model().attribute("order", nullValue()))
+				.andExpect(model().attribute("message", "No order found with id: 1"));
 	}
 }

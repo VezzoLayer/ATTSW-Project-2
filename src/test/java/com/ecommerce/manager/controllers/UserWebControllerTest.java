@@ -92,7 +92,7 @@ public class UserWebControllerTest {
 		when(userService.getUserById(1L)).thenReturn(null);
 
 		mvc.perform(get("/editUser/1")).andExpect(view().name("edit-user"))
-				.andExpect(model().attribute("User", nullValue()))
+				.andExpect(model().attribute("user", nullValue()))
 				.andExpect(model().attribute("message", "No user found with id: 1"));
 	}
 
