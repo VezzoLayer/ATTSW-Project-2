@@ -131,6 +131,15 @@ public class UserWebControllerTest {
 	}
 
 	@Test
+	public void testAllOrdersWhenUserIsNotFound() throws Exception {
+		when(userService.getUserById(1L)).thenReturn(null);
+
+		mvc.perform(get("/user/1/orders")).andExpect(view().name("all-orders"))
+				.andExpect(model().attribute("user", nullValue()))
+				.andExpect(model().attribute("message", "No user found with id: 1"));
+	}
+
+	@Test
 	public void testHandleBalanceWhenTheUserIsFound() throws Exception {
 		User user = new User(1L, "test", "test", "test", 1000);
 
