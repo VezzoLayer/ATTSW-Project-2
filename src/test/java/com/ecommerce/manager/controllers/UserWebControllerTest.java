@@ -161,4 +161,25 @@ public class UserWebControllerTest {
 
 		verify(userService).withdraw(1L, 500);
 	}
+
+	@Test
+	public void testWithdrawWhenAmountIsZero() throws Exception {
+		mvc.perform(post("/1/withdraw").param("amount", "0")).andExpect(view().name("redirect:/"));
+
+		verify(userService).withdraw(1L, 0);
+	}
+
+	@Test
+	public void testWithdrawWhenAmountIsIsNotCorrect() throws Exception {
+		User user = new User(1L, "test", "test", "test", 1000);
+
+		when(userService.getUserById(1L)).thenReturn(user);
+
+		mvc.perform(post("/1/withdraw").param("amount", "-500")).andExpect(view().name("handle-balance"))
+				.andExpect(model().attribute("error", "Importo negativo non ammesso"))
+				.andExpect(model().attribute("user", user));
+
+		verify(userService).getUserById(1L);
+		verifyNoMoreInteractions(userService);
+	}
 }

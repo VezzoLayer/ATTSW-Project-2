@@ -90,9 +90,14 @@ public class UserWebController {
 	}
 
 	@PostMapping("/{id}/withdraw")
-	public String withdraw(@PathVariable long id, @RequestParam long amount) {
-		userService.withdraw(id, amount);
+	public String withdraw(@PathVariable long id, @RequestParam long amount, Model model) {
+		if (amount < 0) {
+			model.addAttribute(ERROR_ATTRIBUTE, "Importo negativo non ammesso");
+			model.addAttribute(USER_ATTRIBUTE, userService.getUserById(id));
+			return "handle-balance";
+		}
 
+		userService.withdraw(id, amount);
 		return "redirect:/";
 	}
 }
