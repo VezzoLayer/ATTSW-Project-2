@@ -14,6 +14,10 @@ import com.ecommerce.manager.services.OrderService;
 @Controller
 public class OrderWebController {
 
+	private static final String MESSAGE_ATTRIBUTE = "message";
+	private static final String ORDER_ATTRIBUTE = "order";
+	private static final String ORDERS_ATTRIBUTE = "orders";
+
 	private OrderService orderService;
 
 	public OrderWebController(OrderService orderService) {
@@ -24,26 +28,26 @@ public class OrderWebController {
 	public String orders(Model model) {
 		List<Order> allOrders = orderService.getAllOrders();
 
-		model.addAttribute("orders", orderService.getAllOrders());
-		model.addAttribute("message", allOrders.isEmpty() ? "No order to show" : "");
+		model.addAttribute(ORDERS_ATTRIBUTE, orderService.getAllOrders());
+		model.addAttribute(MESSAGE_ATTRIBUTE, allOrders.isEmpty() ? "No order to show" : "");
 
 		return "orders";
 	}
 
 	@GetMapping("/editOrder/{id}")
 	public String editOrder(@PathVariable long id, Model model) {
-		Order OrderById = orderService.getOrderById(id);
+		Order orderById = orderService.getOrderById(id);
 
-		model.addAttribute("order", OrderById);
-		model.addAttribute("message", OrderById == null ? "No order found with id: " + id : "");
+		model.addAttribute(ORDER_ATTRIBUTE, orderById);
+		model.addAttribute(MESSAGE_ATTRIBUTE, orderById == null ? "No order found with id: " + id : "");
 
 		return "edit-order";
 	}
 
 	@GetMapping("/newOrder")
 	public String newOrder(Model model) {
-		model.addAttribute("order", new Order());
-		model.addAttribute("message", "");
+		model.addAttribute(ORDER_ATTRIBUTE, new Order());
+		model.addAttribute(MESSAGE_ATTRIBUTE, "");
 
 		return "edit-order";
 	}
