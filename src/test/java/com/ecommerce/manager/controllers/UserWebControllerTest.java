@@ -14,21 +14,33 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.test.web.ModelAndViewAssert;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.ecommerce.manager.model.User;
 import com.ecommerce.manager.services.UserService;
 
-@RunWith(SpringRunner.class)
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
+
+@RunWith(JUnitParamsRunner.class)
 @WebMvcTest(controllers = UserWebController.class)
 public class UserWebControllerTest {
+
+	@ClassRule
+	public static final SpringClassRule springClassRule = new SpringClassRule();
+
+	@Rule
+	public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
 	@MockitoBean
 	private UserService userService;
@@ -86,8 +98,8 @@ public class UserWebControllerTest {
 
 	@Test
 	public void testEditNewUser() throws Exception {
-		mvc.perform(get("/newUser")).andExpect(view().name("edit-user")).andExpect(model().attribute("user", new User()))
-				.andExpect(model().attribute("message", ""));
+		mvc.perform(get("/newUser")).andExpect(view().name("edit-user"))
+				.andExpect(model().attribute("user", new User())).andExpect(model().attribute("message", ""));
 
 		verifyNoMoreInteractions(userService);
 	}
@@ -128,17 +140,11 @@ public class UserWebControllerTest {
 	}
 
 	@Test
-	public void testDepositWhenAmountIsCorrect() throws Exception {
-		mvc.perform(post("/1/deposit").param("amount", "500")).andExpect(view().name("redirect:/"));
+	@Parameters({ "500", "0" })
+	public void testDepositWhenParameterizedAmountIsAllowed(long amount) throws Exception {
+		mvc.perform(post("/1/deposit").param("amount", Long.toString(amount))).andExpect(view().name("redirect:/"));
 
-		verify(userService).deposit(1L, 500);
-	}
-
-	@Test
-	public void testDepositWhenAmountIsZero() throws Exception {
-		mvc.perform(post("/1/deposit").param("amount", "0")).andExpect(view().name("redirect:/"));
-
-		verify(userService).deposit(1L, 0);
+		verify(userService).deposit(1L, amount);
 	}
 
 	@Test
