@@ -2,6 +2,7 @@ package com.ecommerce.manager.controllers;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -94,6 +95,17 @@ public class OrderRestControllerTest {
 				.andExpect(jsonPath("$.user.id", is(1))).andExpect(jsonPath("$.user.username", is("user 1")))
 				.andExpect(jsonPath("$.user.name", is("test"))).andExpect(jsonPath("$.user.email", is("test")))
 				.andExpect(jsonPath("$.user.balance", is(3000)));
+	}
+
+	@Test
+	public void testPostOrderWhenInsertFailsShouldReturn400() throws Exception {
+		when(orderService.insertNewOrder(any(Order.class)))
+				.thenThrow(new IllegalStateException("Unable to insert new order"));
+
+		this.mvc.perform(post("/api/orders/new").contentType(MediaType.APPLICATION_JSON).content(
+				"{\"item\":\"BOX1\", \"price\":800, \"user\":{\"id\":1, \"username\":\"user 1\", \"name\":\"test\", \"email\":\"test\", \"balance\":3000}}")
+				.accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.message", is("Unable to insert new order")));
 	}
 
 	@Test
