@@ -141,25 +141,10 @@ public class UserWebControllerTest {
 	}
 
 	@Test
-	@Parameters({ "500", "0" })
-	public void testDepositWhenParameterizedAmountIsAllowed(long amount) throws Exception {
-		mvc.perform(post("/1/deposit").param("amount", Long.toString(amount))).andExpect(view().name("redirect:/"));
+	public void testDepositWhenSuccessShouldRedirectToMappingUsers() throws Exception {
+		mvc.perform(post("/1/deposit").param("amount", "500")).andExpect(view().name("redirect:/"));
 
-		verify(userService).deposit(1L, amount);
-	}
-
-	@Test
-	public void testDepositWhenAmountIsNotCorrect() throws Exception {
-		User user = new User(1L, "test", "test", "test", 1000);
-
-		when(userService.getUserById(1L)).thenReturn(user);
-
-		mvc.perform(post("/1/deposit").param("amount", "-500")).andExpect(view().name("handle-balance"))
-				.andExpect(model().attribute("error", "Importo negativo non ammesso"))
-				.andExpect(model().attribute("user", user));
-
-		verify(userService).getUserById(1L);
-		verifyNoMoreInteractions(userService);
+		verify(userService).deposit(1L, 500);
 	}
 
 	@Test

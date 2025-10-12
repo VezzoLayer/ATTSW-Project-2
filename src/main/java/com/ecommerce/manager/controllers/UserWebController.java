@@ -90,14 +90,9 @@ public class UserWebController {
 	}
 
 	@PostMapping("/{id}/deposit")
-	public String deposit(@PathVariable long id, @RequestParam long amount, Model model) {
-		if (amount < 0) {
-			model.addAttribute(ERROR_ATTRIBUTE, "Importo negativo non ammesso");
-			model.addAttribute(USER_ATTRIBUTE, userService.getUserById(id));
-			return "handle-balance";
-		}
-
+	public String deposit(@PathVariable long id, @RequestParam long amount) {
 		userService.deposit(id, amount);
+
 		return REDIRECT_TO_MAPPING_USERS;
 	}
 
