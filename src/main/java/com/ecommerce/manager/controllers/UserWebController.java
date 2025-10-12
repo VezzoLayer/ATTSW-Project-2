@@ -34,7 +34,7 @@ public class UserWebController {
 	public String index(Model model) {
 		List<User> allUsers = userService.getAllUsers();
 
-		model.addAttribute(USERS_ATTRIBUTE, userService.getAllUsers());
+		model.addAttribute(USERS_ATTRIBUTE, allUsers);
 		model.addAttribute(MESSAGE_ATTRIBUTE, allUsers.isEmpty() ? "No user to show" : "");
 
 		return "index";
@@ -99,7 +99,7 @@ public class UserWebController {
 	}
 
 	@PostMapping("/{id}/withdraw")
-	public String withdraw(@PathVariable long id, @RequestParam long amount, Model model) {
+	public String withdraw(@PathVariable long id, @RequestParam long amount) {
 		userService.withdraw(id, amount);
 
 		return REDIRECT_TO_MAPPING_USERS;

@@ -140,7 +140,7 @@ public class UserWebControllerTest {
 		when(userService.getUserById(1L)).thenReturn(null);
 
 		mvc.perform(get("/1/handle_balance")).andExpect(view().name("handle-balance"))
-				.andExpect(model().attribute("User", nullValue()))
+				.andExpect(model().attribute("user", nullValue()))
 				.andExpect(model().attribute("message", "No user found with id: 1"));
 	}
 
@@ -166,7 +166,7 @@ public class UserWebControllerTest {
 	public void testDepositWhenFailsShouldHandleIllegalStateException() throws Exception {
 		doThrow(new IllegalStateException("User not found")).when(userService).deposit(anyLong(), anyLong());
 
-		mvc.perform(post("/1/deposit").param("amount", "-500")).andExpect(redirectedUrl("/"))
+		mvc.perform(post("/1/deposit").param("amount", "500")).andExpect(redirectedUrl("/"))
 				.andExpect(flash().attribute("error", "User not found"));
 
 		verify(userService).deposit(anyLong(), anyLong());
@@ -186,6 +186,16 @@ public class UserWebControllerTest {
 
 		mvc.perform(post("/1/withdraw").param("amount", "-500")).andExpect(redirectedUrl("/"))
 				.andExpect(flash().attribute("error", "Withdraw amount cannot be negative"));
+
+		verify(userService).withdraw(anyLong(), anyLong());
+	}
+
+	@Test
+	public void testWithdrawWhenFailsShouldHandleIllegalStateException() throws Exception {
+		doThrow(new IllegalStateException("User not found")).when(userService).withdraw(anyLong(), anyLong());
+
+		mvc.perform(post("/1/withdraw").param("amount", "500")).andExpect(redirectedUrl("/"))
+				.andExpect(flash().attribute("error", "User not found"));
 
 		verify(userService).withdraw(anyLong(), anyLong());
 	}
