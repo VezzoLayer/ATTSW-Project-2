@@ -3,6 +3,7 @@ package com.ecommerce.manager.services;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ecommerce.manager.model.Order;
 import com.ecommerce.manager.repositories.OrderRepository;
@@ -38,8 +39,15 @@ public class OrderService {
 		return orderRepository.save(order);
 	}
 
+	@Transactional
 	public Order updateOrderById(long id, Order replacement) {
+		Order existing = orderRepository.findById(id).orElse(null);
+
 		replacement.setId(id);
+
+		userService.deposit(existing.getUser().getId(), existing.getPrice());
+		userService.withdraw(replacement.getUser().getId(), replacement.getPrice());
+
 		return orderRepository.save(replacement);
 	}
 
