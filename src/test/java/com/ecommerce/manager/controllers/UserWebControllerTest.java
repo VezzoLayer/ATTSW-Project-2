@@ -2,12 +2,16 @@ package com.ecommerce.manager.controllers;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
@@ -136,67 +140,63 @@ public class UserWebControllerTest {
 		when(userService.getUserById(1L)).thenReturn(null);
 
 		mvc.perform(get("/1/handle_balance")).andExpect(view().name("handle-balance"))
-				.andExpect(model().attribute("User", nullValue()))
+				.andExpect(model().attribute("user", nullValue()))
 				.andExpect(model().attribute("message", "No user found with id: 1"));
 	}
 
 	@Test
-	@Parameters({ "500", "0" })
-	public void testDepositWhenParameterizedAmountIsAllowed(long amount) throws Exception {
-		mvc.perform(post("/1/deposit").param("amount", Long.toString(amount))).andExpect(view().name("redirect:/"));
+	public void testDepositWhenSuccessShouldRedirectToMappingUsers() throws Exception {
+		mvc.perform(post("/1/deposit").param("amount", "500")).andExpect(redirectedUrl("/"));
 
-		verify(userService).deposit(1L, amount);
+		verify(userService).deposit(1L, 500);
 	}
 
 	@Test
-	public void testDepositWhenAmountIsNotCorrect() throws Exception {
-		User user = new User(1L, "test", "test", "test", 1000);
+	public void testDepositWhenFailsShouldHandleIllegalArgumentException() throws Exception {
+		doThrow(new IllegalArgumentException("Deposit amount cannot be negative")).when(userService).deposit(anyLong(),
+				anyLong());
 
-		when(userService.getUserById(1L)).thenReturn(user);
+		mvc.perform(post("/1/deposit").param("amount", "-500")).andExpect(redirectedUrl("/"))
+				.andExpect(flash().attribute("error", "Deposit amount cannot be negative"));
 
-		mvc.perform(post("/1/deposit").param("amount", "-500")).andExpect(view().name("handle-balance"))
-				.andExpect(model().attribute("error", "Importo negativo non ammesso"))
-				.andExpect(model().attribute("user", user));
-
-		verify(userService).getUserById(1L);
-		verifyNoMoreInteractions(userService);
+		verify(userService).deposit(anyLong(), anyLong());
 	}
 
 	@Test
-	@Parameters({ "500, 1000", "0, 1000", "1000, 1000" })
-	public void testWithdrawWhenParameterizedAmountIsAllowed(long amount, long initialBalance) throws Exception {
-		when(userService.getUserById(1L)).thenReturn(new User(1L, "test", "test", "test", initialBalance));
+	public void testDepositWhenFailsShouldHandleIllegalStateException() throws Exception {
+		doThrow(new IllegalStateException("User not found")).when(userService).deposit(anyLong(), anyLong());
 
-		mvc.perform(post("/1/withdraw").param("amount", Long.toString(amount))).andExpect(view().name("redirect:/"));
+		mvc.perform(post("/1/deposit").param("amount", "500")).andExpect(redirectedUrl("/"))
+				.andExpect(flash().attribute("error", "User not found"));
 
-		verify(userService).withdraw(1L, amount);
+		verify(userService).deposit(anyLong(), anyLong());
 	}
 
 	@Test
-	public void testWithdrawWhenAmountIsIsNotCorrect() throws Exception {
-		User user = new User(1L, "test", "test", "test", 1000);
+	public void testWithdrawWhenSuccessShouldRedirectToMappingUsers() throws Exception {
+		mvc.perform(post("/1/withdraw").param("amount", "500")).andExpect(redirectedUrl("/"));
 
-		when(userService.getUserById(1L)).thenReturn(user);
-
-		mvc.perform(post("/1/withdraw").param("amount", "-500")).andExpect(view().name("handle-balance"))
-				.andExpect(model().attribute("error", "Importo negativo non ammesso"))
-				.andExpect(model().attribute("user", user));
-
-		verify(userService).getUserById(1L);
-		verifyNoMoreInteractions(userService);
+		verify(userService).withdraw(1L, 500);
 	}
 
 	@Test
-	public void testWithdrawWhenBalanceIsNotEnough() throws Exception {
-		User user = new User(1L, "test", "test", "test", 300);
+	public void testWithdrawWhenFailsShouldHandleIllegalArgumentException() throws Exception {
+		doThrow(new IllegalArgumentException("Withdraw amount cannot be negative")).when(userService)
+				.withdraw(anyLong(), anyLong());
 
-		when(userService.getUserById(1L)).thenReturn(user);
+		mvc.perform(post("/1/withdraw").param("amount", "-500")).andExpect(redirectedUrl("/"))
+				.andExpect(flash().attribute("error", "Withdraw amount cannot be negative"));
 
-		mvc.perform(post("/1/withdraw").param("amount", "500")).andExpect(view().name("handle-balance"))
-				.andExpect(model().attribute("error", "Saldo insufficiente"))
-				.andExpect(model().attribute("user", user));
+		verify(userService).withdraw(anyLong(), anyLong());
+	}
 
-		verify(userService).getUserById(1L);
-		verifyNoMoreInteractions(userService);
+	@Test
+	public void testWithdrawWhenFailsShouldHandleIllegalStateException() throws Exception {
+		doThrow(new IllegalStateException("User not found")).when(userService).withdraw(anyLong(), anyLong());
+
+		mvc.perform(post("/1/withdraw").param("amount", "500")).andExpect(redirectedUrl("/"))
+				.andExpect(flash().attribute("error", "User not found"));
+
+		verify(userService).withdraw(anyLong(), anyLong());
 	}
 }

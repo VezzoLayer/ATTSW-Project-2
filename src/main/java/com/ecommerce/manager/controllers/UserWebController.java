@@ -4,10 +4,12 @@ import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ecommerce.manager.model.User;
 import com.ecommerce.manager.services.UserService;
@@ -19,8 +21,7 @@ public class UserWebController {
 	private static final String ERROR_ATTRIBUTE = "error";
 	private static final String USERS_ATTRIBUTE = "users";
 	private static final String USER_ATTRIBUTE = "user";
-	private static final String REDIRECT_PAGE = "redirect:/";
-	private static final String HANDLE_BALANCE_PAGE = "handle-balance";
+	private static final String REDIRECT_TO_MAPPING_USERS = "redirect:/";
 	private static final String NO_USER_FOUND_MESSAGE = "No user found with id: ";
 
 	private UserService userService;
@@ -33,7 +34,7 @@ public class UserWebController {
 	public String index(Model model) {
 		List<User> allUsers = userService.getAllUsers();
 
-		model.addAttribute(USERS_ATTRIBUTE, userService.getAllUsers());
+		model.addAttribute(USERS_ATTRIBUTE, allUsers);
 		model.addAttribute(MESSAGE_ATTRIBUTE, allUsers.isEmpty() ? "No user to show" : "");
 
 		return "index";
@@ -67,7 +68,7 @@ public class UserWebController {
 			userService.updateUserById(id, user);
 		}
 
-		return REDIRECT_PAGE;
+		return REDIRECT_TO_MAPPING_USERS;
 	}
 
 	@GetMapping("/user/{id}/orders")
@@ -87,38 +88,27 @@ public class UserWebController {
 		model.addAttribute(USER_ATTRIBUTE, userById);
 		model.addAttribute(MESSAGE_ATTRIBUTE, userById == null ? NO_USER_FOUND_MESSAGE + id : "");
 
-		return HANDLE_BALANCE_PAGE;
+		return "handle-balance";
 	}
 
 	@PostMapping("/{id}/deposit")
-	public String deposit(@PathVariable long id, @RequestParam long amount, Model model) {
-		if (amount < 0) {
-			model.addAttribute(ERROR_ATTRIBUTE, "Importo negativo non ammesso");
-			model.addAttribute(USER_ATTRIBUTE, userService.getUserById(id));
-			return HANDLE_BALANCE_PAGE;
-		}
-
+	public String deposit(@PathVariable long id, @RequestParam long amount) {
 		userService.deposit(id, amount);
-		return REDIRECT_PAGE;
+
+		return REDIRECT_TO_MAPPING_USERS;
 	}
 
 	@PostMapping("/{id}/withdraw")
-	public String withdraw(@PathVariable long id, @RequestParam long amount, Model model) {
-		User userById = userService.getUserById(id);
-
-		if (amount < 0) {
-			model.addAttribute(ERROR_ATTRIBUTE, "Importo negativo non ammesso");
-			model.addAttribute(USER_ATTRIBUTE, userById);
-			return HANDLE_BALANCE_PAGE;
-		}
-
-		if (userById.getBalance() - amount < 0) {
-			model.addAttribute(ERROR_ATTRIBUTE, "Saldo insufficiente");
-			model.addAttribute(USER_ATTRIBUTE, userById);
-			return HANDLE_BALANCE_PAGE;
-		}
-
+	public String withdraw(@PathVariable long id, @RequestParam long amount) {
 		userService.withdraw(id, amount);
-		return REDIRECT_PAGE;
+
+		return REDIRECT_TO_MAPPING_USERS;
+	}
+
+	@ExceptionHandler({ IllegalStateException.class, IllegalArgumentException.class })
+	public String handleIllegalState(RuntimeException ex, RedirectAttributes redirectAttributes) {
+		redirectAttributes.addFlashAttribute(ERROR_ATTRIBUTE, ex.getMessage());
+
+		return REDIRECT_TO_MAPPING_USERS;
 	}
 }
