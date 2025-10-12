@@ -3,6 +3,7 @@ package com.ecommerce.manager.controllers;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -90,7 +91,7 @@ public class OrderWebControllerTest {
 	public void testPostOrderWithoutIdShouldInsertNewOrder() throws Exception {
 		mvc.perform(post("/saveOrder").param("item", "BOX1").param("price", "700").param("user.name", "test")
 				.param("user.surname", "test").param("user.email", "test").param("user.balance", "2000"))
-				.andExpect(view().name("all-orders"));
+				.andExpect(redirectedUrl("/orders"));
 
 		verify(orderService)
 				.insertNewOrder(new Order(null, Item.BOX1, 700, new User(1L, "test", "test", "test", 2000)));
@@ -114,9 +115,23 @@ public class OrderWebControllerTest {
 	public void testPostOrderWithIdShouldUpdateExistingOrder() throws Exception {
 		mvc.perform(post("/saveOrder").param("id", "1").param("item", "BOX1").param("price", "700")
 				.param("user.name", "test").param("user.surname", "test").param("user.email", "test")
-				.param("user.balance", "2000")).andExpect(view().name("all-orders"));
+				.param("user.balance", "2000")).andExpect(redirectedUrl("/orders"));
 
 		verify(orderService).updateOrderById(1L,
 				new Order(1L, Item.BOX1, 700, new User(1L, "test", "test", "test", 2000)));
+	}
+
+	@Test
+	public void testPostOrderWhenUpdateFailsShouldHandleException() throws Exception {
+		doThrow(new IllegalStateException("Unable to update the order")).when(orderService).updateOrderById(anyLong(),
+				any(Order.class));
+
+		mvc.perform(post("/saveOrder").param("id", "1").param("item", "BOX1").param("price", "700")
+				.param("user.name", "test").param("user.username", "test").param("user.email", "test")
+				.param("user.balance", "500")).andExpect(redirectedUrl("/orders"))
+				.andExpect(flash().attribute("error", "Unable to update the order"));
+
+		verify(orderService).updateOrderById(anyLong(), any(Order.class));
+		verifyNoMoreInteractions(orderService);
 	}
 }

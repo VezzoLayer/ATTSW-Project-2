@@ -124,4 +124,15 @@ public class OrderRestControllerTest {
 				.andExpect(jsonPath("$.user.name", is("test"))).andExpect(jsonPath("$.user.email", is("test")))
 				.andExpect(jsonPath("$.user.balance", is(3000)));
 	}
+
+	@Test
+	public void testPostOrderWhenUpdateFailsShouldReturn400() throws Exception {
+		when(orderService.updateOrderById(anyLong(), any(Order.class)))
+				.thenThrow(new IllegalStateException("Unable to update the order"));
+
+		this.mvc.perform(put("/api/orders/update/1").contentType(MediaType.APPLICATION_JSON).content(
+				"{\"item\":\"BOX1\", \"price\":800, \"user\":{\"id\":1, \"username\":\"user 1\", \"name\":\"test\", \"email\":\"test\", \"balance\":3000}}")
+				.accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.message", is("Unable to update the order")));
+	}
 }

@@ -20,6 +20,7 @@ public class OrderWebController {
 	private static final String ORDER_ATTRIBUTE = "order";
 	private static final String ORDERS_ATTRIBUTE = "orders";
 	private static final String ERROR_ATTRIBUTE = "error";
+	private static final String REDIRECT_TO_MAPPING_ORDERS = "redirect:/orders";
 
 	private OrderService orderService;
 
@@ -65,13 +66,13 @@ public class OrderWebController {
 			orderService.updateOrderById(id, order);
 		}
 
-		return "all-orders";
+		return REDIRECT_TO_MAPPING_ORDERS;
 	}
 
 	@ExceptionHandler(IllegalStateException.class)
 	public String handleIllegalState(IllegalStateException ex, RedirectAttributes redirectAttributes) {
 		redirectAttributes.addFlashAttribute(ERROR_ATTRIBUTE, ex.getMessage());
 
-		return "redirect:/orders";
+		return REDIRECT_TO_MAPPING_ORDERS;
 	}
 }
