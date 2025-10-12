@@ -163,6 +163,16 @@ public class UserWebControllerTest {
 	}
 
 	@Test
+	public void testDepositWhenFailsShouldHandleIllegalStateException() throws Exception {
+		doThrow(new IllegalStateException("User not found")).when(userService).deposit(anyLong(), anyLong());
+
+		mvc.perform(post("/1/deposit").param("amount", "-500")).andExpect(redirectedUrl("/"))
+				.andExpect(flash().attribute("error", "User not found"));
+
+		verify(userService).deposit(anyLong(), anyLong());
+	}
+
+	@Test
 	public void testWithdrawWhenSuccessShouldRedirectToMappingUsers() throws Exception {
 		mvc.perform(post("/1/withdraw").param("amount", "500")).andExpect(redirectedUrl("/"));
 

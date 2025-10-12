@@ -101,12 +101,19 @@ public class UserWebController {
 	@PostMapping("/{id}/withdraw")
 	public String withdraw(@PathVariable long id, @RequestParam long amount, Model model) {
 		userService.withdraw(id, amount);
-		
+
 		return REDIRECT_TO_MAPPING_USERS;
 	}
-	
+
+	@ExceptionHandler(IllegalStateException.class)
+	public String handleIllegalState(IllegalStateException ex, RedirectAttributes redirectAttributes) {
+		redirectAttributes.addFlashAttribute(ERROR_ATTRIBUTE, ex.getMessage());
+
+		return REDIRECT_TO_MAPPING_USERS;
+	}
+
 	@ExceptionHandler(IllegalArgumentException.class)
-	public String handleIllegalState(IllegalArgumentException ex, RedirectAttributes redirectAttributes) {
+	public String handleIllegalArgument(IllegalArgumentException ex, RedirectAttributes redirectAttributes) {
 		redirectAttributes.addFlashAttribute(ERROR_ATTRIBUTE, ex.getMessage());
 
 		return REDIRECT_TO_MAPPING_USERS;
