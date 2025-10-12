@@ -7,7 +7,16 @@
 </head>
 
 <body>
-	No Users
+
+	<div th:if="${users.empty}">
+		<div>No Users</div>
+	</div>
+
+	<div th:unless="${users.empty}">
+		<table id="users_table">
+		</table>
+	</div>
+
 </body>
 
 </html>

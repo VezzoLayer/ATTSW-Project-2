@@ -1,5 +1,6 @@
 package com.ecommerce.manager.controllers;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.ecommerce.manager.model.User;
 import com.ecommerce.manager.services.UserService;
 
 @RunWith(SpringRunner.class)
@@ -39,5 +41,15 @@ public class UserWebControllerHtmlUnitTest {
 		HtmlPage page = this.webClient.getPage("/");
 
 		assertThat(page.getBody().getTextContent()).contains("No Users");
+	}
+
+	@Test
+	public void testHomePageWithUsersShouldNotContainNoUsers() throws Exception {
+		when(userService.getAllUsers())
+				.thenReturn(asList(new User(1L, "u1", "n1", "e1", 1000), new User(2L, "u2", "n2", "e2", 2000)));
+
+		HtmlPage page = this.webClient.getPage("/");
+
+		assertThat(page.getBody().getTextContent()).doesNotContain("No Users");
 	}
 }
