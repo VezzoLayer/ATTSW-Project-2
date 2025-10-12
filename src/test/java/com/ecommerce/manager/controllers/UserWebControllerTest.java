@@ -152,7 +152,7 @@ public class UserWebControllerTest {
 	}
 
 	@Test
-	public void testDepositWhenFailsShouldHandleException() throws Exception {
+	public void testDepositWhenFailsShouldHandleIllegalArgumentException() throws Exception {
 		doThrow(new IllegalArgumentException("Deposit amount cannot be negative")).when(userService).deposit(anyLong(),
 				anyLong());
 
@@ -167,5 +167,16 @@ public class UserWebControllerTest {
 		mvc.perform(post("/1/withdraw").param("amount", "500")).andExpect(redirectedUrl("/"));
 
 		verify(userService).withdraw(1L, 500);
+	}
+
+	@Test
+	public void testWithdrawWhenFailsShouldHandleIllegalArgumentException() throws Exception {
+		doThrow(new IllegalArgumentException("Withdraw amount cannot be negative")).when(userService)
+				.withdraw(anyLong(), anyLong());
+
+		mvc.perform(post("/1/withdraw").param("amount", "-500")).andExpect(redirectedUrl("/"))
+				.andExpect(flash().attribute("error", "Withdraw amount cannot be negative"));
+
+		verify(userService).withdraw(anyLong(), anyLong());
 	}
 }
