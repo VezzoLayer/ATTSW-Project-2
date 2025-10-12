@@ -2,12 +2,16 @@ package com.ecommerce.manager.controllers;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
@@ -145,6 +149,17 @@ public class UserWebControllerTest {
 		mvc.perform(post("/1/deposit").param("amount", "500")).andExpect(view().name("redirect:/"));
 
 		verify(userService).deposit(1L, 500);
+	}
+
+	@Test
+	public void testDepositWhenFailsShouldHandleException() throws Exception {
+		doThrow(new IllegalArgumentException("Deposit amount cannot be negative")).when(userService).deposit(anyLong(),
+				anyLong());
+
+		mvc.perform(post("/1/deposit").param("amount", "-500")).andExpect(redirectedUrl("/"))
+				.andExpect(flash().attribute("error", "Deposit amount cannot be negative"));
+
+		verify(userService).deposit(anyLong(), anyLong());
 	}
 
 	@Test
