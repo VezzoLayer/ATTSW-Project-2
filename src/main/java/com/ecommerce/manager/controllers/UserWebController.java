@@ -100,21 +100,8 @@ public class UserWebController {
 
 	@PostMapping("/{id}/withdraw")
 	public String withdraw(@PathVariable long id, @RequestParam long amount, Model model) {
-		User userById = userService.getUserById(id);
-
-		if (amount < 0) {
-			model.addAttribute(ERROR_ATTRIBUTE, "Importo negativo non ammesso");
-			model.addAttribute(USER_ATTRIBUTE, userById);
-			return "handle-balance";
-		}
-
-		if (userById.getBalance() - amount < 0) {
-			model.addAttribute(ERROR_ATTRIBUTE, "Saldo insufficiente");
-			model.addAttribute(USER_ATTRIBUTE, userById);
-			return "handle-balance";
-		}
-
 		userService.withdraw(id, amount);
+		
 		return REDIRECT_TO_MAPPING_USERS;
 	}
 	
