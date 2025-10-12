@@ -20,7 +20,7 @@ public class Order {
 	private Item item;
 	private long price;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "user_id")
 	private User user;
 
