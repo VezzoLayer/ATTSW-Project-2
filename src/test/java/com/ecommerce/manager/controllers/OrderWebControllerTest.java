@@ -90,7 +90,7 @@ public class OrderWebControllerTest {
 	public void testPostOrderWithoutIdShouldInsertNewOrder() throws Exception {
 		mvc.perform(post("/saveOrder").param("item", "BOX1").param("price", "700").param("user.name", "test")
 				.param("user.surname", "test").param("user.email", "test").param("user.balance", "2000"))
-				.andExpect(view().name("all-orders"));
+				.andExpect(redirectedUrl("/orders"));
 
 		verify(orderService)
 				.insertNewOrder(new Order(null, Item.BOX1, 700, new User(1L, "test", "test", "test", 2000)));
@@ -114,7 +114,7 @@ public class OrderWebControllerTest {
 	public void testPostOrderWithIdShouldUpdateExistingOrder() throws Exception {
 		mvc.perform(post("/saveOrder").param("id", "1").param("item", "BOX1").param("price", "700")
 				.param("user.name", "test").param("user.surname", "test").param("user.email", "test")
-				.param("user.balance", "2000")).andExpect(view().name("all-orders"));
+				.param("user.balance", "2000")).andExpect(redirectedUrl("/orders"));
 
 		verify(orderService).updateOrderById(1L,
 				new Order(1L, Item.BOX1, 700, new User(1L, "test", "test", "test", 2000)));
