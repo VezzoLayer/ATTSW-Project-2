@@ -45,8 +45,12 @@ public class OrderService {
 
 		replacement.setId(id);
 
-		userService.deposit(existing.getUser().getId(), existing.getPrice());
-		userService.withdraw(replacement.getUser().getId(), replacement.getPrice());
+		try {
+			userService.deposit(existing.getUser().getId(), existing.getPrice());
+			userService.withdraw(replacement.getUser().getId(), replacement.getPrice());
+		} catch (IllegalArgumentException | IllegalStateException e) {
+			throw new IllegalStateException("Unable to update the order");
+		}
 
 		return orderRepository.save(replacement);
 	}

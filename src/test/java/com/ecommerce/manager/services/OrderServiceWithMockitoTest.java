@@ -7,8 +7,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -121,5 +124,29 @@ public class OrderServiceWithMockitoTest {
 		inOrder.verify(userService).deposit(2L, 700);
 		inOrder.verify(userService).withdraw(1L, 500);
 		inOrder.verify(orderRepository).save(replacement);
+	}
+
+	@Test
+	public void testUpdateOrderWhenDepositFailsShouldThrowIllegalStateException() {
+		User user = new User(1L, "test", "test", "test", 5000);
+
+		Order replacement = spy(new Order(null, Item.BOX1, 700, user));
+		Order replaced = new Order(1L, Item.BOX2, 700, user);
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(replaced));
+
+		doThrow(new IllegalStateException("Unable to update the order")).when(userService).deposit(anyLong(),
+				anyLong());
+
+		IllegalStateException ex = assertThrows(IllegalStateException.class,
+				() -> orderService.updateOrderById(1L, replacement));
+
+		assertThat(ex.getMessage()).isEqualTo("Unable to update the order");
+
+		InOrder inOrder = inOrder(replacement, userService);
+		inOrder.verify(replacement).setId(1L);
+		inOrder.verify(userService).deposit(1L, 700);
+		verifyNoMoreInteractions(userService);
+		verify(orderRepository, never()).save(any());
 	}
 }
