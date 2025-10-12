@@ -48,7 +48,7 @@ public class OrderService {
 		try {
 			userService.deposit(existing.getUser().getId(), existing.getPrice());
 			userService.withdraw(replacement.getUser().getId(), replacement.getPrice());
-		} catch (IllegalArgumentException | IllegalStateException e) {
+		} catch (IllegalArgumentException | IllegalStateException | NullPointerException e) {
 			throw new IllegalStateException("Unable to update the order");
 		}
 
