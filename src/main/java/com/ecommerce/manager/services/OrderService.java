@@ -29,7 +29,11 @@ public class OrderService {
 	public Order insertNewOrder(Order order) {
 		order.setId(null);
 
-		userService.withdraw(order.getUser().getId(), order.getPrice());
+		try {
+			userService.withdraw(order.getUser().getId(), order.getPrice());
+		} catch (IllegalArgumentException | IllegalStateException e) {
+			throw new IllegalStateException("Unable to insert new order");
+		}
 
 		return orderRepository.save(order);
 	}

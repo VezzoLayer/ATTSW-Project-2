@@ -2,10 +2,13 @@ package com.ecommerce.manager.services;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -79,6 +82,23 @@ public class OrderServiceWithMockitoTest {
 		inOrder.verify(orderToSave).setId(null);
 		inOrder.verify(userService).withdraw(1L, 700L);
 		inOrder.verify(orderRepository).save(orderToSave);
+	}
+
+	@Test
+	public void testInsertNewOrderWhenWithdrawFailsShouldThrowIllegalStateException() {
+		Order orderToSave = spy(new Order(null, Item.BOX1, 700, new User(1L, "test", "test", "test", 500)));
+
+		doThrow(new IllegalStateException("Unable to insert new order")).when(userService).withdraw(anyLong(),
+				anyLong());
+
+		IllegalStateException ex = assertThrows(IllegalStateException.class,
+				() -> orderService.insertNewOrder(orderToSave));
+
+		assertThat(ex.getMessage()).isEqualTo("Unable to insert new order");
+
+		InOrder inOrder = inOrder(orderToSave);
+		inOrder.verify(orderToSave).setId(null);
+		verifyNoInteractions(orderRepository);
 	}
 
 	@Test

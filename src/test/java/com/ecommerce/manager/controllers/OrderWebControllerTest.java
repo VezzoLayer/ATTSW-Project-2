@@ -2,12 +2,16 @@ package com.ecommerce.manager.controllers;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import java.util.Collections;
@@ -93,7 +97,20 @@ public class OrderWebControllerTest {
 	}
 
 	@Test
+	public void testPostOrderWhenInsertFailsShouldHandleException() throws Exception {
+		doThrow(new IllegalStateException("Unable to insert new order")).when(orderService)
+				.insertNewOrder(any(Order.class));
 
+		mvc.perform(post("/saveOrder").param("item", "BOX1").param("price", "700").param("user.name", "test")
+				.param("user.username", "test").param("user.email", "test").param("user.balance", "500"))
+				.andExpect(redirectedUrl("/orders"))
+				.andExpect(flash().attribute("error", "Unable to insert new order"));
+
+		verify(orderService).insertNewOrder(any(Order.class));
+		verifyNoMoreInteractions(orderService);
+	}
+
+	@Test
 	public void testPostOrderWithIdShouldUpdateExistingOrder() throws Exception {
 		mvc.perform(post("/saveOrder").param("id", "1").param("item", "BOX1").param("price", "700")
 				.param("user.name", "test").param("user.surname", "test").param("user.email", "test")
