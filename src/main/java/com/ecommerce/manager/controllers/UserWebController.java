@@ -105,15 +105,8 @@ public class UserWebController {
 		return REDIRECT_TO_MAPPING_USERS;
 	}
 
-	@ExceptionHandler(IllegalStateException.class)
-	public String handleIllegalState(IllegalStateException ex, RedirectAttributes redirectAttributes) {
-		redirectAttributes.addFlashAttribute(ERROR_ATTRIBUTE, ex.getMessage());
-
-		return REDIRECT_TO_MAPPING_USERS;
-	}
-
-	@ExceptionHandler(IllegalArgumentException.class)
-	public String handleIllegalArgument(IllegalArgumentException ex, RedirectAttributes redirectAttributes) {
+	@ExceptionHandler({ IllegalStateException.class, IllegalArgumentException.class })
+	public String handleIllegalState(RuntimeException ex, RedirectAttributes redirectAttributes) {
 		redirectAttributes.addFlashAttribute(ERROR_ATTRIBUTE, ex.getMessage());
 
 		return REDIRECT_TO_MAPPING_USERS;
