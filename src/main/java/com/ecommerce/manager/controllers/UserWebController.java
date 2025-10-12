@@ -19,8 +19,7 @@ public class UserWebController {
 	private static final String ERROR_ATTRIBUTE = "error";
 	private static final String USERS_ATTRIBUTE = "users";
 	private static final String USER_ATTRIBUTE = "user";
-	private static final String REDIRECT_PAGE = "redirect:/";
-	private static final String HANDLE_BALANCE_PAGE = "handle-balance";
+	private static final String REDIRECT_TO_MAPPING_USERS = "redirect:/";
 	private static final String NO_USER_FOUND_MESSAGE = "No user found with id: ";
 
 	private UserService userService;
@@ -67,7 +66,7 @@ public class UserWebController {
 			userService.updateUserById(id, user);
 		}
 
-		return REDIRECT_PAGE;
+		return REDIRECT_TO_MAPPING_USERS;
 	}
 
 	@GetMapping("/user/{id}/orders")
@@ -87,7 +86,7 @@ public class UserWebController {
 		model.addAttribute(USER_ATTRIBUTE, userById);
 		model.addAttribute(MESSAGE_ATTRIBUTE, userById == null ? NO_USER_FOUND_MESSAGE + id : "");
 
-		return HANDLE_BALANCE_PAGE;
+		return "handle-balance";
 	}
 
 	@PostMapping("/{id}/deposit")
@@ -95,11 +94,11 @@ public class UserWebController {
 		if (amount < 0) {
 			model.addAttribute(ERROR_ATTRIBUTE, "Importo negativo non ammesso");
 			model.addAttribute(USER_ATTRIBUTE, userService.getUserById(id));
-			return HANDLE_BALANCE_PAGE;
+			return "handle-balance";
 		}
 
 		userService.deposit(id, amount);
-		return REDIRECT_PAGE;
+		return REDIRECT_TO_MAPPING_USERS;
 	}
 
 	@PostMapping("/{id}/withdraw")
@@ -109,16 +108,16 @@ public class UserWebController {
 		if (amount < 0) {
 			model.addAttribute(ERROR_ATTRIBUTE, "Importo negativo non ammesso");
 			model.addAttribute(USER_ATTRIBUTE, userById);
-			return HANDLE_BALANCE_PAGE;
+			return "handle-balance";
 		}
 
 		if (userById.getBalance() - amount < 0) {
 			model.addAttribute(ERROR_ATTRIBUTE, "Saldo insufficiente");
 			model.addAttribute(USER_ATTRIBUTE, userById);
-			return HANDLE_BALANCE_PAGE;
+			return "handle-balance";
 		}
 
 		userService.withdraw(id, amount);
-		return REDIRECT_PAGE;
+		return REDIRECT_TO_MAPPING_USERS;
 	}
 }
