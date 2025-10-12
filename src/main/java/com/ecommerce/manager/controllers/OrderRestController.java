@@ -23,7 +23,7 @@ public class OrderRestController {
 
 	private OrderService orderService;
 
-	private static final String MESSAGE = "message";
+	private static final String MESSAGE_ATTRIBUTE = "message";
 
 	public OrderRestController(OrderService orderService) {
 		this.orderService = orderService;
@@ -51,6 +51,6 @@ public class OrderRestController {
 
 	@ExceptionHandler(IllegalStateException.class)
 	public ResponseEntity<Map<String, String>> handleIllegalState(IllegalStateException ex) {
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(MESSAGE, ex.getMessage()));
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(MESSAGE_ATTRIBUTE, ex.getMessage()));
 	}
 }
