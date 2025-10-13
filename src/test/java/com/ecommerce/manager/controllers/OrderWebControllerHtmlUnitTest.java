@@ -68,4 +68,11 @@ public class OrderWebControllerHtmlUnitTest {
 		// replace /t con spazi bianchi e rimuove /r
 		assertThat(table.asNormalizedText().replace("\t", " ").replace("\r", "")).isEqualTo(expectedTableContent);
 	}
+
+	@Test
+	public void testEditOrderPageTitle() throws Exception {
+		HtmlPage page = webClient.getPage("/editOrder/1");
+
+		assertThat(page.getTitleText()).isEqualTo("Edit Order");
+	}
 }
