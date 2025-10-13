@@ -116,4 +116,11 @@ public class UserWebControllerHtmlUnitTest {
 
 		verify(userService).insertNewUser(new User(null, "new u", "new n", "new e", 2000));
 	}
+
+	@Test
+	public void testHomePageShouldHaveALinkForCreatingANewUser() throws Exception {
+		HtmlPage page = this.webClient.getPage("/");
+
+		assertThat(page.getAnchorByText("New User").getHrefAttribute()).isEqualTo("/newUser");
+	}
 }
