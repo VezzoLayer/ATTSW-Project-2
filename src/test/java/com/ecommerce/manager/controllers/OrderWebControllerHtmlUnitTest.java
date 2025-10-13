@@ -3,9 +3,11 @@ package com.ecommerce.manager.controllers;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.htmlunit.WebClient;
+import org.htmlunit.html.HtmlForm;
 import org.htmlunit.html.HtmlPage;
 import org.htmlunit.html.HtmlTable;
 import org.junit.Test;
@@ -83,5 +85,27 @@ public class OrderWebControllerHtmlUnitTest {
 		HtmlPage page = this.webClient.getPage("/editOrder/1");
 
 		assertThat(page.getBody().getTextContent()).contains("No order found with id: 1");
+	}
+
+	@Test
+	public void testEditExistingOrder() throws Exception {
+		User user1 = new User(1L, "u1", "n1", "e1", 1000);
+		User user2 = new User(2L, "u2", "n2", "e2", 2000);
+
+		when(orderService.getOrderById(1L)).thenReturn(new Order(1L, Item.BOX1, 100, user1));
+
+		HtmlPage page = this.webClient.getPage("/editOrder/1");
+
+		final HtmlForm form = page.getFormByName("order_form");
+
+		form.getInputByValue("BOX1").setValueAttribute("BOX2");
+		form.getInputByValue("100").setValueAttribute("200");
+
+		// Altrimenti catcha prima l'hidden id dell'order invece che dello user
+		form.getInputByName("user.id").setValueAttribute("2");
+
+		form.getButtonByName("btn_submit").click();
+
+		verify(orderService).updateOrderById(1L, new Order(1L, Item.BOX2, 200, user2));
 	}
 }
