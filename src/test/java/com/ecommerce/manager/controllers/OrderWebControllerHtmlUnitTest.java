@@ -108,4 +108,19 @@ public class OrderWebControllerHtmlUnitTest {
 
 		verify(orderService).updateOrderById(1L, new Order(1L, Item.BOX2, 200, user2));
 	}
+
+	@Test
+	public void testEditNewOrder() throws Exception {
+		HtmlPage page = this.webClient.getPage("/newOrder");
+
+		final HtmlForm form = page.getFormByName("order_form");
+
+		form.getInputByName("item").setValueAttribute("BOX1");
+		form.getInputByName("price").setValueAttribute("100");
+		form.getInputByName("user.id").setValueAttribute("1");
+
+		form.getButtonByName("btn_submit").click();
+
+		verify(orderService).insertNewOrder(new Order(null, Item.BOX1, 100, new User(1L, "u", "n", "e", 1000)));
+	}
 }
