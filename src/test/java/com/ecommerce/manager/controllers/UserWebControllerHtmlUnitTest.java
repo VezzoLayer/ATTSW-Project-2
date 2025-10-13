@@ -3,9 +3,11 @@ package com.ecommerce.manager.controllers;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.htmlunit.WebClient;
+import org.htmlunit.html.HtmlForm;
 import org.htmlunit.html.HtmlPage;
 import org.htmlunit.html.HtmlTable;
 import org.junit.Test;
@@ -79,5 +81,23 @@ public class UserWebControllerHtmlUnitTest {
 		HtmlPage page = this.webClient.getPage("/editUser/1");
 
 		assertThat(page.getBody().getTextContent()).contains("No user found with id: 1");
+	}
+
+	@Test
+	public void testEditExistingUser() throws Exception {
+		when(userService.getUserById(1)).thenReturn(new User(1L, "original u", "original n", "original e", 1000));
+
+		HtmlPage page = this.webClient.getPage("/editUser/1");
+
+		final HtmlForm form = page.getFormByName("user_form");
+
+		form.getInputByValue("original u").setValueAttribute("modified u");
+		form.getInputByValue("original n").setValueAttribute("modified n");
+		form.getInputByValue("original e").setValueAttribute("modified e");
+		form.getInputByValue("1000").setValueAttribute("2000");
+
+		form.getButtonByName("btn_submit").click();
+
+		verify(userService).updateUserById(1L, new User(1L, "modified u", "modified n", "modified e", 2000));
 	}
 }
