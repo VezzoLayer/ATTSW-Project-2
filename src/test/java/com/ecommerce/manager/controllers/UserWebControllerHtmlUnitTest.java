@@ -71,4 +71,13 @@ public class UserWebControllerHtmlUnitTest {
 
 		assertThat(page.getTitleText()).isEqualTo("Edit User");
 	}
+
+	@Test
+	public void testEditNonExistingUser() throws Exception {
+		when(userService.getUserById(1L)).thenReturn(null);
+
+		HtmlPage page = this.webClient.getPage("/editUser/1");
+
+		assertThat(page.getBody().getTextContent()).contains("No user found with id: 1");
+	}
 }
