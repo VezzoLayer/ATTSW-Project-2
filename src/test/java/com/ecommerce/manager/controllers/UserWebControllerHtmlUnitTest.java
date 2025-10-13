@@ -173,7 +173,7 @@ public class UserWebControllerHtmlUnitTest {
 	}
 
 	@Test
-	public void testDepositWhenAmountIsNotAllowedShouldRedirectToMappingUsers() throws Exception {
+	public void testDepositWhenIllegalArgumentExceptionIsRaisedShouldRedirectToHomeWithErrorMessage() throws Exception {
 		when(userService.getUserById(1L)).thenReturn(new User(1L, "u1", "n1", "e1", 1500));
 		doThrow(new IllegalArgumentException("Amount must be positive")).when(userService).deposit(1L, -500L);
 
@@ -185,7 +185,7 @@ public class UserWebControllerHtmlUnitTest {
 		HtmlPage resultPage = form.getButtonByName("btn_deposit").click();
 
 		verify(userService).deposit(1L, -500L);
-		assertThat(resultPage.getUrl().toString()).endsWith("/");
+		assertThat(resultPage.getBody().getTextContent()).contains("Amount must be positive");
 	}
 
 	@Test
@@ -200,5 +200,38 @@ public class UserWebControllerHtmlUnitTest {
 		form.getButtonByName("btn_withdraw").click();
 
 		verify(userService).withdraw(1L, 500L);
+	}
+
+	@Test
+	public void testWithdrawWhenIllegalArgumentExceptionIsRaisedShouldRedirectToHomeWithErrorMessage()
+			throws Exception {
+		when(userService.getUserById(1L)).thenReturn(new User(1L, "u1", "n1", "e1", 1500));
+		doThrow(new IllegalArgumentException("Amount must be positive")).when(userService).withdraw(1L, -500L);
+
+		HtmlPage page = this.webClient.getPage("/1/handle_balance");
+
+		HtmlForm form = page.getFormByName("withdraw_form");
+
+		form.getInputByName("amount").setValueAttribute("-500");
+		HtmlPage resultPage = form.getButtonByName("btn_withdraw").click();
+
+		verify(userService).withdraw(1L, -500L);
+		assertThat(resultPage.getBody().getTextContent()).contains("Amount must be positive");
+	}
+
+	@Test
+	public void testWithdrawWhenIllegalStateExceptionIsRaisedShouldRedirectToHomeWithErrorMessage() throws Exception {
+		when(userService.getUserById(1L)).thenReturn(new User(1L, "u1", "n1", "e1", 300));
+		doThrow(new IllegalStateException("Balance is not enough")).when(userService).withdraw(1L, 500L);
+
+		HtmlPage page = this.webClient.getPage("/1/handle_balance");
+
+		HtmlForm form = page.getFormByName("withdraw_form");
+
+		form.getInputByName("amount").setValueAttribute("500");
+		HtmlPage resultPage = form.getButtonByName("btn_withdraw").click();
+
+		verify(userService).withdraw(1L, 500L);
+		assertThat(resultPage.getBody().getTextContent()).contains("Balance is not enough");
 	}
 }
