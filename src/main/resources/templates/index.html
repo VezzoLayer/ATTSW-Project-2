@@ -14,6 +14,25 @@
 
 	<div th:unless="${users.empty}">
 		<table id="users_table">
+			<caption>Users</caption>
+			<thead>
+				<tr>
+					<th scope="col">ID</th>
+					<th scope="col">Username</th>
+					<th scope="col">Name</th>
+					<th scope="col">Email</th>
+					<th scope="col">Balance</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="user : ${users}">
+					<td th:text="${user.id}"></td>
+					<td th:text="${user.username}"></td>
+					<td th:text="${user.name}"></td>
+					<td th:text="${user.email}"></td>
+					<td th:text="${user.balance}"></td>
+				</tr>
+			</tbody>
 		</table>
 	</div>
 

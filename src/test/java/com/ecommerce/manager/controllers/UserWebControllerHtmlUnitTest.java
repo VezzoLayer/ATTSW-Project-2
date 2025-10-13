@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import org.htmlunit.WebClient;
 import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlTable;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,12 +45,30 @@ public class UserWebControllerHtmlUnitTest {
 	}
 
 	@Test
-	public void testHomePageWithUsersShouldNotContainNoUsers() throws Exception {
+	public void testHomePageWithUsersShouldShowThemInATable() throws Exception {
 		when(userService.getAllUsers())
 				.thenReturn(asList(new User(1L, "u1", "n1", "e1", 1000), new User(2L, "u2", "n2", "e2", 2000)));
 
 		HtmlPage page = this.webClient.getPage("/");
 
 		assertThat(page.getBody().getTextContent()).doesNotContain("No Users");
+
+		HtmlTable table = page.getHtmlElementById("users_table");
+
+		String expectedTableContent = """
+				Users
+				ID Username Name Email Balance
+				1 u1 n1 e1 1000
+				2 u2 n2 e2 2000""";
+
+		// replace /t con spazi bianchi e rimuove /r
+		assertThat(table.asNormalizedText().replace("\t", " ").replace("\r", "")).isEqualTo(expectedTableContent);
+	}
+
+	@Test
+	public void testEditUserPageTitle() throws Exception {
+		HtmlPage page = webClient.getPage("/editUser/1");
+
+		assertThat(page.getTitleText()).isEqualTo("Edit User");
 	}
 }
