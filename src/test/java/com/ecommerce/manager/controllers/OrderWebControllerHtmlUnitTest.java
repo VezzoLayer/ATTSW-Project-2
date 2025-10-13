@@ -133,4 +133,11 @@ public class OrderWebControllerHtmlUnitTest {
 
 		assertThat(page.getAnchorByText("New Order").getHrefAttribute()).isEqualTo("/newOrder");
 	}
+
+	@Test
+	public void testAllOrdersPageShouldHaveALinkForShowingUsers() throws Exception {
+		HtmlPage page = this.webClient.getPage("/orders");
+
+		assertThat(page.getAnchorByText("Show Users").getHrefAttribute()).isEqualTo("/");
+	}
 }
