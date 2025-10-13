@@ -126,4 +126,11 @@ public class UserWebControllerHtmlUnitTest {
 
 		assertThat(page.getAnchorByText("New User").getHrefAttribute()).isEqualTo("/newUser");
 	}
+
+	@Test
+	public void testHandleBalancePageTitle() throws Exception {
+		HtmlPage page = webClient.getPage("/1/handle_balance");
+
+		assertThat(page.getTitleText()).isEqualTo("Handle Balance");
+	}
 }
