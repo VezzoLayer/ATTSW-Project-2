@@ -18,6 +18,11 @@
 			User ID: <span th:text="${user.id}"></span> —
 			Balance: <span th:text="${user.balance}"></span> €
 		</p>
+
+		<form name="deposit_form" th:action="@{|/${user.id}/deposit|}" method="post">
+			<input type="number" id="amount" name="amount" required />
+			<button type="submit" name="btn_deposit">Deposit</button>
+		</form>
 	</div>
 
 </body>

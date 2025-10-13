@@ -156,4 +156,18 @@ public class UserWebControllerHtmlUnitTest {
 		assertThat(bodyText).contains("User ID: 1");
 		assertThat(bodyText).contains("Balance: 1500");
 	}
+
+	@Test
+	public void testDepositWithLegalParametersShouldCallService() throws Exception {
+		when(userService.getUserById(1L)).thenReturn(new User(1L, "u1", "n1", "e1", 1500));
+
+		HtmlPage page = this.webClient.getPage("/1/handle_balance");
+
+		HtmlForm form = page.getFormByName("deposit_form");
+
+		form.getInputByName("amount").setValueAttribute("500");
+		form.getButtonByName("btn_deposit").click();
+
+		verify(userService).deposit(1L, 500L);
+	}
 }
