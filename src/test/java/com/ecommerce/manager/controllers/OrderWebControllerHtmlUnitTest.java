@@ -75,4 +75,13 @@ public class OrderWebControllerHtmlUnitTest {
 
 		assertThat(page.getTitleText()).isEqualTo("Edit Order");
 	}
+
+	@Test
+	public void testEditNonExistingOrder() throws Exception {
+		when(orderService.getOrderById(1L)).thenReturn(null);
+
+		HtmlPage page = this.webClient.getPage("/editOrder/1");
+
+		assertThat(page.getBody().getTextContent()).contains("No order found with id: 1");
+	}
 }
