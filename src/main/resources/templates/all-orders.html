@@ -43,6 +43,10 @@
 		<a th:href="@{/}">Show Users</a>
 	</div>
 
+	<div th:if="${error}">
+		<p th:text="${error}" style="color:red;"></p>
+	</div>
+
 </body>
 
 </html>

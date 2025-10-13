@@ -3,6 +3,9 @@ package com.ecommerce.manager.controllers;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -139,5 +142,45 @@ public class OrderWebControllerHtmlUnitTest {
 		HtmlPage page = this.webClient.getPage("/orders");
 
 		assertThat(page.getAnchorByText("Show Users").getHrefAttribute()).isEqualTo("/");
+	}
+
+	public void testInsertNewOrderWhenIllegalStateExceptionIsRaisedShouldRedirectToAllOrdersPageWithErrorMessage()
+			throws Exception {
+		doThrow(new IllegalStateException("Unable to insert new order")).when(orderService)
+				.insertNewOrder(any(Order.class));
+
+		HtmlPage page = this.webClient.getPage("/newOrder");
+
+		final HtmlForm form = page.getFormByName("order_form");
+
+		form.getInputByName("item").setValueAttribute("BOX1");
+		form.getInputByName("price").setValueAttribute("100");
+		form.getInputByName("user.id").setValueAttribute("1");
+
+		HtmlPage resultPage = form.getButtonByName("btn_submit").click();
+
+		verify(orderService).insertNewOrder(new Order(null, Item.BOX1, 100, new User(1L, "u", "n", "e", 1000)));
+
+		assertThat(resultPage.getBody().getTextContent()).contains("Unable to insert new order");
+	}
+
+	public void testUpdateOrderWhenIllegalStateExceptionIsRaisedShouldRedirectToAllOrdersPageWithErrorMessage()
+			throws Exception {
+		doThrow(new IllegalStateException("Unable to update the order")).when(orderService).updateOrderById(anyLong(),
+				any(Order.class));
+
+		HtmlPage page = this.webClient.getPage("/editOrder/1");
+
+		final HtmlForm form = page.getFormByName("order_form");
+
+		form.getInputByName("item").setValueAttribute("BOX1");
+		form.getInputByName("price").setValueAttribute("100");
+		form.getInputByName("user.id").setValueAttribute("1");
+
+		HtmlPage resultPage = form.getButtonByName("btn_submit").click();
+
+		verify(orderService).updateOrderById(1L, new Order(1L, Item.BOX1, 100, new User(1L, "u", "n", "e", 1000)));
+
+		assertThat(resultPage.getBody().getTextContent()).contains("Unable to update the order");
 	}
 }
