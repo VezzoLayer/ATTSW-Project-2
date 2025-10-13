@@ -133,4 +133,13 @@ public class UserWebControllerHtmlUnitTest {
 
 		assertThat(page.getTitleText()).isEqualTo("Handle Balance");
 	}
+
+	@Test
+	public void testHandleBalanceOfANonExistingUser() throws Exception {
+		when(userService.getUserById(1L)).thenReturn(null);
+
+		HtmlPage page = this.webClient.getPage("/1/handle_balance");
+
+		assertThat(page.getBody().getTextContent()).contains("No user found with id: 1");
+	}
 }
