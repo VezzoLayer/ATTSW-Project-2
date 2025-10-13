@@ -3,6 +3,7 @@ package com.ecommerce.manager.controllers;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -158,7 +159,7 @@ public class UserWebControllerHtmlUnitTest {
 	}
 
 	@Test
-	public void testDepositWithLegalParametersShouldCallService() throws Exception {
+	public void testDepositWhenAmountIsAllowedShouldCallService() throws Exception {
 		when(userService.getUserById(1L)).thenReturn(new User(1L, "u1", "n1", "e1", 1500));
 
 		HtmlPage page = this.webClient.getPage("/1/handle_balance");
@@ -169,5 +170,21 @@ public class UserWebControllerHtmlUnitTest {
 		form.getButtonByName("btn_deposit").click();
 
 		verify(userService).deposit(1L, 500L);
+	}
+
+	@Test
+	public void testDepositWhenAmountIsNotAllowedShouldRedirectToMappingUsers() throws Exception {
+		when(userService.getUserById(1L)).thenReturn(new User(1L, "u1", "n1", "e1", 1500));
+		doThrow(new IllegalArgumentException("Amount must be positive")).when(userService).deposit(1L, -500L);
+
+		HtmlPage page = this.webClient.getPage("/1/handle_balance");
+
+		HtmlForm form = page.getFormByName("deposit_form");
+
+		form.getInputByName("amount").setValueAttribute("-500");
+		HtmlPage resultPage = form.getButtonByName("btn_deposit").click();
+
+		verify(userService).deposit(1L, -500L);
+		assertThat(resultPage.getUrl().toString()).endsWith("/");
 	}
 }
