@@ -7,7 +7,32 @@
 </head>
 
 <body>
-	No Orders
+	<div th:if="${orders.empty}">
+		<div>No Orders</div>
+	</div>
+
+	<div th:unless="${orders.empty}">
+		<table id="orders_table">
+			<caption>Orders</caption>
+			<thead>
+				<tr>
+					<th scope="col">ID</th>
+					<th scope="col">Item</th>
+					<th scope="col">Price</th>
+					<th scope="col">User</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="order : ${orders}">
+					<td th:text="${order.id}"></td>
+					<td th:text="${order.item}"></td>
+					<td th:text="${order.price}"></td>
+					<td th:text="${order.user.id}"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
 </body>
 
 </html>
