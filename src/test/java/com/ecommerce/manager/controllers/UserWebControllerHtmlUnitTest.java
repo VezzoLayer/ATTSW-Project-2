@@ -160,8 +160,7 @@ public class UserWebControllerHtmlUnitTest {
 
 		String bodyText = page.getBody().getTextContent();
 
-		assertThat(bodyText).contains("User ID: 1");
-		assertThat(bodyText).contains("Balance: 1500");
+		assertThat(bodyText).contains("User ID: 1").contains("Balance: 1500");
 	}
 
 	@Test
