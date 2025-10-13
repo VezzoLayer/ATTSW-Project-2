@@ -237,4 +237,13 @@ public class UserWebControllerHtmlUnitTest {
 		verify(userService).withdraw(1L, 500L);
 		assertThat(resultPage.getBody().getTextContent()).contains("Balance is not enough");
 	}
+
+	@Test
+	public void testHomePageShouldHaveALinkForShowingOrdersWhenThereIsAtLeastOneUser() throws Exception {
+		when(userService.getAllUsers()).thenReturn(asList(new User(1L, "u1", "n1", "e1", 1000)));
+
+		HtmlPage page = this.webClient.getPage("/");
+
+		assertThat(page.getAnchorByText("Show Orders").getHrefAttribute()).isEqualTo("/orders");
+	}
 }
