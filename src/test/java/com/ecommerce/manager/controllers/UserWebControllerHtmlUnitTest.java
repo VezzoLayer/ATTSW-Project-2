@@ -45,6 +45,9 @@ public class UserWebControllerHtmlUnitTest {
 		HtmlPage page = this.webClient.getPage("/");
 
 		assertThat(page.getBody().getTextContent()).contains("No Users");
+
+		// Scorro tutto il documento e cerco gli elementi 'a' che soddisfano il criterio
+		assertThat(page.getByXPath("//a[text()='Show Orders']")).isEmpty();
 	}
 
 	@Test
