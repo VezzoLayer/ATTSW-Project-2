@@ -7,6 +7,11 @@
 </head>
 
 <body>
+
+	<div>
+		<a th:href="@{/newOrder}">New Order</a>
+	</div>
+
 	<div th:if="${orders.empty}">
 		<div>No Orders</div>
 	</div>

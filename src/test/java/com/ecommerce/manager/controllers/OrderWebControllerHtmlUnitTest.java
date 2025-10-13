@@ -123,4 +123,11 @@ public class OrderWebControllerHtmlUnitTest {
 
 		verify(orderService).insertNewOrder(new Order(null, Item.BOX1, 100, new User(1L, "u", "n", "e", 1000)));
 	}
+
+	@Test
+	public void testAllOrderPageShouldHaveALinkForCreatingANewOrder() throws Exception {
+		HtmlPage page = this.webClient.getPage("/orders");
+
+		assertThat(page.getAnchorByText("New Order").getHrefAttribute()).isEqualTo("/newOrder");
+	}
 }
