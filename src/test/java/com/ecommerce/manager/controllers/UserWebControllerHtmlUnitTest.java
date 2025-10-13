@@ -100,4 +100,20 @@ public class UserWebControllerHtmlUnitTest {
 
 		verify(userService).updateUserById(1L, new User(1L, "modified u", "modified n", "modified e", 2000));
 	}
+
+	@Test
+	public void testEditNewUser() throws Exception {
+		HtmlPage page = this.webClient.getPage("/newUser");
+
+		final HtmlForm form = page.getFormByName("user_form");
+
+		form.getInputByName("username").setValueAttribute("new u");
+		form.getInputByName("name").setValueAttribute("new n");
+		form.getInputByName("email").setValueAttribute("new e");
+		form.getInputByName("balance").setValueAttribute("2000");
+
+		form.getButtonByName("btn_submit").click();
+
+		verify(userService).insertNewUser(new User(null, "new u", "new n", "new e", 2000));
+	}
 }
