@@ -71,16 +71,6 @@ public class UserWebController {
 		return REDIRECT_TO_MAPPING_USERS;
 	}
 
-	@GetMapping("/user/{id}/orders")
-	public String userOrders(@PathVariable long id, Model model) {
-		User userById = userService.getUserById(id);
-
-		model.addAttribute(USER_ATTRIBUTE, userById);
-		model.addAttribute(MESSAGE_ATTRIBUTE, userById == null ? NO_USER_FOUND_MESSAGE + id : "");
-
-		return "all-orders";
-	}
-
 	@GetMapping("/{id}/handle_balance")
 	public String handleBalance(@PathVariable long id, Model model) {
 		User userById = userService.getUserById(id);

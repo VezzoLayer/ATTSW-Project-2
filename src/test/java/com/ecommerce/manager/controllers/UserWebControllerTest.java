@@ -82,7 +82,7 @@ public class UserWebControllerTest {
 	}
 
 	@Test
-	@Parameters({ "/editUser/1, edit-user", "/user/1/orders, all-orders", "/1/handle_balance, handle-balance" })
+	@Parameters({ "/editUser/1, edit-user", "/1/handle_balance, handle-balance" })
 	public void testParameterizedMappingNameWhenTheUserIsFound(String mappingName, String expectedView)
 			throws Exception {
 		User user = new User(1L, "test", "test", "test", 1000);
@@ -124,15 +124,6 @@ public class UserWebControllerTest {
 				.param("email", "test email").param("balance", "2000")).andExpect(view().name("redirect:/"));
 
 		verify(userService).updateUserById(1L, new User(1L, "test username", "test name", "test email", 2000));
-	}
-
-	@Test
-	public void testAllOrdersWhenUserIsNotFound() throws Exception {
-		when(userService.getUserById(1L)).thenReturn(null);
-
-		mvc.perform(get("/user/1/orders")).andExpect(view().name("all-orders"))
-				.andExpect(model().attribute("user", nullValue()))
-				.andExpect(model().attribute("message", "No user found with id: 1"));
 	}
 
 	@Test
