@@ -36,6 +36,7 @@
 					<td th:text="${user.email}"></td>
 					<td th:text="${user.balance}"></td>
 					<td><a th:href="@{'/editUser/' + ${user.id}}">Edit</a></td>
+					<td><a th:href="@{'/' + ${user.id} + '/handle_balance'}">Handle Balance</a></td>
 				</tr>
 			</tbody>
 		</table>
