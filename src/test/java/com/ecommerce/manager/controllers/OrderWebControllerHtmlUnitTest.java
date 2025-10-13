@@ -1,6 +1,8 @@
 package com.ecommerce.manager.controllers;
 
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 import org.htmlunit.WebClient;
 import org.htmlunit.html.HtmlPage;
@@ -28,5 +30,14 @@ public class OrderWebControllerHtmlUnitTest {
 		HtmlPage page = webClient.getPage("/orders");
 
 		assertThat(page.getTitleText()).isEqualTo("Orders");
+	}
+
+	@Test
+	public void testAllOrdersPageWithNoOrders() throws Exception {
+		when(orderService.getAllOrders()).thenReturn(emptyList());
+
+		HtmlPage page = this.webClient.getPage("/orders");
+
+		assertThat(page.getBody().getTextContent()).contains("No Orders");
 	}
 }
