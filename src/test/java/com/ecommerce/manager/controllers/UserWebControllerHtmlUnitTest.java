@@ -142,4 +142,18 @@ public class UserWebControllerHtmlUnitTest {
 
 		assertThat(page.getBody().getTextContent()).contains("No user found with id: 1");
 	}
+
+	@Test
+	public void testHandleBalanceOfExistingUserShouldDisplayIdAndBalance() throws Exception {
+		when(userService.getUserById(1L)).thenReturn(new User(1L, "u1", "n1", "e1", 1500));
+
+		HtmlPage page = this.webClient.getPage("/1/handle_balance");
+
+		assertThat(page.getBody().getTextContent()).doesNotContain("No user found with id: 1");
+
+		String bodyText = page.getBody().getTextContent();
+
+		assertThat(bodyText).contains("User ID: 1");
+		assertThat(bodyText).contains("Balance: 1500");
+	}
 }

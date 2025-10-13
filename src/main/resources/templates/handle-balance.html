@@ -13,6 +13,13 @@
 		<span th:text="${message}"></span>
 	</div>
 
+	<div th:if="${message.empty}">
+		<p>
+			User ID: <span th:text="${user.id}"></span> —
+			Balance: <span th:text="${user.balance}"></span> €
+		</p>
+	</div>
+
 </body>
 
 </html>
