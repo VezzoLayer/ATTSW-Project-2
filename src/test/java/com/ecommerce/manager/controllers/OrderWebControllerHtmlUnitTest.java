@@ -64,11 +64,14 @@ public class OrderWebControllerHtmlUnitTest {
 		String expectedTableContent = """
 				Orders
 				ID Item Price User
-				1 BOX1 100 1
-				2 BOX2 200 1""";
+				1 BOX1 100 1 Edit
+				2 BOX2 200 1 Edit""";
 
 		// replace /t con spazi bianchi e rimuove /r
 		assertThat(table.asNormalizedText().replace("\t", " ").replace("\r", "")).isEqualTo(expectedTableContent);
+
+		page.getAnchorByHref("/editOrder/1");
+		page.getAnchorByHref("/editOrder/2");
 	}
 
 	@Test

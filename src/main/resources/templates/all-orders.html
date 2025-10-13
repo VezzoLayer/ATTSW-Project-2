@@ -33,6 +33,7 @@
 					<td th:text="${order.item}"></td>
 					<td th:text="${order.price}"></td>
 					<td th:text="${order.user.id}"></td>
+					<td><a th:href="@{'/editOrder/' + ${order.id}}">Edit</a></td>
 				</tr>
 			</tbody>
 		</table>
