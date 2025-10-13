@@ -35,6 +35,7 @@
 					<td th:text="${user.name}"></td>
 					<td th:text="${user.email}"></td>
 					<td th:text="${user.balance}"></td>
+					<td><a th:href="@{'/editUser/' + ${user.id}}">Edit</a></td>
 				</tr>
 			</tbody>
 		</table>

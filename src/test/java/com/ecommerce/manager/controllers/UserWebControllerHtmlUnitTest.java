@@ -60,11 +60,14 @@ public class UserWebControllerHtmlUnitTest {
 		String expectedTableContent = """
 				Users
 				ID Username Name Email Balance
-				1 u1 n1 e1 1000
-				2 u2 n2 e2 2000""";
+				1 u1 n1 e1 1000 Edit
+				2 u2 n2 e2 2000 Edit""";
 
 		// replace /t con spazi bianchi e rimuove /r
 		assertThat(table.asNormalizedText().replace("\t", " ").replace("\r", "")).isEqualTo(expectedTableContent);
+
+		page.getAnchorByHref("/editUser/1");
+		page.getAnchorByHref("/editUser/2");
 	}
 
 	@Test
