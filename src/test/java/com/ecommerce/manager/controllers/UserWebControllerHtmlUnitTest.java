@@ -187,4 +187,18 @@ public class UserWebControllerHtmlUnitTest {
 		verify(userService).deposit(1L, -500L);
 		assertThat(resultPage.getUrl().toString()).endsWith("/");
 	}
+
+	@Test
+	public void testWithdrawWhenAmountIsAllowedShouldCallService() throws Exception {
+		when(userService.getUserById(1L)).thenReturn(new User(1L, "u1", "n1", "e1", 1500));
+
+		HtmlPage page = this.webClient.getPage("/1/handle_balance");
+
+		HtmlForm form = page.getFormByName("withdraw_form");
+
+		form.getInputByName("amount").setValueAttribute("500");
+		form.getButtonByName("btn_withdraw").click();
+
+		verify(userService).withdraw(1L, 500L);
+	}
 }

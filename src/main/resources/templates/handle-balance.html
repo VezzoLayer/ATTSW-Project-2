@@ -20,8 +20,13 @@
 		</p>
 
 		<form name="deposit_form" th:action="@{|/${user.id}/deposit|}" method="post">
-			<input type="number" id="amount" name="amount" required />
+			<input type="number" name="amount" required />
 			<button type="submit" name="btn_deposit">Deposit</button>
+		</form>
+
+		<form name="withdraw_form" th:action="@{|/${user.id}/withdraw|}" method="post">
+			<input type="number" name="amount" required />
+			<button type="submit" name="btn_withdraw">Withdraw</button>
 		</form>
 	</div>
 
