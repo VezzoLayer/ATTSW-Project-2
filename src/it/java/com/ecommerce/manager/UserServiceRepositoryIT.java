@@ -2,6 +2,8 @@ package com.ecommerce.manager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,4 +45,15 @@ public class UserServiceRepositoryIT {
 		assertThat(userRepository.findById(savedUser.getId())).contains(modifiedUser);
 	}
 
+	@Test
+	public void testRepositoryCorrectlyFindsUserWithLowBalance() {
+		User userShouldBeFound1 = userService.insertNewUser(new User(null, "u1", "n1", "e1", 800));
+		User userShouldBeFound2 = userService.insertNewUser(new User(null, "u2", "n2", "e2", 500));
+
+		userService.insertNewUser(new User(null, "u3", "n3", "e3", 1500));
+
+		List<User> users = userRepository.findAllUsersWithLowBalance(1000);
+
+		assertThat(users).containsExactly(userShouldBeFound1, userShouldBeFound2);
+	}
 }
