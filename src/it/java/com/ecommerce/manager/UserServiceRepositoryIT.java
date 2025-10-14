@@ -33,4 +33,14 @@ public class UserServiceRepositoryIT {
 		assertThat(userRepository.findById(savedUser.getId())).isPresent();
 	}
 
+	@Test
+	public void testServiceCanUpdateRepository() {
+		User savedUser = userService.insertNewUser(new User(null, "username", "name", "email", 1000));
+
+		User modifiedUser = userService.updateUserById(savedUser.getId(),
+				new User(savedUser.getId(), "mod username", "mod name", "mod email", 2000));
+
+		assertThat(userRepository.findById(savedUser.getId())).contains(modifiedUser);
+	}
+
 }

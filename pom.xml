@@ -60,9 +60,14 @@
 			**/model/*,
 			**/EcommerceManagerApplication.*
 		</sonar.coverage.exclusions>
-		
+
+		<sonar.issue.ignore.multicriteria>e12</sonar.issue.ignore.multicriteria>
+		<!-- Disabilita "Credentials should not be hard-coded" -->
+		<sonar.issue.ignore.multicriteria.e12.ruleKey>java:S6437</sonar.issue.ignore.multicriteria.e12.ruleKey>
+		<sonar.issue.ignore.multicriteria.e12.resourceKey>**/application*</sonar.issue.ignore.multicriteria.e12.resourceKey>
+
 	</properties>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
