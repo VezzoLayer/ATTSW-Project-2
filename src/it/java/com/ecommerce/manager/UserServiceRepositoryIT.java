@@ -56,4 +56,16 @@ public class UserServiceRepositoryIT {
 
 		assertThat(users).containsExactly(userShouldBeFound1, userShouldBeFound2);
 	}
+
+	@Test
+	public void testServiceCanCorrectlyDepositIntoRepository() {
+		long initialBalance = 1000;
+		User savedUser = userService.insertNewUser(new User(null, "username", "name", "email", initialBalance));
+
+		long amount = 1000;
+		userService.deposit(savedUser.getId(), amount);
+
+		final long finalBalance = initialBalance + amount;
+		assertThat(userRepository.findById(savedUser.getId()).orElseThrow().getBalance()).isEqualTo(finalBalance);
+	}
 }
