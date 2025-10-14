@@ -59,13 +59,19 @@ public class UserServiceRepositoryIT {
 
 	@Test
 	public void testServiceCanCorrectlyDepositIntoRepository() {
-		long initialBalance = 1000;
-		User savedUser = userService.insertNewUser(new User(null, "username", "name", "email", initialBalance));
+		User savedUser = userService.insertNewUser(new User(null, "username", "name", "email", 1000));
 
-		long amount = 1000;
-		userService.deposit(savedUser.getId(), amount);
+		userService.deposit(savedUser.getId(), 1000);
 
-		final long finalBalance = initialBalance + amount;
-		assertThat(userRepository.findById(savedUser.getId()).orElseThrow().getBalance()).isEqualTo(finalBalance);
+		assertThat(userRepository.findById(savedUser.getId()).orElseThrow().getBalance()).isEqualTo(2000);
+	}
+
+	@Test
+	public void testServiceCanCorrectlyWithdrawIntoRepository() {
+		User savedUser = userService.insertNewUser(new User(null, "username", "name", "email", 2000));
+
+		userService.withdraw(savedUser.getId(), 1000);
+
+		assertThat(userRepository.findById(savedUser.getId()).orElseThrow().getBalance()).isEqualTo(1000);
 	}
 }
