@@ -51,8 +51,8 @@
 		</sonar.sources>
 		<!-- Rileva ulteriori tests configurati nel build-helper-maven-plugin -->
 		<sonar.tests>
-			${project.build.testSourceDirectory}
-			<!-- ${basedir}/src/it/java, -->
+			${project.build.testSourceDirectory},
+			${basedir}/src/it/java
 			<!-- ${basedir}/src/e2e/java -->
 		</sonar.tests>
 		<!-- Esclude Model e Application -->
@@ -129,6 +129,12 @@
 			<artifactId>htmlunit</artifactId>
 			<scope>test</scope>
 		</dependency>
+		
+		<dependency>
+		    <groupId>org.postgresql</groupId>
+		    <artifactId>postgresql</artifactId>
+		    <scope>runtime</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -169,6 +175,10 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<executions>
+			        <execution>
+					<id>default</id>
+						<phase>none</phase>
+			        </execution>
 					<execution>
 					<id>default-it</id>
 						<configuration>
@@ -196,6 +206,44 @@
 						<goals>
 							<goal>integration-test</goal>
 							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>io.fabric8</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.46.0</version>
+				<configuration>
+					<images>
+						<image>
+							<name>postgres:13.22</name>
+							<run>
+								<ports>
+									<port>5432:5432</port>
+								</ports>
+								<env>
+									<POSTGRES_DB>e-commercedb</POSTGRES_DB>
+									<POSTGRES_USER>user</POSTGRES_USER>
+									<POSTGRES_PASSWORD>pass</POSTGRES_PASSWORD>
+								</env>
+							</run>
+						</image>
+					</images>
+				</configuration>
+				<executions>
+					<execution>
+						<id>docker-start</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>start</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>docker-stop</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>stop</goal>
 						</goals>
 					</execution>
 				</executions>
@@ -308,7 +356,7 @@
 				</plugins>
 			</build>
 		</profile>
-		
+
 		<!-- Profilo che lega l'esecuzione di jacoco e coveralls perché coveralls richiede i report di jacoco -->
 		<profile>
 			<id>coveralls</id>

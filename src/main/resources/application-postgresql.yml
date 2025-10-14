@@ -1,0 +1,9 @@
+# Configurazione Postgresql
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/e-commercedb
+    username: user
+    password: pass
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
