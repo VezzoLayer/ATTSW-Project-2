@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<title>Edit Order</title>
+</head>
+
+<body>
+	<h1>Edit Order</h1>
+
+	<div th:unless="${message.empty}">
+		<span th:text="${message}"></span>
+	</div>
+
+	<div th:if="${message.empty}">
+		<form name="order_form" action="#" th:action="@{/saveOrder}" th:object="${order}" method="post">
+			<input type="hidden" th:field="*{id}" />
+			<p>
+				Item: <input type="text" th:field="*{item}" />
+			</p>
+			<p>
+				Price: <input type="text" th:field="*{price}" />
+			</p>
+			<p>
+				User: <input type="text" th:field="*{user.id}" />
+			</p>
+			<button type="submit" name="btn_submit">Save</button>
+		</form>
+	</div>
+
+</body>
+
+</html>

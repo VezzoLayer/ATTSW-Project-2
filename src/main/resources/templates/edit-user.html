@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<title>Edit User</title>
+</head>
+
+<body>
+	<h1>Edit User</h1>
+
+	<div th:unless="${message.empty}">
+		<span th:text="${message}"></span>
+	</div>
+
+	<div th:if="${message.empty}">
+		<form name="user_form" action="#" th:action="@{/saveUser}" th:object="${user}" method="post">
+			<input type="hidden" th:field="*{id}" />
+			<p>
+				Username: <input type="text" th:field="*{username}" />
+			</p>
+			<p>
+				Name: <input type="text" th:field="*{name}" />
+			</p>
+			<p>
+				Email: <input type="text" th:field="*{email}" />
+			</p>
+			<p>
+				Balance: <input type="text" th:field="*{balance}" />
+			</p>
+			<button type="submit" name="btn_submit">Save</button>
+		</form>
+	</div>
+
+</body>
+
+</html>

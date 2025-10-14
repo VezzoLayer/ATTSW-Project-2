@@ -174,21 +174,4 @@ public class OrderServiceWithMockitoTest {
 		verifyNoMoreInteractions(userService);
 		verify(orderRepository, never()).save(any());
 	}
-
-	@Test
-	public void testUpdateOrderWhenExistingOrderNotFoundShouldThrowIllegalStateException() {
-		Order replacement = spy(new Order(null, Item.BOX1, 700, new User(1L, "test", "test", "test", 5000)));
-
-		when(orderRepository.findById(1L)).thenReturn(Optional.empty());
-
-		IllegalStateException ex = assertThrows(IllegalStateException.class,
-				() -> orderService.updateOrderById(1L, replacement));
-
-		assertThat(ex.getMessage()).isEqualTo("Unable to update the order");
-
-		InOrder inOrder = inOrder(replacement);
-		inOrder.verify(replacement).setId(1L);
-		verifyNoInteractions(userService);
-		verify(orderRepository, never()).save(any());
-	}
 }

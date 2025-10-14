@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<title>Handle Balance</title>
+</head>
+
+<body>
+	<h1>Handle Balance</h1>
+
+	<div th:unless="${message.empty}">
+		<span th:text="${message}"></span>
+	</div>
+
+	<div th:if="${message.empty}">
+		<p>
+			User ID: <span th:text="${user.id}"></span> —
+			Balance: <span th:text="${user.balance}"></span> €
+		</p>
+
+		<form name="deposit_form" th:action="@{|/${user.id}/deposit|}" method="post">
+			<input type="number" name="amount" required />
+			<button type="submit" name="btn_deposit">Deposit</button>
+		</form>
+
+		<form name="withdraw_form" th:action="@{|/${user.id}/withdraw|}" method="post">
+			<input type="number" name="amount" required />
+			<button type="submit" name="btn_withdraw">Withdraw</button>
+		</form>
+	</div>
+
+</body>
+
+</html>
