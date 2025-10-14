@@ -2,6 +2,9 @@ package com.ecommerce.manager.model;
 
 import java.util.Objects;
 
+import org.springframework.lang.NonNull;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -17,6 +20,9 @@ public class Order {
 	@Id
 	@GeneratedValue
 	private Long id;
+	
+	@NonNull
+    @Column(nullable = false)
 	private Item item;
 	private long price;
 

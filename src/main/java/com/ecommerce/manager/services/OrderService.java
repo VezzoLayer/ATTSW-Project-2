@@ -12,6 +12,7 @@ import com.ecommerce.manager.repositories.OrderRepository;
 public class OrderService {
 
 	private OrderRepository orderRepository;
+
 	private UserService userService;
 
 	public OrderService(OrderRepository orderRepository, UserService userService) {
@@ -27,6 +28,7 @@ public class OrderService {
 		return orderRepository.findById(id).orElse(null);
 	}
 
+	@Transactional
 	public Order insertNewOrder(Order order) {
 		order.setId(null);
 
