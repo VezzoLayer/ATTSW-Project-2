@@ -4,20 +4,28 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.ecommerce.manager.model.Order;
 import com.ecommerce.manager.model.User;
+import com.ecommerce.manager.repositories.OrderRepository;
 import com.ecommerce.manager.repositories.UserRepository;
 
 @Service
 public class UserService {
 
 	private UserRepository userRepository;
+	private OrderRepository orderRepository;
 
-	public UserService(UserRepository userRepository) {
+	public UserService(UserRepository userRepository, OrderRepository orderRepository) {
 		this.userRepository = userRepository;
+		this.orderRepository = orderRepository;
 	}
 
 	public List<User> getAllUsers() {
 		return userRepository.findAll();
+	}
+
+	public List<Order> getAllOrders() {
+		return orderRepository.findAll();
 	}
 
 	public User getUserById(long id) {
@@ -67,4 +75,5 @@ public class UserService {
 		user.setBalance(user.getBalance() - amount);
 		userRepository.save(user);
 	}
+
 }

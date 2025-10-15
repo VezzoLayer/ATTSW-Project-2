@@ -26,7 +26,10 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
+import com.ecommerce.manager.model.Item;
+import com.ecommerce.manager.model.Order;
 import com.ecommerce.manager.model.User;
+import com.ecommerce.manager.repositories.OrderRepository;
 import com.ecommerce.manager.repositories.UserRepository;
 
 @RunWith(JUnitParamsRunner.class)
@@ -37,6 +40,9 @@ public class UserServiceWithMockitoTest {
 
 	@Mock
 	private UserRepository userRepository;
+
+	@Mock
+	private OrderRepository orderRepository;
 
 	@InjectMocks
 	private UserService userService;
@@ -49,6 +55,18 @@ public class UserServiceWithMockitoTest {
 		when(userRepository.findAll()).thenReturn(asList(user1, user2));
 
 		assertThat(userService.getAllUsers()).containsExactly(user1, user2);
+	}
+
+	@Test
+	public void testGetAllOrders() {
+		User user = new User(1L, "test", "test", "test", 5000);
+
+		Order order1 = new Order(1L, Item.BOX1, 700, user);
+		Order order2 = new Order(2L, Item.BOX2, 900, user);
+
+		when(orderRepository.findAll()).thenReturn(asList(order1, order2));
+
+		assertThat(userService.getAllOrders()).containsExactly(order1, order2);
 	}
 
 	@Test

@@ -27,6 +27,7 @@ public class OrderService {
 		return orderRepository.findById(id).orElse(null);
 	}
 
+	@Transactional
 	public Order insertNewOrder(Order order) {
 		order.setId(null);
 
