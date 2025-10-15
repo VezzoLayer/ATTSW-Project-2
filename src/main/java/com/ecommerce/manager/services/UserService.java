@@ -3,6 +3,7 @@ package com.ecommerce.manager.services;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ecommerce.manager.model.Order;
 import com.ecommerce.manager.model.User;
@@ -39,6 +40,19 @@ public class UserService {
 	public User insertNewUser(User user) {
 		user.setId(null);
 		return userRepository.save(user);
+	}
+
+	@Transactional
+	public Order insertNewOrder(Order order) {
+		order.setId(null);
+
+		try {
+			withdraw(order.getUser().getId(), order.getPrice());
+		} catch (IllegalArgumentException | IllegalStateException e) {
+			throw new IllegalStateException("Unable to insert new order");
+		}
+
+		return orderRepository.save(order);
 	}
 
 	public User updateUserById(long id, User replacement) {

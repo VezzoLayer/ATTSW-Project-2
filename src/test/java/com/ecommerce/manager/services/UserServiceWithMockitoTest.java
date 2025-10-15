@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -115,6 +117,46 @@ public class UserServiceWithMockitoTest {
 		InOrder inOrder = inOrder(userToSave, userRepository);
 		inOrder.verify(userToSave).setId(null);
 		inOrder.verify(userRepository).save(userToSave);
+	}
+
+	@Test
+	public void testInsertNewOrderWhenSuccessShouldSetIdToNullAndReturnsSavedOrder() {
+		User user = new User(1L, "test", "test", "test", 5000);
+
+		Order orderToSave = spy(new Order(70L, Item.BOX1, 700, user));
+		Order savedOrder = new Order(1L, Item.BOX2, 900, user);
+
+		UserService userServiceSpy = spy(userService);
+		doNothing().when(userServiceSpy).withdraw(anyLong(), anyLong());
+
+		when(orderRepository.save(any(Order.class))).thenReturn(savedOrder);
+
+		Order result = userServiceSpy.insertNewOrder(orderToSave);
+
+		assertThat(result).isSameAs(savedOrder);
+
+		InOrder inOrder = inOrder(orderToSave, userServiceSpy, orderRepository);
+		inOrder.verify(orderToSave).setId(null);
+		inOrder.verify(userServiceSpy).withdraw(1L, 700L);
+		inOrder.verify(orderRepository).save(orderToSave);
+	}
+
+	@Test
+	public void testInsertNewOrderWhenFailsShouldThrowIllegalStateException() {
+		Order orderToSave = spy(new Order(null, Item.BOX1, 700, new User(1L, "test", "test", "test", 500)));
+
+		UserService userServiceSpy = spy(userService);
+		doThrow(new IllegalStateException("Unable to insert new order")).when(userServiceSpy).withdraw(anyLong(),
+				anyLong());
+
+		IllegalStateException ex = assertThrows(IllegalStateException.class,
+				() -> userServiceSpy.insertNewOrder(orderToSave));
+
+		assertThat(ex.getMessage()).isEqualTo("Unable to insert new order");
+
+		InOrder inOrder = inOrder(orderToSave);
+		inOrder.verify(orderToSave).setId(null);
+		verifyNoInteractions(orderRepository);
 	}
 
 	@Test
