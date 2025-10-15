@@ -60,6 +60,22 @@ public class UserService {
 		return userRepository.save(replacement);
 	}
 
+	@Transactional
+	public Order updateOrderById(long id, Order replacement) {
+		Order existing = orderRepository.findById(id).orElse(null);
+
+		replacement.setId(id);
+
+		try {
+			deposit(existing.getUser().getId(), existing.getPrice());
+			withdraw(replacement.getUser().getId(), replacement.getPrice());
+		} catch (IllegalArgumentException | IllegalStateException e) {
+			throw new IllegalStateException("Unable to update the order");
+		}
+
+		return orderRepository.save(replacement);
+	}
+
 	public void deposit(long id, long amount) {
 		if (amount < 0) {
 			throw new IllegalArgumentException("Deposit amount cannot be negative");

@@ -156,6 +156,7 @@ public class UserServiceWithMockitoTest {
 
 		InOrder inOrder = inOrder(orderToSave);
 		inOrder.verify(orderToSave).setId(null);
+
 		verifyNoInteractions(orderRepository);
 	}
 
@@ -173,6 +174,85 @@ public class UserServiceWithMockitoTest {
 		InOrder inOrder = inOrder(replacement, userRepository);
 		inOrder.verify(replacement).setId(1L);
 		inOrder.verify(userRepository).save(replacement);
+	}
+
+	@Test
+	public void testUpdateOrderByIdWhenSuccessSetsIdToArgumentAndReturnsSavedOrder() {
+		User user1 = new User(1L, "test", "test", "test", 5000);
+		User user2 = new User(2L, "test", "test", "test", 5000);
+
+		Order replacement = spy(new Order(null, Item.BOX1, 500, user1));
+		Order replaced = new Order(1L, Item.BOX2, 700, user2);
+
+		UserService userServiceSpy = spy(userService);
+		doNothing().when(userServiceSpy).withdraw(anyLong(), anyLong());
+		doNothing().when(userServiceSpy).deposit(anyLong(), anyLong());
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(replaced));
+		when(orderRepository.save(any(Order.class))).thenReturn(replacement);
+
+		Order result = userServiceSpy.updateOrderById(1L, replacement);
+
+		assertThat(result).isSameAs(replacement);
+
+		InOrder inOrder = inOrder(replacement, userServiceSpy, orderRepository);
+		inOrder.verify(replacement).setId(1L);
+		inOrder.verify(userServiceSpy).deposit(2L, 700);
+		inOrder.verify(userServiceSpy).withdraw(1L, 500);
+		inOrder.verify(orderRepository).save(replacement);
+	}
+
+	@Test
+	public void testUpdateOrderWhenDepositFailsShouldThrowIllegalStateException() {
+		User user = new User(1L, "test", "test", "test", 5000);
+
+		Order replacement = spy(new Order(null, Item.BOX1, 700, user));
+		Order replaced = new Order(1L, Item.BOX2, 900, user);
+
+		UserService userServiceSpy = spy(userService);
+		doThrow(new IllegalStateException("Unable to update the order")).when(userServiceSpy).deposit(anyLong(),
+				anyLong());
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(replaced));
+
+		IllegalStateException ex = assertThrows(IllegalStateException.class,
+				() -> userServiceSpy.updateOrderById(1L, replacement));
+
+		assertThat(ex.getMessage()).isEqualTo("Unable to update the order");
+
+		InOrder inOrder = inOrder(replacement, userServiceSpy);
+		inOrder.verify(replacement).setId(1L);
+		inOrder.verify(userServiceSpy).deposit(1L, 900);
+
+		verify(userServiceSpy, never()).withdraw(anyLong(), anyLong());
+		verify(orderRepository, never()).save(any());
+	}
+
+	@Test
+	public void testUpdateOrderWhenWithdrawFailsShouldThrowIllegalStateException() {
+		User user = new User(1L, "test", "test", "test", 5000);
+
+		Order replacement = spy(new Order(null, Item.BOX1, 700, user));
+		Order replaced = new Order(1L, Item.BOX2, 1000, user);
+
+		UserService userServiceSpy = spy(userService);
+		doNothing().when(userServiceSpy).deposit(anyLong(), anyLong());
+		doThrow(new IllegalStateException("Unable to update the order")).when(userServiceSpy).withdraw(anyLong(),
+				anyLong());
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(replaced));
+
+		IllegalStateException ex = assertThrows(IllegalStateException.class,
+				() -> userServiceSpy.updateOrderById(1L, replacement));
+
+		assertThat(ex.getMessage()).isEqualTo("Unable to update the order");
+
+		InOrder inOrder = inOrder(replacement, userServiceSpy);
+		inOrder.verify(replacement).setId(1L);
+		inOrder.verify(userServiceSpy).deposit(1L, 1000);
+		inOrder.verify(userServiceSpy).withdraw(1L, 700);
+
+		verify(orderRepository, never()).save(any());
 	}
 
 	@Test
