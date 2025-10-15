@@ -1,6 +1,7 @@
 package com.ecommerce.manager;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,7 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ecommerce.manager.model.Item;
 import com.ecommerce.manager.model.Order;
@@ -41,5 +45,18 @@ public class OrderServiceRepositoryIT {
 
 		assertThat(orderRepository.findById(savedOrder.getId())).isPresent();
 		assertThat(userService.getUserById(user.getId()).getBalance()).isEqualTo(1500);
+	}
+
+	@Test
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	public void testServiceInsertNewOrderWhenRepositorySaveFailsShouldRollbackUserBalance() {
+		User user = userService.insertNewUser(new User(null, "u1", "n1", "e1", 2000));
+		Order notSavedOrder = new Order(null, null, 500, user);
+
+		assertThatThrownBy(() -> orderService.insertNewOrder(notSavedOrder))
+				.isInstanceOf(DataIntegrityViolationException.class);
+
+		assertThat(orderRepository.findById(notSavedOrder.getId()).orElse(null)).isNull();
+		assertThat(userService.getUserById(user.getId()).getBalance()).isEqualTo(2000);
 	}
 }
