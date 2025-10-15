@@ -86,6 +86,22 @@ public class UserServiceWithMockitoTest {
 	}
 
 	@Test
+	public void testGetOrderByIdCorrectlyFound() {
+		Order order = new Order(1L, Item.BOX1, 700, new User(1L, "test", "test", "test", 5000));
+
+		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+
+		assertThat(userService.getOrderById(1)).isSameAs(order);
+	}
+
+	@Test
+	public void testGetOrderByIdNotFound() {
+		when(orderRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+		assertThat(userService.getOrderById(1)).isNull();
+	}
+
+	@Test
 	public void testInsertNewUserShouldSetIdToNullAndReturnsSavedUser() {
 		User userToSave = spy(new User(70L, "", "", "", 0));
 		User savedUser = new User(1L, "saved", "saved", "saved", 3000);

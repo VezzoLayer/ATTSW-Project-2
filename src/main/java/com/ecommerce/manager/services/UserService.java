@@ -32,6 +32,10 @@ public class UserService {
 		return userRepository.findById(id).orElse(null);
 	}
 
+	public Order getOrderById(long id) {
+		return orderRepository.findById(id).orElse(null);
+	}
+
 	public User insertNewUser(User user) {
 		user.setId(null);
 		return userRepository.save(user);
