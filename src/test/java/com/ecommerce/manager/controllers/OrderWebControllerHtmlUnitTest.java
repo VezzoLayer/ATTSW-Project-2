@@ -23,7 +23,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.ecommerce.manager.model.Item;
 import com.ecommerce.manager.model.Order;
 import com.ecommerce.manager.model.User;
-import com.ecommerce.manager.services.OrderService;
+import com.ecommerce.manager.services.UserService;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(controllers = UserWebController.class)
@@ -33,7 +33,7 @@ public class OrderWebControllerHtmlUnitTest {
 	private WebClient webClient;
 
 	@MockitoBean
-	private OrderService orderService;
+	private UserService userService;
 
 	@Test
 	public void testAllOrdersPageTitle() throws Exception {
@@ -44,7 +44,7 @@ public class OrderWebControllerHtmlUnitTest {
 
 	@Test
 	public void testAllOrdersPageWithNoOrders() throws Exception {
-		when(orderService.getAllOrders()).thenReturn(emptyList());
+		when(userService.getAllOrders()).thenReturn(emptyList());
 
 		HtmlPage page = this.webClient.getPage("/orders");
 
@@ -55,7 +55,7 @@ public class OrderWebControllerHtmlUnitTest {
 	public void testAllOrdersPageWithOrdersShouldShowThemInATable() throws Exception {
 		User user = new User(1L, "u1", "n1", "e1", 1000);
 
-		when(orderService.getAllOrders())
+		when(userService.getAllOrders())
 				.thenReturn(asList(new Order(1L, Item.BOX1, 100, user), new Order(2L, Item.BOX2, 200, user)));
 
 		HtmlPage page = this.webClient.getPage("/orders");
@@ -86,7 +86,7 @@ public class OrderWebControllerHtmlUnitTest {
 
 	@Test
 	public void testEditNonExistingOrder() throws Exception {
-		when(orderService.getOrderById(1L)).thenReturn(null);
+		when(userService.getOrderById(1L)).thenReturn(null);
 
 		HtmlPage page = this.webClient.getPage("/editOrder/1");
 
@@ -98,7 +98,7 @@ public class OrderWebControllerHtmlUnitTest {
 		User user1 = new User(1L, "u1", "n1", "e1", 1000);
 		User user2 = new User(2L, "u2", "n2", "e2", 2000);
 
-		when(orderService.getOrderById(1L)).thenReturn(new Order(1L, Item.BOX1, 100, user1));
+		when(userService.getOrderById(1L)).thenReturn(new Order(1L, Item.BOX1, 100, user1));
 
 		HtmlPage page = this.webClient.getPage("/editOrder/1");
 
@@ -112,7 +112,7 @@ public class OrderWebControllerHtmlUnitTest {
 
 		form.getButtonByName("btn_submit").click();
 
-		verify(orderService).updateOrderById(1L, new Order(1L, Item.BOX2, 200, user2));
+		verify(userService).updateOrderById(1L, new Order(1L, Item.BOX2, 200, user2));
 	}
 
 	@Test
@@ -127,7 +127,7 @@ public class OrderWebControllerHtmlUnitTest {
 
 		form.getButtonByName("btn_submit").click();
 
-		verify(orderService).insertNewOrder(new Order(null, Item.BOX1, 100, new User(1L, "u", "n", "e", 1000)));
+		verify(userService).insertNewOrder(new Order(null, Item.BOX1, 100, new User(1L, "u", "n", "e", 1000)));
 	}
 
 	@Test
@@ -146,7 +146,7 @@ public class OrderWebControllerHtmlUnitTest {
 
 	public void testInsertNewOrderWhenIllegalStateExceptionIsRaisedShouldRedirectToAllOrdersPageWithErrorMessage()
 			throws Exception {
-		doThrow(new IllegalStateException("Unable to insert new order")).when(orderService)
+		doThrow(new IllegalStateException("Unable to insert new order")).when(userService)
 				.insertNewOrder(any(Order.class));
 
 		HtmlPage page = this.webClient.getPage("/newOrder");
@@ -159,14 +159,14 @@ public class OrderWebControllerHtmlUnitTest {
 
 		HtmlPage resultPage = form.getButtonByName("btn_submit").click();
 
-		verify(orderService).insertNewOrder(new Order(null, Item.BOX1, 100, new User(1L, "u", "n", "e", 1000)));
+		verify(userService).insertNewOrder(new Order(null, Item.BOX1, 100, new User(1L, "u", "n", "e", 1000)));
 
 		assertThat(resultPage.getBody().getTextContent()).contains("Unable to insert new order");
 	}
 
 	public void testUpdateOrderWhenIllegalStateExceptionIsRaisedShouldRedirectToAllOrdersPageWithErrorMessage()
 			throws Exception {
-		doThrow(new IllegalStateException("Unable to update the order")).when(orderService).updateOrderById(anyLong(),
+		doThrow(new IllegalStateException("Unable to update the order")).when(userService).updateOrderById(anyLong(),
 				any(Order.class));
 
 		HtmlPage page = this.webClient.getPage("/editOrder/1");
@@ -179,7 +179,7 @@ public class OrderWebControllerHtmlUnitTest {
 
 		HtmlPage resultPage = form.getButtonByName("btn_submit").click();
 
-		verify(orderService).updateOrderById(1L, new Order(1L, Item.BOX1, 100, new User(1L, "u", "n", "e", 1000)));
+		verify(userService).updateOrderById(1L, new Order(1L, Item.BOX1, 100, new User(1L, "u", "n", "e", 1000)));
 
 		assertThat(resultPage.getBody().getTextContent()).contains("Unable to update the order");
 	}

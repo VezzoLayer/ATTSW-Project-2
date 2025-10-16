@@ -163,9 +163,6 @@
 					<includes>
 						<include>**/*Test.java</include>
 					</includes>
-					<excludes>
-						<exclude>**/*HtmlUnitTest.java</exclude>
-					</excludes>
 				</configuration>
 			</plugin>
 			<plugin>
