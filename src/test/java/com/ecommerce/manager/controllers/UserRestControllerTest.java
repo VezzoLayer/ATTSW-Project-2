@@ -22,6 +22,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.ecommerce.manager.model.Item;
+import com.ecommerce.manager.model.Order;
 import com.ecommerce.manager.model.User;
 import com.ecommerce.manager.services.UserService;
 
@@ -52,6 +54,30 @@ public class UserRestControllerTest {
 				.andExpect(jsonPath("$[0].balance", is(3000))).andExpect(jsonPath("$[1].id", is(2)))
 				.andExpect(jsonPath("$[1].username", is("user 2"))).andExpect(jsonPath("$[1].name", is("test")))
 				.andExpect(jsonPath("$[1].email", is("test"))).andExpect(jsonPath("$[1].balance", is(4000)));
+	}
+
+	@Test
+	public void testAllOrdersEmpty() throws Exception {
+		this.mvc.perform(get("/api/orders").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+				.andExpect(content().json("[]"));
+	}
+
+	@Test
+	public void testAllOrdersWhenThereIsSome() throws Exception {
+		User user = new User(1L, "user 1", "test", "test", 3000);
+
+		when(userService.getAllOrders())
+				.thenReturn(asList(new Order(1L, Item.BOX1, 800, user), new Order(2L, Item.BOX2, 500, user)));
+
+		this.mvc.perform(get("/api/orders").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+				.andExpect(jsonPath("$[0].id", is(1))).andExpect(jsonPath("$[0].item", is("BOX1")))
+				.andExpect(jsonPath("$[0].price", is(800))).andExpect(jsonPath("$[0].user.username", is("user 1")))
+				.andExpect(jsonPath("$[0].user.name", is("test"))).andExpect(jsonPath("$[0].user.email", is("test")))
+				.andExpect(jsonPath("$[0].user.balance", is(3000))).andExpect(jsonPath("$[1].id", is(2)))
+				.andExpect(jsonPath("$[1].item", is("BOX2"))).andExpect(jsonPath("$[1].price", is(500)))
+				.andExpect(jsonPath("$[1].user.id", is(1))).andExpect(jsonPath("$[1].user.username", is("user 1")))
+				.andExpect(jsonPath("$[1].user.name", is("test"))).andExpect(jsonPath("$[1].user.email", is("test")))
+				.andExpect(jsonPath("$[1].user.balance", is(3000)));
 	}
 
 	@Test

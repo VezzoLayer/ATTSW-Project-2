@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ecommerce.manager.model.Order;
 import com.ecommerce.manager.model.User;
 import com.ecommerce.manager.services.UserService;
 
@@ -32,6 +33,11 @@ public class UserRestController {
 	@GetMapping("/users")
 	public List<User> allUsers() {
 		return userService.getAllUsers();
+	}
+
+	@GetMapping("/orders")
+	public List<Order> allOrders() {
+		return userService.getAllOrders();
 	}
 
 	@GetMapping("/users/{id}")
