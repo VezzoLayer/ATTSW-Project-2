@@ -151,6 +151,14 @@ public class UserWebControllerTest {
 	}
 
 	@Test
+	public void testEditNewOrder() throws Exception {
+		mvc.perform(get("/newOrder")).andExpect(view().name("edit-order"))
+				.andExpect(model().attribute("order", new Order())).andExpect(model().attribute("message", ""));
+
+		verifyNoMoreInteractions(userService);
+	}
+
+	@Test
 	public void testPostUserWithoutIdShouldInsertNewUser() throws Exception {
 		mvc.perform(post("/saveUser").param("username", "test username").param("name", "test name")
 				.param("email", "test email").param("balance", "2000")).andExpect(view().name("redirect:/"));

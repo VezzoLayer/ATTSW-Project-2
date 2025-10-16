@@ -84,6 +84,14 @@ public class UserWebController {
 		return "edit-user";
 	}
 
+	@GetMapping("/newOrder")
+	public String newOrder(Model model) {
+		model.addAttribute(ORDER_ATTRIBUTE, new Order());
+		model.addAttribute(MESSAGE_ATTRIBUTE, "");
+
+		return "edit-order";
+	}
+
 	@PostMapping("/saveUser")
 	public String saveUser(User user) {
 		final Long id = user.getId();

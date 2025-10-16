@@ -46,16 +46,15 @@ public class OrderWebController {
 	 * "No order found with id: " + id : "");
 	 * 
 	 * return "edit-order"; }
+	 * 
+	 * 
+	 * @GetMapping("/newOrder") public String newOrder(Model model) {
+	 * model.addAttribute(ORDER_ATTRIBUTE, new Order());
+	 * model.addAttribute(MESSAGE_ATTRIBUTE, "");
+	 * 
+	 * return "edit-order"; }
 	 */
 	
-	@GetMapping("/newOrder")
-	public String newOrder(Model model) {
-		model.addAttribute(ORDER_ATTRIBUTE, new Order());
-		model.addAttribute(MESSAGE_ATTRIBUTE, "");
-
-		return "edit-order";
-	}
-
 	@PostMapping("/saveOrder")
 	public String saveOrder(Order order) {
 		final Long id = order.getId();

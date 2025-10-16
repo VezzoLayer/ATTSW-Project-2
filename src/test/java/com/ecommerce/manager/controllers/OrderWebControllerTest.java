@@ -77,16 +77,16 @@ public class OrderWebControllerTest {
 	 * mvc.perform(get("/editOrder/1")).andExpect(view().name("edit-order"))
 	 * .andExpect(model().attribute("order", nullValue()))
 	 * .andExpect(model().attribute("message", "No order found with id: 1")); }
+	 * 
+	 * 
+	 * @Test public void testEditNewOrder() throws Exception {
+	 * mvc.perform(get("/newOrder")).andExpect(view().name("edit-order"))
+	 * .andExpect(model().attribute("order", new
+	 * Order())).andExpect(model().attribute("message", ""));
+	 * 
+	 * verifyNoMoreInteractions(orderService); }
 	 */
 	
-	@Test
-	public void testEditNewOrder() throws Exception {
-		mvc.perform(get("/newOrder")).andExpect(view().name("edit-order"))
-				.andExpect(model().attribute("order", new Order())).andExpect(model().attribute("message", ""));
-
-		verifyNoMoreInteractions(orderService);
-	}
-
 	@Test
 	public void testPostOrderWithoutIdShouldInsertNewOrder() throws Exception {
 		mvc.perform(post("/saveOrder").param("item", "BOX1").param("price", "700").param("user.name", "test")
