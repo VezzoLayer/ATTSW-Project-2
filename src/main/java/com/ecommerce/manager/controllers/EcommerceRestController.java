@@ -20,13 +20,13 @@ import com.ecommerce.manager.services.EcommerceService;
 
 @RestController
 @RequestMapping("/api")
-public class UserRestController {
+public class EcommerceRestController {
 
 	private EcommerceService ecommerceService;
 
 	private static final String MESSAGE_ATTRIBUTE = "message";
 
-	public UserRestController(EcommerceService ecommerceService) {
+	public EcommerceRestController(EcommerceService ecommerceService) {
 		this.ecommerceService = ecommerceService;
 	}
 
