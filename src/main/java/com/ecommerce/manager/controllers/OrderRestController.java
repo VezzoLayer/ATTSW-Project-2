@@ -29,16 +29,14 @@ public class OrderRestController {
 		this.orderService = orderService;
 	}
 
-	@GetMapping
-	public List<Order> allOrders() {
-		return orderService.getAllOrders();
-	}
-
-	@GetMapping("/{id}")
-	public Order oneOrder(@PathVariable long id) {
-		return orderService.getOrderById(id);
-	}
-
+	/*
+	 * @GetMapping public List<Order> allOrders() { return
+	 * orderService.getAllOrders(); }
+	 * 
+	 * @GetMapping("/{id}") public Order oneOrder(@PathVariable long id) { return
+	 * orderService.getOrderById(id); }
+	 */
+	
 	@PostMapping("/new")
 	public Order newOrder(@RequestBody Order order) {
 		return orderService.insertNewOrder(order);
