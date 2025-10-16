@@ -37,17 +37,17 @@ public class OrderWebController {
 	 * "No order to show" : "");
 	 * 
 	 * return "all-orders"; }
+	 * 
+	 * @GetMapping("/editOrder/{id}") public String editOrder(@PathVariable long id,
+	 * Model model) { Order orderById = orderService.getOrderById(id);
+	 * 
+	 * model.addAttribute(ORDER_ATTRIBUTE, orderById);
+	 * model.addAttribute(MESSAGE_ATTRIBUTE, orderById == null ?
+	 * "No order found with id: " + id : "");
+	 * 
+	 * return "edit-order"; }
 	 */
-	@GetMapping("/editOrder/{id}")
-	public String editOrder(@PathVariable long id, Model model) {
-		Order orderById = orderService.getOrderById(id);
-
-		model.addAttribute(ORDER_ATTRIBUTE, orderById);
-		model.addAttribute(MESSAGE_ATTRIBUTE, orderById == null ? "No order found with id: " + id : "");
-
-		return "edit-order";
-	}
-
+	
 	@GetMapping("/newOrder")
 	public String newOrder(Model model) {
 		model.addAttribute(ORDER_ATTRIBUTE, new Order());

@@ -59,27 +59,26 @@ public class OrderWebControllerTest {
 	 * mvc.perform(get("/orders")).andExpect(view().name("all-orders"))
 	 * .andExpect(model().attribute("orders", Collections.emptyList()))
 	 * .andExpect(model().attribute("message", "No order to show")); }
+	 * 
+	 * 
+	 * @Test public void testEditOrderWhenTheOrderIsFound() throws Exception { Order
+	 * order = new Order(1L, Item.BOX1, 700, new User(1L, "test", "test", "test",
+	 * 1000));
+	 * 
+	 * when(orderService.getOrderById(1L)).thenReturn(order);
+	 * 
+	 * mvc.perform(get("/editOrder/1")).andExpect(view().name("edit-order"))
+	 * .andExpect(model().attribute("order",
+	 * order)).andExpect(model().attribute("message", "")); }
+	 * 
+	 * @Test public void testEditOrderWhenOrderIsNotFound() throws Exception {
+	 * when(orderService.getOrderById(1L)).thenReturn(null);
+	 * 
+	 * mvc.perform(get("/editOrder/1")).andExpect(view().name("edit-order"))
+	 * .andExpect(model().attribute("order", nullValue()))
+	 * .andExpect(model().attribute("message", "No order found with id: 1")); }
 	 */
 	
-	@Test
-	public void testEditOrderWhenTheOrderIsFound() throws Exception {
-		Order order = new Order(1L, Item.BOX1, 700, new User(1L, "test", "test", "test", 1000));
-
-		when(orderService.getOrderById(1L)).thenReturn(order);
-
-		mvc.perform(get("/editOrder/1")).andExpect(view().name("edit-order"))
-				.andExpect(model().attribute("order", order)).andExpect(model().attribute("message", ""));
-	}
-
-	@Test
-	public void testEditOrderWhenOrderIsNotFound() throws Exception {
-		when(orderService.getOrderById(1L)).thenReturn(null);
-
-		mvc.perform(get("/editOrder/1")).andExpect(view().name("edit-order"))
-				.andExpect(model().attribute("order", nullValue()))
-				.andExpect(model().attribute("message", "No order found with id: 1"));
-	}
-
 	@Test
 	public void testEditNewOrder() throws Exception {
 		mvc.perform(get("/newOrder")).andExpect(view().name("edit-order"))

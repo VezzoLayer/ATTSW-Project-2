@@ -124,6 +124,25 @@ public class UserWebControllerTest {
 	}
 
 	@Test
+	public void testEditOrderWhenTheOrderIsFound() throws Exception {
+		Order order = new Order(1L, Item.BOX1, 700, new User(1L, "test", "test", "test", 1000));
+
+		when(userService.getOrderById(1L)).thenReturn(order);
+
+		mvc.perform(get("/editOrder/1")).andExpect(view().name("edit-order"))
+				.andExpect(model().attribute("order", order)).andExpect(model().attribute("message", ""));
+	}
+
+	@Test
+	public void testEditOrderWhenOrderIsNotFound() throws Exception {
+		when(userService.getOrderById(1L)).thenReturn(null);
+
+		mvc.perform(get("/editOrder/1")).andExpect(view().name("edit-order"))
+				.andExpect(model().attribute("order", nullValue()))
+				.andExpect(model().attribute("message", "No order found with id: 1"));
+	}
+
+	@Test
 	public void testEditNewUser() throws Exception {
 		mvc.perform(get("/newUser")).andExpect(view().name("edit-user"))
 				.andExpect(model().attribute("user", new User())).andExpect(model().attribute("message", ""));

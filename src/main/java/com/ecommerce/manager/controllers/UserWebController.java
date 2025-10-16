@@ -20,9 +20,13 @@ public class UserWebController {
 
 	private static final String MESSAGE_ATTRIBUTE = "message";
 	private static final String ERROR_ATTRIBUTE = "error";
+
+	private static final String USER_ATTRIBUTE = "user";
+	private static final String ORDER_ATTRIBUTE = "order";
+
 	private static final String USERS_ATTRIBUTE = "users";
 	private static final String ORDERS_ATTRIBUTE = "orders";
-	private static final String USER_ATTRIBUTE = "user";
+
 	private static final String REDIRECT_TO_MAPPING_USERS = "redirect:/";
 	private static final String NO_USER_FOUND_MESSAGE = "No user found with id: ";
 
@@ -60,6 +64,16 @@ public class UserWebController {
 		model.addAttribute(MESSAGE_ATTRIBUTE, userById == null ? NO_USER_FOUND_MESSAGE + id : "");
 
 		return "edit-user";
+	}
+
+	@GetMapping("/editOrder/{id}")
+	public String editOrder(@PathVariable long id, Model model) {
+		Order orderById = userService.getOrderById(id);
+
+		model.addAttribute(ORDER_ATTRIBUTE, orderById);
+		model.addAttribute(MESSAGE_ATTRIBUTE, orderById == null ? "No order found with id: " + id : "");
+
+		return "edit-order";
 	}
 
 	@GetMapping("/newUser")
