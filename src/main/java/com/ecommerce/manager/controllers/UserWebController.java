@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.ecommerce.manager.model.Order;
 import com.ecommerce.manager.model.User;
 import com.ecommerce.manager.services.UserService;
 
@@ -20,6 +21,7 @@ public class UserWebController {
 	private static final String MESSAGE_ATTRIBUTE = "message";
 	private static final String ERROR_ATTRIBUTE = "error";
 	private static final String USERS_ATTRIBUTE = "users";
+	private static final String ORDERS_ATTRIBUTE = "orders";
 	private static final String USER_ATTRIBUTE = "user";
 	private static final String REDIRECT_TO_MAPPING_USERS = "redirect:/";
 	private static final String NO_USER_FOUND_MESSAGE = "No user found with id: ";
@@ -38,6 +40,16 @@ public class UserWebController {
 		model.addAttribute(MESSAGE_ATTRIBUTE, allUsers.isEmpty() ? "No user to show" : "");
 
 		return "index";
+	}
+
+	@GetMapping("/orders")
+	public String orders(Model model) {
+		List<Order> allOrders = userService.getAllOrders();
+
+		model.addAttribute(ORDERS_ATTRIBUTE, allOrders);
+		model.addAttribute(MESSAGE_ATTRIBUTE, allOrders.isEmpty() ? "No order to show" : "");
+
+		return "all-orders";
 	}
 
 	@GetMapping("/editUser/{id}")

@@ -28,16 +28,16 @@ public class OrderWebController {
 		this.orderService = orderService;
 	}
 
-	@GetMapping("/orders")
-	public String orders(Model model) {
-		List<Order> allOrders = orderService.getAllOrders();
-
-		model.addAttribute(ORDERS_ATTRIBUTE, orderService.getAllOrders());
-		model.addAttribute(MESSAGE_ATTRIBUTE, allOrders.isEmpty() ? "No order to show" : "");
-
-		return "all-orders";
-	}
-
+	/*
+	 * @GetMapping("/orders") public String orders(Model model) { List<Order>
+	 * allOrders = orderService.getAllOrders();
+	 * 
+	 * model.addAttribute(ORDERS_ATTRIBUTE, orderService.getAllOrders());
+	 * model.addAttribute(MESSAGE_ATTRIBUTE, allOrders.isEmpty() ?
+	 * "No order to show" : "");
+	 * 
+	 * return "all-orders"; }
+	 */
 	@GetMapping("/editOrder/{id}")
 	public String editOrder(@PathVariable long id, Model model) {
 		Order orderById = orderService.getOrderById(id);

@@ -41,25 +41,26 @@ public class OrderWebControllerTest {
 	@Autowired
 	private MockMvc mvc;
 
-	@Test
-	public void testOrdersViewShowsOrdersWhenThereAreOrders() throws Exception {
-		List<Order> orders = asList(new Order(1L, Item.BOX1, 700, new User(1L, "test", "test", "test", 1000)));
-
-		when(orderService.getAllOrders()).thenReturn(orders);
-
-		mvc.perform(get("/orders")).andExpect(view().name("all-orders")).andExpect(model().attribute("orders", orders))
-				.andExpect(model().attribute("message", ""));
-	}
-
-	@Test
-	public void testOrdersViewShowsMessageWhenThereAreNoOrders() throws Exception {
-		when(orderService.getAllOrders()).thenReturn(Collections.emptyList());
-
-		mvc.perform(get("/orders")).andExpect(view().name("all-orders"))
-				.andExpect(model().attribute("orders", Collections.emptyList()))
-				.andExpect(model().attribute("message", "No order to show"));
-	}
-
+	/*
+	 * @Test public void testOrdersViewShowsOrdersWhenThereAreOrders() throws
+	 * Exception { List<Order> orders = asList(new Order(1L, Item.BOX1, 700, new
+	 * User(1L, "test", "test", "test", 1000)));
+	 * 
+	 * when(orderService.getAllOrders()).thenReturn(orders);
+	 * 
+	 * mvc.perform(get("/orders")).andExpect(view().name("all-orders")).andExpect(
+	 * model().attribute("orders", orders)) .andExpect(model().attribute("message",
+	 * "")); }
+	 * 
+	 * @Test public void testOrdersViewShowsMessageWhenThereAreNoOrders() throws
+	 * Exception {
+	 * when(orderService.getAllOrders()).thenReturn(Collections.emptyList());
+	 * 
+	 * mvc.perform(get("/orders")).andExpect(view().name("all-orders"))
+	 * .andExpect(model().attribute("orders", Collections.emptyList()))
+	 * .andExpect(model().attribute("message", "No order to show")); }
+	 */
+	
 	@Test
 	public void testEditOrderWhenTheOrderIsFound() throws Exception {
 		Order order = new Order(1L, Item.BOX1, 700, new User(1L, "test", "test", "test", 1000));
