@@ -123,4 +123,31 @@ public class EcommerceRestControllerIT {
 
 		assertThat(userRepository.findById(savedUser.getId()).orElseThrow().getBalance()).isEqualTo(500);
 	}
+
+	@Test
+	public void testWithdrawFailsDueToInsufficientBalance() {
+		User savedUser = userRepository.save(new User(null, "username", "name", "email", 1000));
+
+		given().contentType(MediaType.APPLICATION_JSON_VALUE).body(2000L).when()
+				.post("/api/users/" + savedUser.getId() + "/withdraw").then().statusCode(400)
+				.body("message", equalTo("Not enough balance to perform withdraw"));
+	}
+
+	@Test
+	public void testDepositFailsUserNotFound() {
+		long nonExistentId = 99L;
+
+		given().contentType(MediaType.APPLICATION_JSON_VALUE).body(500L).when()
+				.post("/api/users/" + nonExistentId + "/deposit").then().statusCode(404)
+				.body("message", equalTo("User not found"));
+	}
+
+	@Test
+	public void testDepositFailsDueToNegativeAmount() {
+		User savedUser = userRepository.save(new User(null, "username", "name", "email", 1000));
+
+		given().contentType(MediaType.APPLICATION_JSON_VALUE).body(-500L).when()
+				.post("/api/users/" + savedUser.getId() + "/deposit").then().statusCode(400)
+				.body("message", equalTo("Deposit amount cannot be negative"));
+	}
 }
