@@ -90,7 +90,7 @@ public class EcommerceRestController {
 	@ExceptionHandler(IllegalStateException.class)
 	public ResponseEntity<Map<String, String>> handleIllegalState(IllegalStateException ex) {
 		if (ex.getMessage().contains("Not enough balance to perform withdraw")
-				| ex.getMessage().contains("Unable to")) {
+				|| ex.getMessage().contains("Unable to")) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(MESSAGE_ATTRIBUTE, ex.getMessage()));
 		}
 
