@@ -70,8 +70,7 @@ public class EcommerceRestControllerIT {
 
 	@Test
 	public void testNewOrder() {
-		User savedUser = new User(null, "username", "name", "email", 1000);
-		userRepository.save(savedUser);
+		User savedUser = userRepository.save(new User(null, "username", "name", "email", 1000));
 
 		Response response = given().contentType(MediaType.APPLICATION_JSON_VALUE)
 				.body(new Order(null, Item.BOX1, 500, savedUser)).when().post("/api/orders/new");
@@ -80,6 +79,15 @@ public class EcommerceRestControllerIT {
 
 		assertThat(orderRepository.findById(savedOrder.getId())).contains(savedOrder);
 		assertThat(userRepository.findById(savedUser.getId()).orElseThrow().getBalance()).isEqualTo(500);
+	}
+
+	@Test
+	public void testNewOrderFails() {
+		User savedUser = new User(null, "username", "name", "email", 1000);
+		userRepository.save(savedUser);
+
+		given().contentType(MediaType.APPLICATION_JSON_VALUE).body(new Order(null, Item.BOX1, 10000, savedUser)).when()
+				.post("/api/orders/new").then().statusCode(400).body("message", equalTo("Unable to insert new order"));
 	}
 
 	@Test
