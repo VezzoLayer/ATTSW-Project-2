@@ -18,7 +18,7 @@ import com.ecommerce.manager.model.User;
 import com.ecommerce.manager.services.UserService;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api")
 public class UserRestController {
 
 	private UserService userService;
@@ -29,33 +29,33 @@ public class UserRestController {
 		this.userService = userService;
 	}
 
-	@GetMapping
+	@GetMapping("/users")
 	public List<User> allUsers() {
 		return userService.getAllUsers();
 	}
 
-	@GetMapping("/{id}")
+	@GetMapping("/users/{id}")
 	public User oneUser(@PathVariable long id) {
 		return userService.getUserById(id);
 	}
 
-	@PostMapping("/new")
+	@PostMapping("/users/new")
 	public User newUser(@RequestBody User user) {
 		return userService.insertNewUser(user);
 	}
 
-	@PutMapping("/update/{id}")
+	@PutMapping("/users/update/{id}")
 	public User updateUser(@PathVariable long id, @RequestBody User user) {
 		return userService.updateUserById(id, user);
 	}
 
-	@PostMapping("/{id}/deposit")
+	@PostMapping("/users/{id}/deposit")
 	public ResponseEntity<Void> deposit(@PathVariable long id, @RequestBody long amount) {
 		userService.deposit(id, amount);
 		return ResponseEntity.noContent().build();
 	}
 
-	@PostMapping("/{id}/withdraw")
+	@PostMapping("/users/{id}/withdraw")
 	public ResponseEntity<Void> withdraw(@PathVariable long id, @RequestBody long amount) {
 		userService.withdraw(id, amount);
 		return ResponseEntity.noContent().build();
