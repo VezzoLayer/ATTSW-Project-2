@@ -1,6 +1,7 @@
 package com.ecommerce.manager;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 
@@ -10,7 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ecommerce.manager.model.Item;
 import com.ecommerce.manager.model.Order;
@@ -49,7 +53,7 @@ public class EcommerceServiceRepositoryIT {
 		Order savedOrder = ecommerceService.insertNewOrder(order);
 
 		assertThat(orderRepository.findById(savedOrder.getId())).isPresent();
-		assertThat(ecommerceService.getUserById(user.getId()).getBalance()).isEqualTo(1500);
+		assertThat(userRepository.findById(user.getId()).orElse(null).getBalance()).isEqualTo(1500);
 	}
 
 	@Test
@@ -63,7 +67,7 @@ public class EcommerceServiceRepositoryIT {
 	}
 
 	@Test
-	public void testRepositoryCorrectlyFindsUserWithLowBalance() {
+	public void testUserRepositoryCorrectlyFindsUserWithLowBalance() {
 		User userShouldBeFound1 = ecommerceService.insertNewUser(new User(null, "u1", "n1", "e1", 800));
 		User userShouldBeFound2 = ecommerceService.insertNewUser(new User(null, "u2", "n2", "e2", 500));
 
@@ -82,7 +86,7 @@ public class EcommerceServiceRepositoryIT {
 
 		assertThat(userRepository.findById(savedUser.getId()).orElseThrow().getBalance()).isEqualTo(2000);
 	}
-	
+
 	@Test
 	public void testServiceCanCorrectlyWithdrawIntoUserRepository() {
 		User savedUser = ecommerceService.insertNewUser(new User(null, "username", "name", "email", 1000));
@@ -90,5 +94,18 @@ public class EcommerceServiceRepositoryIT {
 		ecommerceService.withdraw(savedUser.getId(), 500);
 
 		assertThat(userRepository.findById(savedUser.getId()).orElseThrow().getBalance()).isEqualTo(500);
+	}
+
+	@Test
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	public void testServiceInsertNewOrderWhenRepositorySaveFailsShouldRollbackUserBalance() {
+		User user = ecommerceService.insertNewUser(new User(null, "u1", "n1", "e1", 2000));
+		Order notSavedOrder = new Order(null, null, 500, user);
+
+		assertThatThrownBy(() -> ecommerceService.insertNewOrder(notSavedOrder))
+				.isInstanceOf(DataIntegrityViolationException.class);
+
+		assertThat(orderRepository.findById(notSavedOrder.getId()).orElse(null)).isNull();
+		assertThat(userRepository.findById(user.getId()).orElse(null).getBalance()).isEqualTo(2000);
 	}
 }
