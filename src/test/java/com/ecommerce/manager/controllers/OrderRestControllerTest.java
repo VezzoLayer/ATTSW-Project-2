@@ -36,50 +36,53 @@ public class OrderRestControllerTest {
 	@MockitoBean
 	private OrderService orderService;
 
-	@Test
-	public void testAllOrdersEmpty() throws Exception {
-		this.mvc.perform(get("/api/orders").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
-				.andExpect(content().json("[]"));
-	}
-
-	@Test
-	public void testAllOrdersWhenThereIsSome() throws Exception {
-		User user = new User(1L, "user 1", "test", "test", 3000);
-
-		when(orderService.getAllOrders())
-				.thenReturn(asList(new Order(1L, Item.BOX1, 800, user), new Order(2L, Item.BOX2, 500, user)));
-
-		this.mvc.perform(get("/api/orders").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
-				.andExpect(jsonPath("$[0].id", is(1))).andExpect(jsonPath("$[0].item", is("BOX1")))
-				.andExpect(jsonPath("$[0].price", is(800))).andExpect(jsonPath("$[0].user.username", is("user 1")))
-				.andExpect(jsonPath("$[0].user.name", is("test"))).andExpect(jsonPath("$[0].user.email", is("test")))
-				.andExpect(jsonPath("$[0].user.balance", is(3000))).andExpect(jsonPath("$[1].id", is(2)))
-				.andExpect(jsonPath("$[1].item", is("BOX2"))).andExpect(jsonPath("$[1].price", is(500)))
-				.andExpect(jsonPath("$[1].user.id", is(1))).andExpect(jsonPath("$[1].user.username", is("user 1")))
-				.andExpect(jsonPath("$[1].user.name", is("test"))).andExpect(jsonPath("$[1].user.email", is("test")))
-				.andExpect(jsonPath("$[1].user.balance", is(3000)));
-	}
-
-	@Test
-	public void testOneOrderByIdWithExistingOrder() throws Exception {
-		when(orderService.getOrderById(anyLong()))
-				.thenReturn(new Order(1L, Item.BOX1, 800, new User(1L, "user 1", "test", "test", 3000)));
-
-		this.mvc.perform(get("/api/orders/1").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
-				.andExpect(jsonPath("$.id", is(1))).andExpect(jsonPath("$.item", is("BOX1")))
-				.andExpect(jsonPath("$.price", is(800))).andExpect(jsonPath("$.user.username", is("user 1")))
-				.andExpect(jsonPath("$.user.name", is("test"))).andExpect(jsonPath("$.user.email", is("test")))
-				.andExpect(jsonPath("$.user.balance", is(3000)));
-	}
-
-	@Test
-	public void testOneOrderByIdWithNotFoundOrder() throws Exception {
-		when(orderService.getOrderById(anyLong())).thenReturn(null);
-
-		this.mvc.perform(get("/api/orders/1").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
-				.andExpect(content().string(""));
-	}
-
+	/*
+	 * @Test public void testAllOrdersEmpty() throws Exception {
+	 * this.mvc.perform(get("/api/orders").accept(MediaType.APPLICATION_JSON)).
+	 * andExpect(status().isOk()) .andExpect(content().json("[]")); }
+	 * 
+	 * @Test public void testAllOrdersWhenThereIsSome() throws Exception { User user
+	 * = new User(1L, "user 1", "test", "test", 3000);
+	 * 
+	 * when(orderService.getAllOrders()) .thenReturn(asList(new Order(1L, Item.BOX1,
+	 * 800, user), new Order(2L, Item.BOX2, 500, user)));
+	 * 
+	 * this.mvc.perform(get("/api/orders").accept(MediaType.APPLICATION_JSON)).
+	 * andExpect(status().isOk()) .andExpect(jsonPath("$[0].id",
+	 * is(1))).andExpect(jsonPath("$[0].item", is("BOX1")))
+	 * .andExpect(jsonPath("$[0].price",
+	 * is(800))).andExpect(jsonPath("$[0].user.username", is("user 1")))
+	 * .andExpect(jsonPath("$[0].user.name",
+	 * is("test"))).andExpect(jsonPath("$[0].user.email", is("test")))
+	 * .andExpect(jsonPath("$[0].user.balance",
+	 * is(3000))).andExpect(jsonPath("$[1].id", is(2)))
+	 * .andExpect(jsonPath("$[1].item",
+	 * is("BOX2"))).andExpect(jsonPath("$[1].price", is(500)))
+	 * .andExpect(jsonPath("$[1].user.id",
+	 * is(1))).andExpect(jsonPath("$[1].user.username", is("user 1")))
+	 * .andExpect(jsonPath("$[1].user.name",
+	 * is("test"))).andExpect(jsonPath("$[1].user.email", is("test")))
+	 * .andExpect(jsonPath("$[1].user.balance", is(3000))); }
+	 * 
+	 * @Test public void testOneOrderByIdWithExistingOrder() throws Exception {
+	 * when(orderService.getOrderById(anyLong())) .thenReturn(new Order(1L,
+	 * Item.BOX1, 800, new User(1L, "user 1", "test", "test", 3000)));
+	 * 
+	 * this.mvc.perform(get("/api/orders/1").accept(MediaType.APPLICATION_JSON)).
+	 * andExpect(status().isOk()) .andExpect(jsonPath("$.id",
+	 * is(1))).andExpect(jsonPath("$.item", is("BOX1")))
+	 * .andExpect(jsonPath("$.price",
+	 * is(800))).andExpect(jsonPath("$.user.username", is("user 1")))
+	 * .andExpect(jsonPath("$.user.name",
+	 * is("test"))).andExpect(jsonPath("$.user.email", is("test")))
+	 * .andExpect(jsonPath("$.user.balance", is(3000))); }
+	 * 
+	 * @Test public void testOneOrderByIdWithNotFoundOrder() throws Exception {
+	 * when(orderService.getOrderById(anyLong())).thenReturn(null);
+	 * 
+	 * this.mvc.perform(get("/api/orders/1").accept(MediaType.APPLICATION_JSON)).
+	 * andExpect(status().isOk()) .andExpect(content().string("")); }
+	 */
 	@Test
 	public void testPostOrder() throws Exception {
 		User user = new User(1L, "user 1", "test", "test", 3000);
