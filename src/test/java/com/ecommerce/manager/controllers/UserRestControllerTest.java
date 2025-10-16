@@ -99,6 +99,26 @@ public class UserRestControllerTest {
 	}
 
 	@Test
+	public void testOneOrderByIdWithExistingOrder() throws Exception {
+		when(userService.getOrderById(anyLong()))
+				.thenReturn(new Order(1L, Item.BOX1, 800, new User(1L, "user 1", "test", "test", 3000)));
+
+		this.mvc.perform(get("/api/orders/1").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+				.andExpect(jsonPath("$.id", is(1))).andExpect(jsonPath("$.item", is("BOX1")))
+				.andExpect(jsonPath("$.price", is(800))).andExpect(jsonPath("$.user.username", is("user 1")))
+				.andExpect(jsonPath("$.user.name", is("test"))).andExpect(jsonPath("$.user.email", is("test")))
+				.andExpect(jsonPath("$.user.balance", is(3000)));
+	}
+
+	@Test
+	public void testOneOrderByIdWithNotFoundOrder() throws Exception {
+		when(userService.getOrderById(anyLong())).thenReturn(null);
+
+		this.mvc.perform(get("/api/orders/1").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+				.andExpect(content().string(""));
+	}
+
+	@Test
 	public void testPostUser() throws Exception {
 		User requestBodyUser = new User(null, "username", "new user", "email", 4000);
 

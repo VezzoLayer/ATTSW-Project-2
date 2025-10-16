@@ -45,6 +45,11 @@ public class UserRestController {
 		return userService.getUserById(id);
 	}
 
+	@GetMapping("/orders/{id}")
+	public Order oneOrder(@PathVariable long id) {
+		return userService.getOrderById(id);
+	}
+
 	@PostMapping("/users/new")
 	public User newUser(@RequestBody User user) {
 		return userService.insertNewUser(user);
