@@ -157,4 +157,22 @@ public class EcommerceServiceRepositoryIT {
 		assertThat(userRepository.findById(user2.getId()).orElseThrow().getBalance()).isEqualTo(2000);
 		assertThat(orderRepository.findById(savedOrder.getId())).contains(savedOrder);
 	}
+
+	@Test
+	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	public void testServiceUpdateAnOrderWhenWithdrawFailsShouldRollBack() {
+		User user1 = ecommerceService.insertNewUser(new User(null, "u1", "n1", "e1", 1000));
+		User user2 = ecommerceService.insertNewUser(new User(null, "u2", "n2", "e2", 2000));
+
+		Order savedOrder = ecommerceService.insertNewOrder(new Order(null, Item.BOX1, 500, user1));
+
+		assertThatThrownBy(
+				() -> ecommerceService.updateOrderById(savedOrder.getId(), new Order(null, Item.BOX2, 100000, user2)))
+				.isInstanceOf(IllegalStateException.class);
+
+		// Si controlla che tutto sia allo stato iniziale prima dell'update
+		assertThat(userRepository.findById(user1.getId()).orElseThrow().getBalance()).isEqualTo(500);
+		assertThat(userRepository.findById(user2.getId()).orElseThrow().getBalance()).isEqualTo(2000);
+		assertThat(orderRepository.findById(savedOrder.getId())).contains(savedOrder);
+	}
 }
