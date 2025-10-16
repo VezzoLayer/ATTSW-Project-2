@@ -16,7 +16,7 @@ import com.ecommerce.manager.model.User;
 import com.ecommerce.manager.services.EcommerceService;
 
 @Controller
-public class UserWebController {
+public class EcommerceWebController {
 
 	private static final String MESSAGE_ATTRIBUTE = "message";
 	private static final String ERROR_ATTRIBUTE = "error";
@@ -32,7 +32,7 @@ public class UserWebController {
 
 	private EcommerceService ecommerceService;
 
-	public UserWebController(EcommerceService ecommerceService) {
+	public EcommerceWebController(EcommerceService ecommerceService) {
 		this.ecommerceService = ecommerceService;
 	}
 

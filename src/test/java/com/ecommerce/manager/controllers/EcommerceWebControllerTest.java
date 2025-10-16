@@ -40,8 +40,8 @@ import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 
 @RunWith(JUnitParamsRunner.class)
-@WebMvcTest(controllers = UserWebController.class)
-public class UserWebControllerTest {
+@WebMvcTest(controllers = EcommerceWebController.class)
+public class EcommerceWebControllerTest {
 
 	@ClassRule
 	public static final SpringClassRule springClassRule = new SpringClassRule();

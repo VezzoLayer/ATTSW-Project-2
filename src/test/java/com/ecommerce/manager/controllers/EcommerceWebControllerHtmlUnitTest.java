@@ -26,8 +26,8 @@ import com.ecommerce.manager.model.User;
 import com.ecommerce.manager.services.EcommerceService;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(controllers = UserWebController.class)
-public class UserWebControllerHtmlUnitTest {
+@WebMvcTest(controllers = EcommerceWebController.class)
+public class EcommerceWebControllerHtmlUnitTest {
 
 	@Autowired
 	private WebClient webClient;
