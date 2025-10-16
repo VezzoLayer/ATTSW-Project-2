@@ -93,4 +93,34 @@ public class EcommerceRestControllerIT {
 						equalTo(savedOrder.getId().intValue()), "item", equalTo("BOX2"), "price", equalTo(700),
 						"user.id", equalTo(savedUser.getId().intValue()), "user.balance", equalTo(800));
 	}
+
+	@Test
+	public void testUpdateOrderFails() {
+		User savedUser = userRepository.save(new User(null, "username", "name", "email", 1000));
+		Order savedOrder = orderRepository.save(new Order(null, Item.BOX1, 500, savedUser));
+
+		given().contentType(MediaType.APPLICATION_JSON_VALUE).body(new Order(null, Item.BOX2, 10000, savedUser)).when()
+				.put("/api/orders/update/" + savedOrder.getId()).then().statusCode(400)
+				.body("message", equalTo("Unable to update the order"));
+	}
+
+	@Test
+	public void testDepositSuccess() {
+		User savedUser = userRepository.save(new User(null, "username", "name", "email", 1000));
+
+		given().contentType(MediaType.APPLICATION_JSON_VALUE).body(500L).when()
+				.post("/api/users/" + savedUser.getId() + "/deposit").then().statusCode(204);
+
+		assertThat(userRepository.findById(savedUser.getId()).orElseThrow().getBalance()).isEqualTo(1500);
+	}
+
+	@Test
+	public void testWithdrawSuccess() {
+		User savedUser = userRepository.save(new User(null, "username", "name", "email", 1000));
+
+		given().contentType(MediaType.APPLICATION_JSON_VALUE).body(500L).when()
+				.post("/api/users/" + savedUser.getId() + "/withdraw").then().statusCode(204);
+
+		assertThat(userRepository.findById(savedUser.getId()).orElseThrow().getBalance()).isEqualTo(500);
+	}
 }
