@@ -65,6 +65,11 @@ public class UserRestController {
 		return userService.updateUserById(id, user);
 	}
 
+	@PutMapping("/orders/update/{id}")
+	public Order updateOrder(@PathVariable long id, @RequestBody Order order) {
+		return userService.updateOrderById(id, order);
+	}
+
 	@PostMapping("/users/{id}/deposit")
 	public ResponseEntity<Void> deposit(@PathVariable long id, @RequestBody long amount) {
 		userService.deposit(id, amount);
