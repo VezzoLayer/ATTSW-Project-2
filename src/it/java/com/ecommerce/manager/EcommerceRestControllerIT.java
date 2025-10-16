@@ -81,4 +81,16 @@ public class EcommerceRestControllerIT {
 		assertThat(orderRepository.findById(savedOrder.getId())).contains(savedOrder);
 		assertThat(userRepository.findById(savedUser.getId()).orElseThrow().getBalance()).isEqualTo(500);
 	}
+
+	@Test
+	public void testUpdateOrder() {
+		User savedUser = userRepository.save(new User(null, "username", "name", "email", 1000));
+		Order savedOrder = orderRepository.save(new Order(null, Item.BOX1, 500, savedUser));
+
+		// Per user mi limito a controllare id e balance
+		given().contentType(MediaType.APPLICATION_JSON_VALUE).body(new Order(null, Item.BOX2, 700, savedUser)).when()
+				.put("/api/orders/update/" + savedOrder.getId()).then().statusCode(200).body("id",
+						equalTo(savedOrder.getId().intValue()), "item", equalTo("BOX2"), "price", equalTo(700),
+						"user.id", equalTo(savedUser.getId().intValue()), "user.balance", equalTo(800));
+	}
 }
