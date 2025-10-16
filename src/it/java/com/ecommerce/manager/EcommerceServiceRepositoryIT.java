@@ -148,8 +148,10 @@ public class EcommerceServiceRepositoryIT {
 
 		Order savedOrder = ecommerceService.insertNewOrder(new Order(null, Item.BOX1, 500, user1));
 
-		assertThatThrownBy(
-				() -> ecommerceService.updateOrderById(savedOrder.getId(), new Order(null, null, 1000, user2)))
+		Order replacementOrder = new Order(null, null, 1000, user2);
+		long savedOrderId = savedOrder.getId();
+
+		assertThatThrownBy(() -> ecommerceService.updateOrderById(savedOrderId, replacementOrder))
 				.isInstanceOf(DataIntegrityViolationException.class);
 
 		// Si controlla che tutto sia allo stato iniziale prima dell'update
@@ -166,8 +168,10 @@ public class EcommerceServiceRepositoryIT {
 
 		Order savedOrder = ecommerceService.insertNewOrder(new Order(null, Item.BOX1, 500, user1));
 
-		assertThatThrownBy(
-				() -> ecommerceService.updateOrderById(savedOrder.getId(), new Order(null, Item.BOX2, 100000, user2)))
+		Order replacementOrder = new Order(null, Item.BOX2, 100000, user2);
+		long savedOrderId = savedOrder.getId();
+
+		assertThatThrownBy(() -> ecommerceService.updateOrderById(savedOrderId, replacementOrder))
 				.isInstanceOf(IllegalStateException.class);
 
 		// Si controlla che tutto sia allo stato iniziale prima dell'update
