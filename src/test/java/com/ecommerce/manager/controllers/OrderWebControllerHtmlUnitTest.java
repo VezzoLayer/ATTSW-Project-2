@@ -26,7 +26,7 @@ import com.ecommerce.manager.model.User;
 import com.ecommerce.manager.services.OrderService;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(controllers = OrderWebController.class)
+@WebMvcTest(controllers = UserWebController.class)
 public class OrderWebControllerHtmlUnitTest {
 
 	@Autowired

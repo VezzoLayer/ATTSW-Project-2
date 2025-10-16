@@ -28,7 +28,7 @@ public class UserWebController {
 	private static final String ORDERS_ATTRIBUTE = "orders";
 
 	private static final String REDIRECT_TO_MAPPING_USERS = "redirect:/";
-	private static final String NO_USER_FOUND_MESSAGE = "No user found with id: ";
+	private static final String REDIRECT_TO_MAPPING_ORDERS = "redirect:/orders";
 
 	private UserService userService;
 
@@ -61,7 +61,7 @@ public class UserWebController {
 		User userById = userService.getUserById(id);
 
 		model.addAttribute(USER_ATTRIBUTE, userById);
-		model.addAttribute(MESSAGE_ATTRIBUTE, userById == null ? NO_USER_FOUND_MESSAGE + id : "");
+		model.addAttribute(MESSAGE_ATTRIBUTE, userById == null ? "No user found with id: " + id : "");
 
 		return "edit-user";
 	}
@@ -105,12 +105,25 @@ public class UserWebController {
 		return REDIRECT_TO_MAPPING_USERS;
 	}
 
+	@PostMapping("/saveOrder")
+	public String saveOrder(Order order) {
+		final Long id = order.getId();
+
+		if (id == null) {
+			userService.insertNewOrder(order);
+		} else {
+			userService.updateOrderById(id, order);
+		}
+
+		return REDIRECT_TO_MAPPING_ORDERS;
+	}
+
 	@GetMapping("/{id}/handle_balance")
 	public String handleBalance(@PathVariable long id, Model model) {
 		User userById = userService.getUserById(id);
 
 		model.addAttribute(USER_ATTRIBUTE, userById);
-		model.addAttribute(MESSAGE_ATTRIBUTE, userById == null ? NO_USER_FOUND_MESSAGE + id : "");
+		model.addAttribute(MESSAGE_ATTRIBUTE, userById == null ? "No user found with id: " + id : "");
 
 		return "handle-balance";
 	}
@@ -132,6 +145,10 @@ public class UserWebController {
 	@ExceptionHandler({ IllegalStateException.class, IllegalArgumentException.class })
 	public String handleIllegalState(RuntimeException ex, RedirectAttributes redirectAttributes) {
 		redirectAttributes.addFlashAttribute(ERROR_ATTRIBUTE, ex.getMessage());
+
+		if (ex.getMessage().contains("Unable to")) {
+			return REDIRECT_TO_MAPPING_ORDERS;
+		}
 
 		return REDIRECT_TO_MAPPING_USERS;
 	}

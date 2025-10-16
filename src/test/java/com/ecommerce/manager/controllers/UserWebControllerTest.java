@@ -2,6 +2,7 @@ package com.ecommerce.manager.controllers;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
@@ -172,6 +173,53 @@ public class UserWebControllerTest {
 				.param("email", "test email").param("balance", "2000")).andExpect(view().name("redirect:/"));
 
 		verify(userService).updateUserById(1L, new User(1L, "test username", "test name", "test email", 2000));
+	}
+
+	@Test
+	public void testPostOrderWithoutIdShouldInsertNewOrder() throws Exception {
+		mvc.perform(post("/saveOrder").param("item", "BOX1").param("price", "700").param("user.name", "test")
+				.param("user.surname", "test").param("user.email", "test").param("user.balance", "2000"))
+				.andExpect(redirectedUrl("/orders"));
+
+		verify(userService).insertNewOrder(new Order(null, Item.BOX1, 700, new User(1L, "test", "test", "test", 2000)));
+	}
+
+	@Test
+	public void testPostOrderWhenInsertFailsShouldHandleException() throws Exception {
+		doThrow(new IllegalStateException("Unable to insert new order")).when(userService)
+				.insertNewOrder(any(Order.class));
+
+		mvc.perform(post("/saveOrder").param("item", "BOX1").param("price", "700").param("user.name", "test")
+				.param("user.username", "test").param("user.email", "test").param("user.balance", "500"))
+				.andExpect(redirectedUrl("/orders"))
+				.andExpect(flash().attribute("error", "Unable to insert new order"));
+
+		verify(userService).insertNewOrder(any(Order.class));
+		verifyNoMoreInteractions(userService);
+	}
+
+	@Test
+	public void testPostOrderWithIdShouldUpdateExistingOrder() throws Exception {
+		mvc.perform(post("/saveOrder").param("id", "1").param("item", "BOX1").param("price", "700")
+				.param("user.name", "test").param("user.surname", "test").param("user.email", "test")
+				.param("user.balance", "2000")).andExpect(redirectedUrl("/orders"));
+
+		verify(userService).updateOrderById(1L,
+				new Order(1L, Item.BOX1, 700, new User(1L, "test", "test", "test", 2000)));
+	}
+
+	@Test
+	public void testPostOrderWhenUpdateFailsShouldHandleException() throws Exception {
+		doThrow(new IllegalStateException("Unable to update the order")).when(userService).updateOrderById(anyLong(),
+				any(Order.class));
+
+		mvc.perform(post("/saveOrder").param("id", "1").param("item", "BOX1").param("price", "700")
+				.param("user.name", "test").param("user.username", "test").param("user.email", "test")
+				.param("user.balance", "500")).andExpect(redirectedUrl("/orders"))
+				.andExpect(flash().attribute("error", "Unable to update the order"));
+
+		verify(userService).updateOrderById(anyLong(), any(Order.class));
+		verifyNoMoreInteractions(userService);
 	}
 
 	@Test
