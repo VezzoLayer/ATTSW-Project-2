@@ -3,6 +3,7 @@ package com.ecommerce.manager;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.contains;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -157,5 +158,49 @@ public class EcommerceRestControllerIT {
 		given().contentType(MediaType.APPLICATION_JSON_VALUE).body(-500L).when()
 				.post("/api/users/" + savedUser.getId() + "/deposit").then().statusCode(400)
 				.body("message", equalTo("Deposit amount cannot be negative"));
+	}
+
+	@Test
+	public void testGetOrderById() {
+		User savedUser = userRepository.save(new User(null, "username", "name", "email", 1000));
+		Order savedOrder = orderRepository.save(new Order(null, Item.BOX1, 500, savedUser));
+
+		given().accept(MediaType.APPLICATION_JSON_VALUE).when().get("/api/orders/" + savedOrder.getId()).then()
+				.statusCode(200).body("id", equalTo(savedOrder.getId().intValue())).body("item", equalTo("BOX1"))
+				.body("price", equalTo(500)).body("user.id", equalTo(savedUser.getId().intValue()));
+	}
+
+	@Test
+	public void testGetUserById() {
+		User savedUser = userRepository.save(new User(null, "username", "name", "email", 1000));
+
+		given().accept(MediaType.APPLICATION_JSON_VALUE).when().get("/api/users/" + savedUser.getId()).then()
+				.statusCode(200).body("id", equalTo(savedUser.getId().intValue())).body("username", equalTo("username"))
+				.body("name", equalTo("name")).body("email", equalTo("email")).body("balance", equalTo(1000));
+	}
+
+	@Test
+	public void testGetAllUsers() {
+		User user1 = userRepository.save(new User(null, "u1", "n1", "e1", 1000));
+		User user2 = userRepository.save(new User(null, "u2", "n2", "e2", 2000));
+
+		given().accept(MediaType.APPLICATION_JSON_VALUE).when().get("/api/users").then().statusCode(200)
+				.body("size()", equalTo(2)).body("id", contains(user1.getId().intValue(), user2.getId().intValue()))
+				.body("username", contains("u1", "u2")).body("name", contains("n1", "n2"))
+				.body("email", contains("e1", "e2")).body("balance", contains(1000, 2000));
+	}
+
+	@Test
+	public void testGetAllOrders() {
+		User user1 = userRepository.save(new User(null, "u1", "n1", "e1", 1000));
+		User user2 = userRepository.save(new User(null, "u2", "n2", "e2", 2000));
+
+		Order order1 = orderRepository.save(new Order(null, Item.BOX1, 400, user1));
+		Order order2 = orderRepository.save(new Order(null, Item.BOX2, 600, user2));
+
+		given().accept(MediaType.APPLICATION_JSON_VALUE).when().get("/api/orders").then().statusCode(200)
+				.body("size()", equalTo(2)).body("id", contains(order1.getId().intValue(), order2.getId().intValue()))
+				.body("item", contains("BOX1", "BOX2")).body("price", contains(400, 600))
+				.body("user.id", contains(user1.getId().intValue(), user2.getId().intValue()));
 	}
 }
