@@ -2,6 +2,7 @@ package com.ecommerce.manager.controllers;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
@@ -30,15 +31,17 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.test.web.ModelAndViewAssert;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.ecommerce.manager.model.Item;
+import com.ecommerce.manager.model.Order;
 import com.ecommerce.manager.model.User;
-import com.ecommerce.manager.services.UserService;
+import com.ecommerce.manager.services.EcommerceService;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 
 @RunWith(JUnitParamsRunner.class)
-@WebMvcTest(controllers = UserWebController.class)
-public class UserWebControllerTest {
+@WebMvcTest(controllers = EcommerceWebController.class)
+public class EcommerceWebControllerTest {
 
 	@ClassRule
 	public static final SpringClassRule springClassRule = new SpringClassRule();
@@ -47,7 +50,7 @@ public class UserWebControllerTest {
 	public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
 	@MockitoBean
-	private UserService userService;
+	private EcommerceService ecommerceService;
 
 	@Autowired
 	private MockMvc mvc;
@@ -66,7 +69,7 @@ public class UserWebControllerTest {
 	public void testHomeViewShowsUsersWhenThereAreUsers() throws Exception {
 		List<User> users = asList(new User(1L, "test", "test", "test", 1000));
 
-		when(userService.getAllUsers()).thenReturn(users);
+		when(ecommerceService.getAllUsers()).thenReturn(users);
 
 		mvc.perform(get("/")).andExpect(view().name("index")).andExpect(model().attribute("users", users))
 				.andExpect(model().attribute("message", ""));
@@ -74,11 +77,30 @@ public class UserWebControllerTest {
 
 	@Test
 	public void testHomeViewShowsMessageWhenThereAreNoUsers() throws Exception {
-		when(userService.getAllUsers()).thenReturn(Collections.emptyList());
+		when(ecommerceService.getAllUsers()).thenReturn(Collections.emptyList());
 
 		mvc.perform(get("/")).andExpect(view().name("index"))
 				.andExpect(model().attribute("users", Collections.emptyList()))
 				.andExpect(model().attribute("message", "No user to show"));
+	}
+
+	@Test
+	public void testOrdersViewShowsOrdersWhenThereAreOrders() throws Exception {
+		List<Order> orders = asList(new Order(1L, Item.BOX1, 700, new User(1L, "test", "test", "test", 1000)));
+
+		when(ecommerceService.getAllOrders()).thenReturn(orders);
+
+		mvc.perform(get("/orders")).andExpect(view().name("all-orders")).andExpect(model().attribute("orders", orders))
+				.andExpect(model().attribute("message", ""));
+	}
+
+	@Test
+	public void testOrdersViewShowsMessageWhenThereAreNoOrders() throws Exception {
+		when(ecommerceService.getAllOrders()).thenReturn(Collections.emptyList());
+
+		mvc.perform(get("/orders")).andExpect(view().name("all-orders"))
+				.andExpect(model().attribute("orders", Collections.emptyList()))
+				.andExpect(model().attribute("message", "No order to show"));
 	}
 
 	@Test
@@ -87,7 +109,7 @@ public class UserWebControllerTest {
 			throws Exception {
 		User user = new User(1L, "test", "test", "test", 1000);
 
-		when(userService.getUserById(1L)).thenReturn(user);
+		when(ecommerceService.getUserById(1L)).thenReturn(user);
 
 		mvc.perform(get(mappingName)).andExpect(view().name(expectedView)).andExpect(model().attribute("user", user))
 				.andExpect(model().attribute("message", ""));
@@ -95,7 +117,7 @@ public class UserWebControllerTest {
 
 	@Test
 	public void testEditUserWhenUserIsNotFound() throws Exception {
-		when(userService.getUserById(1L)).thenReturn(null);
+		when(ecommerceService.getUserById(1L)).thenReturn(null);
 
 		mvc.perform(get("/editUser/1")).andExpect(view().name("edit-user"))
 				.andExpect(model().attribute("user", nullValue()))
@@ -103,11 +125,38 @@ public class UserWebControllerTest {
 	}
 
 	@Test
+	public void testEditOrderWhenTheOrderIsFound() throws Exception {
+		Order order = new Order(1L, Item.BOX1, 700, new User(1L, "test", "test", "test", 1000));
+
+		when(ecommerceService.getOrderById(1L)).thenReturn(order);
+
+		mvc.perform(get("/editOrder/1")).andExpect(view().name("edit-order"))
+				.andExpect(model().attribute("order", order)).andExpect(model().attribute("message", ""));
+	}
+
+	@Test
+	public void testEditOrderWhenOrderIsNotFound() throws Exception {
+		when(ecommerceService.getOrderById(1L)).thenReturn(null);
+
+		mvc.perform(get("/editOrder/1")).andExpect(view().name("edit-order"))
+				.andExpect(model().attribute("order", nullValue()))
+				.andExpect(model().attribute("message", "No order found with id: 1"));
+	}
+
+	@Test
 	public void testEditNewUser() throws Exception {
 		mvc.perform(get("/newUser")).andExpect(view().name("edit-user"))
 				.andExpect(model().attribute("user", new User())).andExpect(model().attribute("message", ""));
 
-		verifyNoMoreInteractions(userService);
+		verifyNoMoreInteractions(ecommerceService);
+	}
+
+	@Test
+	public void testEditNewOrder() throws Exception {
+		mvc.perform(get("/newOrder")).andExpect(view().name("edit-order"))
+				.andExpect(model().attribute("order", new Order())).andExpect(model().attribute("message", ""));
+
+		verifyNoMoreInteractions(ecommerceService);
 	}
 
 	@Test
@@ -115,7 +164,7 @@ public class UserWebControllerTest {
 		mvc.perform(post("/saveUser").param("username", "test username").param("name", "test name")
 				.param("email", "test email").param("balance", "2000")).andExpect(view().name("redirect:/"));
 
-		verify(userService).insertNewUser(new User(null, "test username", "test name", "test email", 2000));
+		verify(ecommerceService).insertNewUser(new User(null, "test username", "test name", "test email", 2000));
 	}
 
 	@Test
@@ -123,12 +172,59 @@ public class UserWebControllerTest {
 		mvc.perform(post("/saveUser").param("id", "1").param("username", "test username").param("name", "test name")
 				.param("email", "test email").param("balance", "2000")).andExpect(view().name("redirect:/"));
 
-		verify(userService).updateUserById(1L, new User(1L, "test username", "test name", "test email", 2000));
+		verify(ecommerceService).updateUserById(1L, new User(1L, "test username", "test name", "test email", 2000));
+	}
+
+	@Test
+	public void testPostOrderWithoutIdShouldInsertNewOrder() throws Exception {
+		mvc.perform(post("/saveOrder").param("item", "BOX1").param("price", "700").param("user.name", "test")
+				.param("user.surname", "test").param("user.email", "test").param("user.balance", "2000"))
+				.andExpect(redirectedUrl("/orders"));
+
+		verify(ecommerceService).insertNewOrder(new Order(null, Item.BOX1, 700, new User(1L, "test", "test", "test", 2000)));
+	}
+
+	@Test
+	public void testPostOrderWhenInsertFailsShouldHandleException() throws Exception {
+		doThrow(new IllegalStateException("Unable to insert new order")).when(ecommerceService)
+				.insertNewOrder(any(Order.class));
+
+		mvc.perform(post("/saveOrder").param("item", "BOX1").param("price", "700").param("user.name", "test")
+				.param("user.username", "test").param("user.email", "test").param("user.balance", "500"))
+				.andExpect(redirectedUrl("/orders"))
+				.andExpect(flash().attribute("error", "Unable to insert new order"));
+
+		verify(ecommerceService).insertNewOrder(any(Order.class));
+		verifyNoMoreInteractions(ecommerceService);
+	}
+
+	@Test
+	public void testPostOrderWithIdShouldUpdateExistingOrder() throws Exception {
+		mvc.perform(post("/saveOrder").param("id", "1").param("item", "BOX1").param("price", "700")
+				.param("user.name", "test").param("user.surname", "test").param("user.email", "test")
+				.param("user.balance", "2000")).andExpect(redirectedUrl("/orders"));
+
+		verify(ecommerceService).updateOrderById(1L,
+				new Order(1L, Item.BOX1, 700, new User(1L, "test", "test", "test", 2000)));
+	}
+
+	@Test
+	public void testPostOrderWhenUpdateFailsShouldHandleException() throws Exception {
+		doThrow(new IllegalStateException("Unable to update the order")).when(ecommerceService).updateOrderById(anyLong(),
+				any(Order.class));
+
+		mvc.perform(post("/saveOrder").param("id", "1").param("item", "BOX1").param("price", "700")
+				.param("user.name", "test").param("user.username", "test").param("user.email", "test")
+				.param("user.balance", "500")).andExpect(redirectedUrl("/orders"))
+				.andExpect(flash().attribute("error", "Unable to update the order"));
+
+		verify(ecommerceService).updateOrderById(anyLong(), any(Order.class));
+		verifyNoMoreInteractions(ecommerceService);
 	}
 
 	@Test
 	public void testHandleBalanceWhenUserIsNotFound() throws Exception {
-		when(userService.getUserById(1L)).thenReturn(null);
+		when(ecommerceService.getUserById(1L)).thenReturn(null);
 
 		mvc.perform(get("/1/handle_balance")).andExpect(view().name("handle-balance"))
 				.andExpect(model().attribute("user", nullValue()))
@@ -139,55 +235,55 @@ public class UserWebControllerTest {
 	public void testDepositWhenSuccessShouldRedirectToMappingUsers() throws Exception {
 		mvc.perform(post("/1/deposit").param("amount", "500")).andExpect(redirectedUrl("/"));
 
-		verify(userService).deposit(1L, 500);
+		verify(ecommerceService).deposit(1L, 500);
 	}
 
 	@Test
 	public void testDepositWhenFailsShouldHandleIllegalArgumentException() throws Exception {
-		doThrow(new IllegalArgumentException("Deposit amount cannot be negative")).when(userService).deposit(anyLong(),
+		doThrow(new IllegalArgumentException("Deposit amount cannot be negative")).when(ecommerceService).deposit(anyLong(),
 				anyLong());
 
 		mvc.perform(post("/1/deposit").param("amount", "-500")).andExpect(redirectedUrl("/"))
 				.andExpect(flash().attribute("error", "Deposit amount cannot be negative"));
 
-		verify(userService).deposit(anyLong(), anyLong());
+		verify(ecommerceService).deposit(anyLong(), anyLong());
 	}
 
 	@Test
 	public void testDepositWhenFailsShouldHandleIllegalStateException() throws Exception {
-		doThrow(new IllegalStateException("User not found")).when(userService).deposit(anyLong(), anyLong());
+		doThrow(new IllegalStateException("User not found")).when(ecommerceService).deposit(anyLong(), anyLong());
 
 		mvc.perform(post("/1/deposit").param("amount", "500")).andExpect(redirectedUrl("/"))
 				.andExpect(flash().attribute("error", "User not found"));
 
-		verify(userService).deposit(anyLong(), anyLong());
+		verify(ecommerceService).deposit(anyLong(), anyLong());
 	}
 
 	@Test
 	public void testWithdrawWhenSuccessShouldRedirectToMappingUsers() throws Exception {
 		mvc.perform(post("/1/withdraw").param("amount", "500")).andExpect(redirectedUrl("/"));
 
-		verify(userService).withdraw(1L, 500);
+		verify(ecommerceService).withdraw(1L, 500);
 	}
 
 	@Test
 	public void testWithdrawWhenFailsShouldHandleIllegalArgumentException() throws Exception {
-		doThrow(new IllegalArgumentException("Withdraw amount cannot be negative")).when(userService)
+		doThrow(new IllegalArgumentException("Withdraw amount cannot be negative")).when(ecommerceService)
 				.withdraw(anyLong(), anyLong());
 
 		mvc.perform(post("/1/withdraw").param("amount", "-500")).andExpect(redirectedUrl("/"))
 				.andExpect(flash().attribute("error", "Withdraw amount cannot be negative"));
 
-		verify(userService).withdraw(anyLong(), anyLong());
+		verify(ecommerceService).withdraw(anyLong(), anyLong());
 	}
 
 	@Test
 	public void testWithdrawWhenFailsShouldHandleIllegalStateException() throws Exception {
-		doThrow(new IllegalStateException("User not found")).when(userService).withdraw(anyLong(), anyLong());
+		doThrow(new IllegalStateException("User not found")).when(ecommerceService).withdraw(anyLong(), anyLong());
 
 		mvc.perform(post("/1/withdraw").param("amount", "500")).andExpect(redirectedUrl("/"))
 				.andExpect(flash().attribute("error", "User not found"));
 
-		verify(userService).withdraw(anyLong(), anyLong());
+		verify(ecommerceService).withdraw(anyLong(), anyLong());
 	}
 }
