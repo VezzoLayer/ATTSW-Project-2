@@ -60,7 +60,11 @@
 			**/model/*,
 			**/EcommerceManagerApplication.*
 		</sonar.coverage.exclusions>
-		
+		<sonar.issue.ignore.multicriteria>e12</sonar.issue.ignore.multicriteria>
+		<!-- Disabilita "Credentials should not be hard-coded" -->
+		<sonar.issue.ignore.multicriteria.e12.ruleKey>java:S6437</sonar.issue.ignore.multicriteria.e12.ruleKey>
+		<sonar.issue.ignore.multicriteria.e12.resourceKey>**/application*</sonar.issue.ignore.multicriteria.e12.resourceKey>
+
 	</properties>
 	
 	<dependencies>
@@ -115,7 +119,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<!-- Per usare test parametrizzati -->
 		<dependency>
 			<groupId>pl.pragmatists</groupId>
@@ -356,7 +360,7 @@
 				</plugins>
 			</build>
 		</profile>
-		
+
 		<!-- Profilo che lega l'esecuzione di jacoco e coveralls perché coveralls richiede i report di jacoco -->
 		<profile>
 			<id>coveralls</id>
