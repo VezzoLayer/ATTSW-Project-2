@@ -55,6 +55,11 @@ public class UserRestController {
 		return userService.insertNewUser(user);
 	}
 
+	@PostMapping("/orders/new")
+	public Order newOrder(@RequestBody Order order) {
+		return userService.insertNewOrder(order);
+	}
+
 	@PutMapping("/users/update/{id}")
 	public User updateUser(@PathVariable long id, @RequestBody User user) {
 		return userService.updateUserById(id, user);
@@ -79,7 +84,8 @@ public class UserRestController {
 
 	@ExceptionHandler(IllegalStateException.class)
 	public ResponseEntity<Map<String, String>> handleIllegalState(IllegalStateException ex) {
-		if (ex.getMessage().contains("Not enough balance to perform withdraw")) {
+		if (ex.getMessage().contains("Not enough balance to perform withdraw")
+				| ex.getMessage().contains("Unable to")) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(MESSAGE_ATTRIBUTE, ex.getMessage()));
 		}
 

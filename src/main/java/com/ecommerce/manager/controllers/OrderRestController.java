@@ -35,13 +35,12 @@ public class OrderRestController {
 	 * 
 	 * @GetMapping("/{id}") public Order oneOrder(@PathVariable long id) { return
 	 * orderService.getOrderById(id); }
+	 * 
+	 * 
+	 * @PostMapping("/new") public Order newOrder(@RequestBody Order order) { return
+	 * orderService.insertNewOrder(order); }
 	 */
 	
-	@PostMapping("/new")
-	public Order newOrder(@RequestBody Order order) {
-		return orderService.insertNewOrder(order);
-	}
-
 	@PutMapping("/update/{id}")
 	public Order updateOrder(@PathVariable long id, @RequestBody Order order) {
 		return orderService.updateOrderById(id, order);
