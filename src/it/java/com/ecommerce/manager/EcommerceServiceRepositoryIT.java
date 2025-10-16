@@ -53,7 +53,7 @@ public class EcommerceServiceRepositoryIT {
 		Order savedOrder = ecommerceService.insertNewOrder(order);
 
 		assertThat(orderRepository.findById(savedOrder.getId())).isPresent();
-		assertThat(userRepository.findById(user.getId()).orElse(null).getBalance()).isEqualTo(1500);
+		assertThat(userRepository.findById(user.getId()).orElseThrow().getBalance()).isEqualTo(1500);
 	}
 
 	@Test
@@ -105,7 +105,7 @@ public class EcommerceServiceRepositoryIT {
 		assertThatThrownBy(() -> ecommerceService.insertNewOrder(notSavedOrder))
 				.isInstanceOf(DataIntegrityViolationException.class);
 
-		assertThat(orderRepository.findById(notSavedOrder.getId()).orElse(null)).isNull();
+		assertThat(orderRepository.findById(notSavedOrder.getId())).isNotPresent();
 		assertThat(userRepository.findById(user.getId()).orElse(null).getBalance()).isEqualTo(2000);
 	}
 }
