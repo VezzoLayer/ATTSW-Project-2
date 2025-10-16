@@ -13,7 +13,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ecommerce.manager.model.Order;
 import com.ecommerce.manager.model.User;
-import com.ecommerce.manager.services.UserService;
+import com.ecommerce.manager.services.EcommerceService;
 
 @Controller
 public class UserWebController {
@@ -30,15 +30,15 @@ public class UserWebController {
 	private static final String REDIRECT_TO_MAPPING_USERS = "redirect:/";
 	private static final String REDIRECT_TO_MAPPING_ORDERS = "redirect:/orders";
 
-	private UserService userService;
+	private EcommerceService ecommerceService;
 
-	public UserWebController(UserService userService) {
-		this.userService = userService;
+	public UserWebController(EcommerceService ecommerceService) {
+		this.ecommerceService = ecommerceService;
 	}
 
 	@GetMapping("/")
 	public String index(Model model) {
-		List<User> allUsers = userService.getAllUsers();
+		List<User> allUsers = ecommerceService.getAllUsers();
 
 		model.addAttribute(USERS_ATTRIBUTE, allUsers);
 		model.addAttribute(MESSAGE_ATTRIBUTE, allUsers.isEmpty() ? "No user to show" : "");
@@ -48,7 +48,7 @@ public class UserWebController {
 
 	@GetMapping("/orders")
 	public String orders(Model model) {
-		List<Order> allOrders = userService.getAllOrders();
+		List<Order> allOrders = ecommerceService.getAllOrders();
 
 		model.addAttribute(ORDERS_ATTRIBUTE, allOrders);
 		model.addAttribute(MESSAGE_ATTRIBUTE, allOrders.isEmpty() ? "No order to show" : "");
@@ -58,7 +58,7 @@ public class UserWebController {
 
 	@GetMapping("/editUser/{id}")
 	public String editUser(@PathVariable long id, Model model) {
-		User userById = userService.getUserById(id);
+		User userById = ecommerceService.getUserById(id);
 
 		model.addAttribute(USER_ATTRIBUTE, userById);
 		model.addAttribute(MESSAGE_ATTRIBUTE, userById == null ? "No user found with id: " + id : "");
@@ -68,7 +68,7 @@ public class UserWebController {
 
 	@GetMapping("/editOrder/{id}")
 	public String editOrder(@PathVariable long id, Model model) {
-		Order orderById = userService.getOrderById(id);
+		Order orderById = ecommerceService.getOrderById(id);
 
 		model.addAttribute(ORDER_ATTRIBUTE, orderById);
 		model.addAttribute(MESSAGE_ATTRIBUTE, orderById == null ? "No order found with id: " + id : "");
@@ -97,9 +97,9 @@ public class UserWebController {
 		final Long id = user.getId();
 
 		if (id == null) {
-			userService.insertNewUser(user);
+			ecommerceService.insertNewUser(user);
 		} else {
-			userService.updateUserById(id, user);
+			ecommerceService.updateUserById(id, user);
 		}
 
 		return REDIRECT_TO_MAPPING_USERS;
@@ -110,9 +110,9 @@ public class UserWebController {
 		final Long id = order.getId();
 
 		if (id == null) {
-			userService.insertNewOrder(order);
+			ecommerceService.insertNewOrder(order);
 		} else {
-			userService.updateOrderById(id, order);
+			ecommerceService.updateOrderById(id, order);
 		}
 
 		return REDIRECT_TO_MAPPING_ORDERS;
@@ -120,7 +120,7 @@ public class UserWebController {
 
 	@GetMapping("/{id}/handle_balance")
 	public String handleBalance(@PathVariable long id, Model model) {
-		User userById = userService.getUserById(id);
+		User userById = ecommerceService.getUserById(id);
 
 		model.addAttribute(USER_ATTRIBUTE, userById);
 		model.addAttribute(MESSAGE_ATTRIBUTE, userById == null ? "No user found with id: " + id : "");
@@ -130,14 +130,14 @@ public class UserWebController {
 
 	@PostMapping("/{id}/deposit")
 	public String deposit(@PathVariable long id, @RequestParam long amount) {
-		userService.deposit(id, amount);
+		ecommerceService.deposit(id, amount);
 
 		return REDIRECT_TO_MAPPING_USERS;
 	}
 
 	@PostMapping("/{id}/withdraw")
 	public String withdraw(@PathVariable long id, @RequestParam long amount) {
-		userService.withdraw(id, amount);
+		ecommerceService.withdraw(id, amount);
 
 		return REDIRECT_TO_MAPPING_USERS;
 	}

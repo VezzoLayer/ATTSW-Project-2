@@ -26,7 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.ecommerce.manager.model.Item;
 import com.ecommerce.manager.model.Order;
 import com.ecommerce.manager.model.User;
-import com.ecommerce.manager.services.UserService;
+import com.ecommerce.manager.services.EcommerceService;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(controllers = UserRestController.class)
@@ -36,7 +36,7 @@ public class UserRestControllerTest {
 	private MockMvc mvc;
 
 	@MockitoBean
-	private UserService userService;
+	private EcommerceService ecommerceService;
 
 	@Test
 	public void testAllUsersEmpty() throws Exception {
@@ -46,7 +46,7 @@ public class UserRestControllerTest {
 
 	@Test
 	public void testAllUsersWhenThereIsSome() throws Exception {
-		when(userService.getAllUsers()).thenReturn(
+		when(ecommerceService.getAllUsers()).thenReturn(
 				asList(new User(1L, "user 1", "test", "test", 3000), new User(2L, "user 2", "test", "test", 4000)));
 
 		this.mvc.perform(get("/api/users").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
@@ -67,7 +67,7 @@ public class UserRestControllerTest {
 	public void testAllOrdersWhenThereIsSome() throws Exception {
 		User user = new User(1L, "user 1", "test", "test", 3000);
 
-		when(userService.getAllOrders())
+		when(ecommerceService.getAllOrders())
 				.thenReturn(asList(new Order(1L, Item.BOX1, 800, user), new Order(2L, Item.BOX2, 500, user)));
 
 		this.mvc.perform(get("/api/orders").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
@@ -83,7 +83,7 @@ public class UserRestControllerTest {
 
 	@Test
 	public void testOneUserByIdWithExistingUser() throws Exception {
-		when(userService.getUserById(anyLong())).thenReturn(new User(1L, "user 1", "test", "test", 3000));
+		when(ecommerceService.getUserById(anyLong())).thenReturn(new User(1L, "user 1", "test", "test", 3000));
 
 		this.mvc.perform(get("/api/users/1").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
 				.andExpect(jsonPath("$.id", is(1))).andExpect(jsonPath("$.username", is("user 1")))
@@ -93,7 +93,7 @@ public class UserRestControllerTest {
 
 	@Test
 	public void testOneUserByIdWithNotFoundUser() throws Exception {
-		when(userService.getUserById(anyLong())).thenReturn(null);
+		when(ecommerceService.getUserById(anyLong())).thenReturn(null);
 
 		this.mvc.perform(get("/api/users/1").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
 				.andExpect(content().string(""));
@@ -101,7 +101,7 @@ public class UserRestControllerTest {
 
 	@Test
 	public void testOneOrderByIdWithExistingOrder() throws Exception {
-		when(userService.getOrderById(anyLong()))
+		when(ecommerceService.getOrderById(anyLong()))
 				.thenReturn(new Order(1L, Item.BOX1, 800, new User(1L, "user 1", "test", "test", 3000)));
 
 		this.mvc.perform(get("/api/orders/1").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
@@ -113,7 +113,7 @@ public class UserRestControllerTest {
 
 	@Test
 	public void testOneOrderByIdWithNotFoundOrder() throws Exception {
-		when(userService.getOrderById(anyLong())).thenReturn(null);
+		when(ecommerceService.getOrderById(anyLong())).thenReturn(null);
 
 		this.mvc.perform(get("/api/orders/1").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
 				.andExpect(content().string(""));
@@ -123,7 +123,7 @@ public class UserRestControllerTest {
 	public void testPostUser() throws Exception {
 		User requestBodyUser = new User(null, "username", "new user", "email", 4000);
 
-		when(userService.insertNewUser(requestBodyUser))
+		when(ecommerceService.insertNewUser(requestBodyUser))
 				.thenReturn(new User(1L, "username", "new user", "email", 4000));
 
 		this.mvc.perform(post("/api/users/new").contentType(MediaType.APPLICATION_JSON)
@@ -139,7 +139,7 @@ public class UserRestControllerTest {
 
 		Order requestBodyOrder = new Order(null, Item.BOX1, 800, user);
 
-		when(userService.insertNewOrder(requestBodyOrder)).thenReturn(new Order(1L, Item.BOX1, 800, user));
+		when(ecommerceService.insertNewOrder(requestBodyOrder)).thenReturn(new Order(1L, Item.BOX1, 800, user));
 
 		this.mvc.perform(post("/api/orders/new").contentType(MediaType.APPLICATION_JSON).content(
 				"{\"item\":\"BOX1\", \"price\":800, \"user\":{\"id\":1, \"username\":\"user 1\", \"name\":\"test\", \"email\":\"test\", \"balance\":3000}}")
@@ -152,7 +152,7 @@ public class UserRestControllerTest {
 
 	@Test
 	public void testPostOrderWhenInsertFailsShouldReturn400() throws Exception {
-		when(userService.insertNewOrder(any(Order.class)))
+		when(ecommerceService.insertNewOrder(any(Order.class)))
 				.thenThrow(new IllegalStateException("Unable to insert new order"));
 
 		this.mvc.perform(post("/api/orders/new").contentType(MediaType.APPLICATION_JSON).content(
@@ -165,7 +165,7 @@ public class UserRestControllerTest {
 	public void testUpdateUser() throws Exception {
 		User requestBodyUser = new User(null, "username", "new user", "email", 4000);
 
-		when(userService.updateUserById(1L, requestBodyUser))
+		when(ecommerceService.updateUserById(1L, requestBodyUser))
 				.thenReturn(new User(1L, "username", "new user", "email", 4000));
 
 		this.mvc.perform(put("/api/users/update/1").contentType(MediaType.APPLICATION_JSON)
@@ -181,7 +181,7 @@ public class UserRestControllerTest {
 
 		Order requestBodyOrder = new Order(null, Item.BOX1, 800, user);
 
-		when(userService.updateOrderById(1L, requestBodyOrder)).thenReturn(new Order(1L, Item.BOX1, 800, user));
+		when(ecommerceService.updateOrderById(1L, requestBodyOrder)).thenReturn(new Order(1L, Item.BOX1, 800, user));
 
 		this.mvc.perform(put("/api/orders/update/1").contentType(MediaType.APPLICATION_JSON).content(
 				"{\"item\":\"BOX1\", \"price\":800, \"user\":{\"id\":1, \"username\":\"user 1\", \"name\":\"test\", \"email\":\"test\", \"balance\":3000}}")
@@ -194,7 +194,7 @@ public class UserRestControllerTest {
 
 	@Test
 	public void testPostOrderWhenUpdateFailsShouldReturn400() throws Exception {
-		when(userService.updateOrderById(anyLong(), any(Order.class)))
+		when(ecommerceService.updateOrderById(anyLong(), any(Order.class)))
 				.thenThrow(new IllegalStateException("Unable to update the order"));
 
 		this.mvc.perform(put("/api/orders/update/1").contentType(MediaType.APPLICATION_JSON).content(
@@ -211,7 +211,7 @@ public class UserRestControllerTest {
 
 	@Test
 	public void testDepositWithNegativeAmountReturns400() throws Exception {
-		doThrow(new IllegalArgumentException("Deposit amount cannot be negative")).when(userService).deposit(anyLong(),
+		doThrow(new IllegalArgumentException("Deposit amount cannot be negative")).when(ecommerceService).deposit(anyLong(),
 				eq(-500L));
 
 		this.mvc.perform(post("/api/users/1/deposit").contentType(MediaType.APPLICATION_JSON).content("-500")
@@ -221,7 +221,7 @@ public class UserRestControllerTest {
 
 	@Test
 	public void testDepositWithUserNotFoundReturns404() throws Exception {
-		doThrow(new IllegalStateException("User not found")).when(userService).deposit(anyLong(), anyLong());
+		doThrow(new IllegalStateException("User not found")).when(ecommerceService).deposit(anyLong(), anyLong());
 
 		this.mvc.perform(post("/api/users/1/deposit").contentType(MediaType.APPLICATION_JSON).content("500"))
 				.andExpect(status().isNotFound()).andExpect(jsonPath("$.message", is("User not found")));
@@ -235,7 +235,7 @@ public class UserRestControllerTest {
 
 	@Test
 	public void testWithdrawWithNegativeAmountReturns400() throws Exception {
-		doThrow(new IllegalArgumentException("Withdraw amount cannot be negative")).when(userService)
+		doThrow(new IllegalArgumentException("Withdraw amount cannot be negative")).when(ecommerceService)
 				.withdraw(anyLong(), eq(-500L));
 
 		this.mvc.perform(post("/api/users/1/withdraw").contentType(MediaType.APPLICATION_JSON).content("-500")
@@ -245,7 +245,7 @@ public class UserRestControllerTest {
 
 	@Test
 	public void testWithdrawWithUserNotFoundReturns404() throws Exception {
-		doThrow(new IllegalStateException("User not found")).when(userService).withdraw(anyLong(), anyLong());
+		doThrow(new IllegalStateException("User not found")).when(ecommerceService).withdraw(anyLong(), anyLong());
 
 		this.mvc.perform(post("/api/users/1/withdraw").contentType(MediaType.APPLICATION_JSON).content("500")
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound())
@@ -254,7 +254,7 @@ public class UserRestControllerTest {
 
 	@Test
 	public void testWithdrawWhenBalanceNotEnoughReturns400() throws Exception {
-		doThrow(new IllegalStateException("Not enough balance to perform withdraw")).when(userService)
+		doThrow(new IllegalStateException("Not enough balance to perform withdraw")).when(ecommerceService)
 				.withdraw(anyLong(), anyLong());
 
 		this.mvc.perform(post("/api/users/1/withdraw").contentType(MediaType.APPLICATION_JSON).content("500")

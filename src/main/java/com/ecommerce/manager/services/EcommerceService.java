@@ -11,12 +11,12 @@ import com.ecommerce.manager.repositories.OrderRepository;
 import com.ecommerce.manager.repositories.UserRepository;
 
 @Service
-public class UserService {
+public class EcommerceService {
 
 	private UserRepository userRepository;
 	private OrderRepository orderRepository;
 
-	public UserService(UserRepository userRepository, OrderRepository orderRepository) {
+	public EcommerceService(UserRepository userRepository, OrderRepository orderRepository) {
 		this.userRepository = userRepository;
 		this.orderRepository = orderRepository;
 	}

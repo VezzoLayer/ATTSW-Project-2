@@ -23,7 +23,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.ecommerce.manager.model.Item;
 import com.ecommerce.manager.model.Order;
 import com.ecommerce.manager.model.User;
-import com.ecommerce.manager.services.UserService;
+import com.ecommerce.manager.services.EcommerceService;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(controllers = UserWebController.class)
@@ -33,7 +33,7 @@ public class UserWebControllerHtmlUnitTest {
 	private WebClient webClient;
 
 	@MockitoBean
-	private UserService userService;
+	private EcommerceService ecommerceService;
 
 	@Test
 	public void testHomePageTitle() throws Exception {
@@ -44,7 +44,7 @@ public class UserWebControllerHtmlUnitTest {
 
 	@Test
 	public void testHomePageWithNoUsers() throws Exception {
-		when(userService.getAllUsers()).thenReturn(emptyList());
+		when(ecommerceService.getAllUsers()).thenReturn(emptyList());
 
 		HtmlPage page = this.webClient.getPage("/");
 
@@ -56,7 +56,7 @@ public class UserWebControllerHtmlUnitTest {
 
 	@Test
 	public void testHomePageWithUsersShouldShowThemInATable() throws Exception {
-		when(userService.getAllUsers())
+		when(ecommerceService.getAllUsers())
 				.thenReturn(asList(new User(1L, "u1", "n1", "e1", 1000), new User(2L, "u2", "n2", "e2", 2000)));
 
 		HtmlPage page = this.webClient.getPage("/");
@@ -90,7 +90,7 @@ public class UserWebControllerHtmlUnitTest {
 
 	@Test
 	public void testEditNonExistingUser() throws Exception {
-		when(userService.getUserById(1L)).thenReturn(null);
+		when(ecommerceService.getUserById(1L)).thenReturn(null);
 
 		HtmlPage page = this.webClient.getPage("/editUser/1");
 
@@ -99,7 +99,7 @@ public class UserWebControllerHtmlUnitTest {
 
 	@Test
 	public void testEditExistingUser() throws Exception {
-		when(userService.getUserById(1)).thenReturn(new User(1L, "original u", "original n", "original e", 1000));
+		when(ecommerceService.getUserById(1)).thenReturn(new User(1L, "original u", "original n", "original e", 1000));
 
 		HtmlPage page = this.webClient.getPage("/editUser/1");
 
@@ -112,7 +112,7 @@ public class UserWebControllerHtmlUnitTest {
 
 		form.getButtonByName("btn_submit").click();
 
-		verify(userService).updateUserById(1L, new User(1L, "modified u", "modified n", "modified e", 2000));
+		verify(ecommerceService).updateUserById(1L, new User(1L, "modified u", "modified n", "modified e", 2000));
 	}
 
 	@Test
@@ -128,7 +128,7 @@ public class UserWebControllerHtmlUnitTest {
 
 		form.getButtonByName("btn_submit").click();
 
-		verify(userService).insertNewUser(new User(null, "new u", "new n", "new e", 2000));
+		verify(ecommerceService).insertNewUser(new User(null, "new u", "new n", "new e", 2000));
 	}
 
 	@Test
@@ -147,7 +147,7 @@ public class UserWebControllerHtmlUnitTest {
 
 	@Test
 	public void testHandleBalanceOfANonExistingUser() throws Exception {
-		when(userService.getUserById(1L)).thenReturn(null);
+		when(ecommerceService.getUserById(1L)).thenReturn(null);
 
 		HtmlPage page = this.webClient.getPage("/1/handle_balance");
 
@@ -156,7 +156,7 @@ public class UserWebControllerHtmlUnitTest {
 
 	@Test
 	public void testHandleBalanceOfExistingUserShouldDisplayIdAndBalance() throws Exception {
-		when(userService.getUserById(1L)).thenReturn(new User(1L, "u1", "n1", "e1", 1500));
+		when(ecommerceService.getUserById(1L)).thenReturn(new User(1L, "u1", "n1", "e1", 1500));
 
 		HtmlPage page = this.webClient.getPage("/1/handle_balance");
 
@@ -169,7 +169,7 @@ public class UserWebControllerHtmlUnitTest {
 
 	@Test
 	public void testDepositWhenAmountIsAllowedShouldCallService() throws Exception {
-		when(userService.getUserById(1L)).thenReturn(new User(1L, "u1", "n1", "e1", 1500));
+		when(ecommerceService.getUserById(1L)).thenReturn(new User(1L, "u1", "n1", "e1", 1500));
 
 		HtmlPage page = this.webClient.getPage("/1/handle_balance");
 
@@ -178,13 +178,13 @@ public class UserWebControllerHtmlUnitTest {
 		form.getInputByName("amount").setValueAttribute("500");
 		form.getButtonByName("btn_deposit").click();
 
-		verify(userService).deposit(1L, 500L);
+		verify(ecommerceService).deposit(1L, 500L);
 	}
 
 	@Test
 	public void testDepositWhenIllegalArgumentExceptionIsRaisedShouldRedirectToHomeWithErrorMessage() throws Exception {
-		when(userService.getUserById(1L)).thenReturn(new User(1L, "u1", "n1", "e1", 1500));
-		doThrow(new IllegalArgumentException("Amount must be positive")).when(userService).deposit(1L, -500L);
+		when(ecommerceService.getUserById(1L)).thenReturn(new User(1L, "u1", "n1", "e1", 1500));
+		doThrow(new IllegalArgumentException("Amount must be positive")).when(ecommerceService).deposit(1L, -500L);
 
 		HtmlPage page = this.webClient.getPage("/1/handle_balance");
 
@@ -193,13 +193,13 @@ public class UserWebControllerHtmlUnitTest {
 		form.getInputByName("amount").setValueAttribute("-500");
 		HtmlPage resultPage = form.getButtonByName("btn_deposit").click();
 
-		verify(userService).deposit(1L, -500L);
+		verify(ecommerceService).deposit(1L, -500L);
 		assertThat(resultPage.getBody().getTextContent()).contains("Amount must be positive");
 	}
 
 	@Test
 	public void testWithdrawWhenAmountIsAllowedShouldCallService() throws Exception {
-		when(userService.getUserById(1L)).thenReturn(new User(1L, "u1", "n1", "e1", 1500));
+		when(ecommerceService.getUserById(1L)).thenReturn(new User(1L, "u1", "n1", "e1", 1500));
 
 		HtmlPage page = this.webClient.getPage("/1/handle_balance");
 
@@ -208,14 +208,14 @@ public class UserWebControllerHtmlUnitTest {
 		form.getInputByName("amount").setValueAttribute("500");
 		form.getButtonByName("btn_withdraw").click();
 
-		verify(userService).withdraw(1L, 500L);
+		verify(ecommerceService).withdraw(1L, 500L);
 	}
 
 	@Test
 	public void testWithdrawWhenIllegalArgumentExceptionIsRaisedShouldRedirectToHomeWithErrorMessage()
 			throws Exception {
-		when(userService.getUserById(1L)).thenReturn(new User(1L, "u1", "n1", "e1", 1500));
-		doThrow(new IllegalArgumentException("Amount must be positive")).when(userService).withdraw(1L, -500L);
+		when(ecommerceService.getUserById(1L)).thenReturn(new User(1L, "u1", "n1", "e1", 1500));
+		doThrow(new IllegalArgumentException("Amount must be positive")).when(ecommerceService).withdraw(1L, -500L);
 
 		HtmlPage page = this.webClient.getPage("/1/handle_balance");
 
@@ -224,14 +224,14 @@ public class UserWebControllerHtmlUnitTest {
 		form.getInputByName("amount").setValueAttribute("-500");
 		HtmlPage resultPage = form.getButtonByName("btn_withdraw").click();
 
-		verify(userService).withdraw(1L, -500L);
+		verify(ecommerceService).withdraw(1L, -500L);
 		assertThat(resultPage.getBody().getTextContent()).contains("Amount must be positive");
 	}
 
 	@Test
 	public void testWithdrawWhenIllegalStateExceptionIsRaisedShouldRedirectToHomeWithErrorMessage() throws Exception {
-		when(userService.getUserById(1L)).thenReturn(new User(1L, "u1", "n1", "e1", 300));
-		doThrow(new IllegalStateException("Balance is not enough")).when(userService).withdraw(1L, 500L);
+		when(ecommerceService.getUserById(1L)).thenReturn(new User(1L, "u1", "n1", "e1", 300));
+		doThrow(new IllegalStateException("Balance is not enough")).when(ecommerceService).withdraw(1L, 500L);
 
 		HtmlPage page = this.webClient.getPage("/1/handle_balance");
 
@@ -240,13 +240,13 @@ public class UserWebControllerHtmlUnitTest {
 		form.getInputByName("amount").setValueAttribute("500");
 		HtmlPage resultPage = form.getButtonByName("btn_withdraw").click();
 
-		verify(userService).withdraw(1L, 500L);
+		verify(ecommerceService).withdraw(1L, 500L);
 		assertThat(resultPage.getBody().getTextContent()).contains("Balance is not enough");
 	}
 
 	@Test
 	public void testHomePageShouldHaveALinkForShowingOrdersWhenThereIsAtLeastOneUser() throws Exception {
-		when(userService.getAllUsers()).thenReturn(asList(new User(1L, "u1", "n1", "e1", 1000)));
+		when(ecommerceService.getAllUsers()).thenReturn(asList(new User(1L, "u1", "n1", "e1", 1000)));
 
 		HtmlPage page = this.webClient.getPage("/");
 
@@ -262,7 +262,7 @@ public class UserWebControllerHtmlUnitTest {
 
 	@Test
 	public void testAllOrdersPageWithNoOrders() throws Exception {
-		when(userService.getAllOrders()).thenReturn(emptyList());
+		when(ecommerceService.getAllOrders()).thenReturn(emptyList());
 
 		HtmlPage page = this.webClient.getPage("/orders");
 
@@ -273,7 +273,7 @@ public class UserWebControllerHtmlUnitTest {
 	public void testAllOrdersPageWithOrdersShouldShowThemInATable() throws Exception {
 		User user = new User(1L, "u1", "n1", "e1", 1000);
 
-		when(userService.getAllOrders())
+		when(ecommerceService.getAllOrders())
 				.thenReturn(asList(new Order(1L, Item.BOX1, 100, user), new Order(2L, Item.BOX2, 200, user)));
 
 		HtmlPage page = this.webClient.getPage("/orders");
@@ -304,7 +304,7 @@ public class UserWebControllerHtmlUnitTest {
 
 	@Test
 	public void testEditNonExistingOrder() throws Exception {
-		when(userService.getOrderById(1L)).thenReturn(null);
+		when(ecommerceService.getOrderById(1L)).thenReturn(null);
 
 		HtmlPage page = this.webClient.getPage("/editOrder/1");
 
@@ -316,7 +316,7 @@ public class UserWebControllerHtmlUnitTest {
 		User user1 = new User(1L, "u1", "n1", "e1", 1000);
 		User user2 = new User(2L, "u2", "n2", "e2", 2000);
 
-		when(userService.getOrderById(1L)).thenReturn(new Order(1L, Item.BOX1, 100, user1));
+		when(ecommerceService.getOrderById(1L)).thenReturn(new Order(1L, Item.BOX1, 100, user1));
 
 		HtmlPage page = this.webClient.getPage("/editOrder/1");
 
@@ -330,7 +330,7 @@ public class UserWebControllerHtmlUnitTest {
 
 		form.getButtonByName("btn_submit").click();
 
-		verify(userService).updateOrderById(1L, new Order(1L, Item.BOX2, 200, user2));
+		verify(ecommerceService).updateOrderById(1L, new Order(1L, Item.BOX2, 200, user2));
 	}
 
 	@Test
@@ -345,7 +345,7 @@ public class UserWebControllerHtmlUnitTest {
 
 		form.getButtonByName("btn_submit").click();
 
-		verify(userService).insertNewOrder(new Order(null, Item.BOX1, 100, new User(1L, "u", "n", "e", 1000)));
+		verify(ecommerceService).insertNewOrder(new Order(null, Item.BOX1, 100, new User(1L, "u", "n", "e", 1000)));
 	}
 
 	@Test
@@ -364,7 +364,7 @@ public class UserWebControllerHtmlUnitTest {
 
 	public void testInsertNewOrderWhenIllegalStateExceptionIsRaisedShouldRedirectToAllOrdersPageWithErrorMessage()
 			throws Exception {
-		doThrow(new IllegalStateException("Unable to insert new order")).when(userService)
+		doThrow(new IllegalStateException("Unable to insert new order")).when(ecommerceService)
 				.insertNewOrder(any(Order.class));
 
 		HtmlPage page = this.webClient.getPage("/newOrder");
@@ -377,14 +377,14 @@ public class UserWebControllerHtmlUnitTest {
 
 		HtmlPage resultPage = form.getButtonByName("btn_submit").click();
 
-		verify(userService).insertNewOrder(new Order(null, Item.BOX1, 100, new User(1L, "u", "n", "e", 1000)));
+		verify(ecommerceService).insertNewOrder(new Order(null, Item.BOX1, 100, new User(1L, "u", "n", "e", 1000)));
 
 		assertThat(resultPage.getBody().getTextContent()).contains("Unable to insert new order");
 	}
 
 	public void testUpdateOrderWhenIllegalStateExceptionIsRaisedShouldRedirectToAllOrdersPageWithErrorMessage()
 			throws Exception {
-		doThrow(new IllegalStateException("Unable to update the order")).when(userService).updateOrderById(anyLong(),
+		doThrow(new IllegalStateException("Unable to update the order")).when(ecommerceService).updateOrderById(anyLong(),
 				any(Order.class));
 
 		HtmlPage page = this.webClient.getPage("/editOrder/1");
@@ -397,7 +397,7 @@ public class UserWebControllerHtmlUnitTest {
 
 		HtmlPage resultPage = form.getButtonByName("btn_submit").click();
 
-		verify(userService).updateOrderById(1L, new Order(1L, Item.BOX1, 100, new User(1L, "u", "n", "e", 1000)));
+		verify(ecommerceService).updateOrderById(1L, new Order(1L, Item.BOX1, 100, new User(1L, "u", "n", "e", 1000)));
 
 		assertThat(resultPage.getBody().getTextContent()).contains("Unable to update the order");
 	}

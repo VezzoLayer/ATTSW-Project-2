@@ -35,7 +35,7 @@ import com.ecommerce.manager.repositories.OrderRepository;
 import com.ecommerce.manager.repositories.UserRepository;
 
 @RunWith(JUnitParamsRunner.class)
-public class UserServiceWithMockitoTest {
+public class EcommerceServiceWithMockitoTest {
 
 	@Rule
 	public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -47,7 +47,7 @@ public class UserServiceWithMockitoTest {
 	private OrderRepository orderRepository;
 
 	@InjectMocks
-	private UserService userService;
+	private EcommerceService ecommerceService;
 
 	@Test
 	public void testGetAllUsers() {
@@ -56,7 +56,7 @@ public class UserServiceWithMockitoTest {
 
 		when(userRepository.findAll()).thenReturn(asList(user1, user2));
 
-		assertThat(userService.getAllUsers()).containsExactly(user1, user2);
+		assertThat(ecommerceService.getAllUsers()).containsExactly(user1, user2);
 	}
 
 	@Test
@@ -68,7 +68,7 @@ public class UserServiceWithMockitoTest {
 
 		when(orderRepository.findAll()).thenReturn(asList(order1, order2));
 
-		assertThat(userService.getAllOrders()).containsExactly(order1, order2);
+		assertThat(ecommerceService.getAllOrders()).containsExactly(order1, order2);
 	}
 
 	@Test
@@ -77,14 +77,14 @@ public class UserServiceWithMockitoTest {
 
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
-		assertThat(userService.getUserById(1)).isSameAs(user);
+		assertThat(ecommerceService.getUserById(1)).isSameAs(user);
 	}
 
 	@Test
 	public void testGetUserByIdNotFound() {
 		when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-		assertThat(userService.getUserById(1)).isNull();
+		assertThat(ecommerceService.getUserById(1)).isNull();
 	}
 
 	@Test
@@ -93,14 +93,14 @@ public class UserServiceWithMockitoTest {
 
 		when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
 
-		assertThat(userService.getOrderById(1)).isSameAs(order);
+		assertThat(ecommerceService.getOrderById(1)).isSameAs(order);
 	}
 
 	@Test
 	public void testGetOrderByIdNotFound() {
 		when(orderRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-		assertThat(userService.getOrderById(1)).isNull();
+		assertThat(ecommerceService.getOrderById(1)).isNull();
 	}
 
 	@Test
@@ -110,7 +110,7 @@ public class UserServiceWithMockitoTest {
 
 		when(userRepository.save(any(User.class))).thenReturn(savedUser);
 
-		User result = userService.insertNewUser(userToSave);
+		User result = ecommerceService.insertNewUser(userToSave);
 
 		assertThat(result).isSameAs(savedUser);
 
@@ -126,18 +126,18 @@ public class UserServiceWithMockitoTest {
 		Order orderToSave = spy(new Order(70L, Item.BOX1, 700, user));
 		Order savedOrder = new Order(1L, Item.BOX2, 900, user);
 
-		UserService userServiceSpy = spy(userService);
-		doNothing().when(userServiceSpy).withdraw(anyLong(), anyLong());
+		EcommerceService ecommerceServiceSpy = spy(ecommerceService);
+		doNothing().when(ecommerceServiceSpy).withdraw(anyLong(), anyLong());
 
 		when(orderRepository.save(any(Order.class))).thenReturn(savedOrder);
 
-		Order result = userServiceSpy.insertNewOrder(orderToSave);
+		Order result = ecommerceServiceSpy.insertNewOrder(orderToSave);
 
 		assertThat(result).isSameAs(savedOrder);
 
-		InOrder inOrder = inOrder(orderToSave, userServiceSpy, orderRepository);
+		InOrder inOrder = inOrder(orderToSave, ecommerceServiceSpy, orderRepository);
 		inOrder.verify(orderToSave).setId(null);
-		inOrder.verify(userServiceSpy).withdraw(1L, 700L);
+		inOrder.verify(ecommerceServiceSpy).withdraw(1L, 700L);
 		inOrder.verify(orderRepository).save(orderToSave);
 	}
 
@@ -145,12 +145,12 @@ public class UserServiceWithMockitoTest {
 	public void testInsertNewOrderWhenFailsShouldThrowIllegalStateException() {
 		Order orderToSave = spy(new Order(null, Item.BOX1, 700, new User(1L, "test", "test", "test", 500)));
 
-		UserService userServiceSpy = spy(userService);
-		doThrow(new IllegalStateException("Unable to insert new order")).when(userServiceSpy).withdraw(anyLong(),
+		EcommerceService ecommerceServiceSpy = spy(ecommerceService);
+		doThrow(new IllegalStateException("Unable to insert new order")).when(ecommerceServiceSpy).withdraw(anyLong(),
 				anyLong());
 
 		IllegalStateException ex = assertThrows(IllegalStateException.class,
-				() -> userServiceSpy.insertNewOrder(orderToSave));
+				() -> ecommerceServiceSpy.insertNewOrder(orderToSave));
 
 		assertThat(ex.getMessage()).isEqualTo("Unable to insert new order");
 
@@ -167,7 +167,7 @@ public class UserServiceWithMockitoTest {
 
 		when(userRepository.save(any(User.class))).thenReturn(replaced);
 
-		User result = userService.updateUserById(1L, replacement);
+		User result = ecommerceService.updateUserById(1L, replacement);
 
 		assertThat(result).isSameAs(replaced);
 
@@ -184,21 +184,21 @@ public class UserServiceWithMockitoTest {
 		Order replacement = spy(new Order(null, Item.BOX1, 500, user1));
 		Order replaced = new Order(1L, Item.BOX2, 700, user2);
 
-		UserService userServiceSpy = spy(userService);
-		doNothing().when(userServiceSpy).withdraw(anyLong(), anyLong());
-		doNothing().when(userServiceSpy).deposit(anyLong(), anyLong());
+		EcommerceService ecommerceServiceSpy = spy(ecommerceService);
+		doNothing().when(ecommerceServiceSpy).withdraw(anyLong(), anyLong());
+		doNothing().when(ecommerceServiceSpy).deposit(anyLong(), anyLong());
 
 		when(orderRepository.findById(1L)).thenReturn(Optional.of(replaced));
 		when(orderRepository.save(any(Order.class))).thenReturn(replacement);
 
-		Order result = userServiceSpy.updateOrderById(1L, replacement);
+		Order result = ecommerceServiceSpy.updateOrderById(1L, replacement);
 
 		assertThat(result).isSameAs(replacement);
 
-		InOrder inOrder = inOrder(replacement, userServiceSpy, orderRepository);
+		InOrder inOrder = inOrder(replacement, ecommerceServiceSpy, orderRepository);
 		inOrder.verify(replacement).setId(1L);
-		inOrder.verify(userServiceSpy).deposit(2L, 700);
-		inOrder.verify(userServiceSpy).withdraw(1L, 500);
+		inOrder.verify(ecommerceServiceSpy).deposit(2L, 700);
+		inOrder.verify(ecommerceServiceSpy).withdraw(1L, 500);
 		inOrder.verify(orderRepository).save(replacement);
 	}
 
@@ -209,22 +209,22 @@ public class UserServiceWithMockitoTest {
 		Order replacement = spy(new Order(null, Item.BOX1, 700, user));
 		Order replaced = new Order(1L, Item.BOX2, 900, user);
 
-		UserService userServiceSpy = spy(userService);
-		doThrow(new IllegalStateException("Unable to update the order")).when(userServiceSpy).deposit(anyLong(),
+		EcommerceService ecommerceServiceSpy = spy(ecommerceService);
+		doThrow(new IllegalStateException("Unable to update the order")).when(ecommerceServiceSpy).deposit(anyLong(),
 				anyLong());
 
 		when(orderRepository.findById(1L)).thenReturn(Optional.of(replaced));
 
 		IllegalStateException ex = assertThrows(IllegalStateException.class,
-				() -> userServiceSpy.updateOrderById(1L, replacement));
+				() -> ecommerceServiceSpy.updateOrderById(1L, replacement));
 
 		assertThat(ex.getMessage()).isEqualTo("Unable to update the order");
 
-		InOrder inOrder = inOrder(replacement, userServiceSpy);
+		InOrder inOrder = inOrder(replacement, ecommerceServiceSpy);
 		inOrder.verify(replacement).setId(1L);
-		inOrder.verify(userServiceSpy).deposit(1L, 900);
+		inOrder.verify(ecommerceServiceSpy).deposit(1L, 900);
 
-		verify(userServiceSpy, never()).withdraw(anyLong(), anyLong());
+		verify(ecommerceServiceSpy, never()).withdraw(anyLong(), anyLong());
 		verify(orderRepository, never()).save(any());
 	}
 
@@ -235,22 +235,22 @@ public class UserServiceWithMockitoTest {
 		Order replacement = spy(new Order(null, Item.BOX1, 700, user));
 		Order replaced = new Order(1L, Item.BOX2, 1000, user);
 
-		UserService userServiceSpy = spy(userService);
-		doNothing().when(userServiceSpy).deposit(anyLong(), anyLong());
-		doThrow(new IllegalStateException("Unable to update the order")).when(userServiceSpy).withdraw(anyLong(),
+		EcommerceService ecommerceServiceSpy = spy(ecommerceService);
+		doNothing().when(ecommerceServiceSpy).deposit(anyLong(), anyLong());
+		doThrow(new IllegalStateException("Unable to update the order")).when(ecommerceServiceSpy).withdraw(anyLong(),
 				anyLong());
 
 		when(orderRepository.findById(1L)).thenReturn(Optional.of(replaced));
 
 		IllegalStateException ex = assertThrows(IllegalStateException.class,
-				() -> userServiceSpy.updateOrderById(1L, replacement));
+				() -> ecommerceServiceSpy.updateOrderById(1L, replacement));
 
 		assertThat(ex.getMessage()).isEqualTo("Unable to update the order");
 
-		InOrder inOrder = inOrder(replacement, userServiceSpy);
+		InOrder inOrder = inOrder(replacement, ecommerceServiceSpy);
 		inOrder.verify(replacement).setId(1L);
-		inOrder.verify(userServiceSpy).deposit(1L, 1000);
-		inOrder.verify(userServiceSpy).withdraw(1L, 700);
+		inOrder.verify(ecommerceServiceSpy).deposit(1L, 1000);
+		inOrder.verify(ecommerceServiceSpy).withdraw(1L, 700);
 
 		verify(orderRepository, never()).save(any());
 	}
@@ -264,7 +264,7 @@ public class UserServiceWithMockitoTest {
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 		when(userRepository.save(any(User.class))).thenReturn(user);
 
-		userService.deposit(1L, amount);
+		ecommerceService.deposit(1L, amount);
 
 		InOrder inOrder = inOrder(user, userRepository);
 		inOrder.verify(user).setBalance(expectedBalance);
@@ -274,7 +274,7 @@ public class UserServiceWithMockitoTest {
 	@Test
 	public void testDepositWhenAmountIsNegativeShouldThrowException() {
 		IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-				() -> userService.deposit(1L, -500L));
+				() -> ecommerceService.deposit(1L, -500L));
 
 		assertThat(ex.getMessage()).isEqualTo("Deposit amount cannot be negative");
 		verifyNoInteractions(userRepository);
@@ -284,7 +284,7 @@ public class UserServiceWithMockitoTest {
 	public void testDepositWhenUserNotFoundShouldThrowException() {
 		when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-		IllegalStateException ex = assertThrows(IllegalStateException.class, () -> userService.deposit(1L, 500L));
+		IllegalStateException ex = assertThrows(IllegalStateException.class, () -> ecommerceService.deposit(1L, 500L));
 
 		assertThat(ex.getMessage()).isEqualTo("User not found");
 		verify(userRepository, never()).save(any());
@@ -299,7 +299,7 @@ public class UserServiceWithMockitoTest {
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 		when(userRepository.save(any(User.class))).thenReturn(user);
 
-		userService.withdraw(1L, amount);
+		ecommerceService.withdraw(1L, amount);
 
 		InOrder inOrder = inOrder(user, userRepository);
 		inOrder.verify(user).setBalance(expectedBalance);
@@ -309,7 +309,7 @@ public class UserServiceWithMockitoTest {
 	@Test
 	public void testWithdrawWhenAmountIsNegativeShouldThrowException() {
 		IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-				() -> userService.withdraw(1L, -500L));
+				() -> ecommerceService.withdraw(1L, -500L));
 
 		assertThat(ex.getMessage()).isEqualTo("Withdraw amount cannot be negative");
 		verifyNoInteractions(userRepository);
@@ -319,7 +319,7 @@ public class UserServiceWithMockitoTest {
 	public void testWithdrawWhenUserNotFoundShouldThrowException() {
 		when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-		IllegalStateException ex = assertThrows(IllegalStateException.class, () -> userService.withdraw(1L, 500L));
+		IllegalStateException ex = assertThrows(IllegalStateException.class, () -> ecommerceService.withdraw(1L, 500L));
 
 		assertThat(ex.getMessage()).isEqualTo("User not found");
 		verify(userRepository, never()).save(any());
@@ -331,7 +331,7 @@ public class UserServiceWithMockitoTest {
 
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
-		IllegalStateException ex = assertThrows(IllegalStateException.class, () -> userService.withdraw(1L, 500L));
+		IllegalStateException ex = assertThrows(IllegalStateException.class, () -> ecommerceService.withdraw(1L, 500L));
 		assertThat(ex.getMessage()).isEqualTo("Not enough balance to perform withdraw");
 		verify(userRepository, never()).save(any());
 	}

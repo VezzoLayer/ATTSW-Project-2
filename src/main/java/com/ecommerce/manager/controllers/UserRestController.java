@@ -16,69 +16,69 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ecommerce.manager.model.Order;
 import com.ecommerce.manager.model.User;
-import com.ecommerce.manager.services.UserService;
+import com.ecommerce.manager.services.EcommerceService;
 
 @RestController
 @RequestMapping("/api")
 public class UserRestController {
 
-	private UserService userService;
+	private EcommerceService ecommerceService;
 
 	private static final String MESSAGE_ATTRIBUTE = "message";
 
-	public UserRestController(UserService userService) {
-		this.userService = userService;
+	public UserRestController(EcommerceService ecommerceService) {
+		this.ecommerceService = ecommerceService;
 	}
 
 	@GetMapping("/users")
 	public List<User> allUsers() {
-		return userService.getAllUsers();
+		return ecommerceService.getAllUsers();
 	}
 
 	@GetMapping("/orders")
 	public List<Order> allOrders() {
-		return userService.getAllOrders();
+		return ecommerceService.getAllOrders();
 	}
 
 	@GetMapping("/users/{id}")
 	public User oneUser(@PathVariable long id) {
-		return userService.getUserById(id);
+		return ecommerceService.getUserById(id);
 	}
 
 	@GetMapping("/orders/{id}")
 	public Order oneOrder(@PathVariable long id) {
-		return userService.getOrderById(id);
+		return ecommerceService.getOrderById(id);
 	}
 
 	@PostMapping("/users/new")
 	public User newUser(@RequestBody User user) {
-		return userService.insertNewUser(user);
+		return ecommerceService.insertNewUser(user);
 	}
 
 	@PostMapping("/orders/new")
 	public Order newOrder(@RequestBody Order order) {
-		return userService.insertNewOrder(order);
+		return ecommerceService.insertNewOrder(order);
 	}
 
 	@PutMapping("/users/update/{id}")
 	public User updateUser(@PathVariable long id, @RequestBody User user) {
-		return userService.updateUserById(id, user);
+		return ecommerceService.updateUserById(id, user);
 	}
 
 	@PutMapping("/orders/update/{id}")
 	public Order updateOrder(@PathVariable long id, @RequestBody Order order) {
-		return userService.updateOrderById(id, order);
+		return ecommerceService.updateOrderById(id, order);
 	}
 
 	@PostMapping("/users/{id}/deposit")
 	public ResponseEntity<Void> deposit(@PathVariable long id, @RequestBody long amount) {
-		userService.deposit(id, amount);
+		ecommerceService.deposit(id, amount);
 		return ResponseEntity.noContent().build();
 	}
 
 	@PostMapping("/users/{id}/withdraw")
 	public ResponseEntity<Void> withdraw(@PathVariable long id, @RequestBody long amount) {
-		userService.withdraw(id, amount);
+		ecommerceService.withdraw(id, amount);
 		return ResponseEntity.noContent().build();
 	}
 
