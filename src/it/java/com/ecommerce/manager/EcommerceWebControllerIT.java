@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -71,5 +72,46 @@ public class EcommerceWebControllerIT {
 		driver.findElement(By.cssSelector("a[href*='/editUser/" + testUser.getId() + "']"));
 		driver.findElement(By.cssSelector("a[href*='/" + testUser.getId() + "/handle_balance']"));
 		driver.findElement(By.cssSelector("a[href*='/orders']"));
+	}
+
+	@Test
+	public void testEditPageNewUser() {
+		driver.get(baseUrl + "/newUser");
+
+		driver.findElement(By.name("username")).sendKeys("new username");
+		driver.findElement(By.name("name")).sendKeys("new name");
+		driver.findElement(By.name("email")).sendKeys("new email");
+		driver.findElement(By.name("balance")).sendKeys("1000");
+		driver.findElement(By.name("btn_submit")).click();
+
+		assertThat(userRepository.findByUsername("new username")).usingRecursiveComparison().ignoringFields("id")
+				.isEqualTo(new User(null, "new username", "new name", "new email", 1000L));
+	}
+
+	@Test
+	public void testEditPageUpdateUser() {
+		User testUser = userRepository.save(new User(null, "t username", "t name", "t email", 1000L));
+		driver.get(baseUrl + "/editUser/" + testUser.getId());
+
+		final WebElement usernameField = driver.findElement(By.name("username"));
+		usernameField.clear();
+		usernameField.sendKeys("mod username");
+
+		final WebElement nameField = driver.findElement(By.name("name"));
+		nameField.clear();
+		nameField.sendKeys("mod name");
+
+		final WebElement emailField = driver.findElement(By.name("email"));
+		emailField.clear();
+		emailField.sendKeys("mod email");
+
+		final WebElement balanceField = driver.findElement(By.name("balance"));
+		balanceField.clear();
+		balanceField.sendKeys("2000");
+
+		driver.findElement(By.name("btn_submit")).click();
+
+		assertThat(userRepository.findByUsername("mod username")).usingRecursiveComparison().ignoringFields("id")
+				.isEqualTo(new User(null, "mod username", "mod name", "mod email", 2000L));
 	}
 }
