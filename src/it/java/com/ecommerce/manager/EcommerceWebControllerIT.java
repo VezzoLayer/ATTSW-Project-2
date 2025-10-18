@@ -118,8 +118,8 @@ public class EcommerceWebControllerIT {
 	@Test
 	public void testEditBalanceDepositSuccess() {
 		User testUser = userRepository.save(new User(null, "t username", "t name", "t email", 1000L));
-		driver.get(baseUrl + "/" + testUser.getId() + "/handle_balance");
 
+		driver.get(baseUrl + "/" + testUser.getId() + "/handle_balance");
 		driver.findElement(By.id("deposit_amount")).sendKeys("500");
 		driver.findElement(By.name("btn_deposit")).click();
 
@@ -128,14 +128,40 @@ public class EcommerceWebControllerIT {
 	}
 
 	@Test
+	public void testEditBalanceDepositNegativeAmountShowsErrorOnHomePage() {
+		User testUser = userRepository.save(new User(null, "t username", "t name", "t email", 1000L));
+
+		driver.get(baseUrl + "/" + testUser.getId() + "/handle_balance");
+		driver.findElement(By.id("deposit_amount")).sendKeys("-500");
+		driver.findElement(By.name("btn_deposit")).click();
+
+		WebElement body = driver.findElement(By.tagName("body"));
+
+		assertThat(body.getText()).contains("Deposit amount cannot be negative");
+	}
+
+	@Test
 	public void testEditBalanceWithdrawSuccess() {
 		User testUser = userRepository.save(new User(null, "t username", "t name", "t email", 1000L));
-		driver.get(baseUrl + "/" + testUser.getId() + "/handle_balance");
 
+		driver.get(baseUrl + "/" + testUser.getId() + "/handle_balance");
 		driver.findElement(By.id("withdraw_amount")).sendKeys("500");
 		driver.findElement(By.name("btn_withdraw")).click();
 
 		assertThat(userRepository.findByUsername("t username")).usingRecursiveComparison().ignoringFields("id")
 				.isEqualTo(new User(null, "t username", "t name", "t email", 500L));
+	}
+
+	@Test
+	public void testEditBalanceWithdrawTooMuchShowsErrorOnHomePage() {
+		User testUser = userRepository.save(new User(null, "t username", "t name", "t email", 100L));
+
+		driver.get(baseUrl + "/" + testUser.getId() + "/handle_balance");
+		driver.findElement(By.id("withdraw_amount")).sendKeys("500");
+		driver.findElement(By.name("btn_withdraw")).click();
+
+		WebElement body = driver.findElement(By.tagName("body"));
+
+		assertThat(body.getText()).contains("Not enough balance to perform withdraw");
 	}
 }
