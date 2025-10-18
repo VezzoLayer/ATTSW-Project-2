@@ -2,6 +2,8 @@ package com.ecommerce.manager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -231,10 +233,49 @@ public class EcommerceWebControllerIT {
 		driver.findElement(By.name("user.id")).sendKeys(savedUser.getId().toString());
 		driver.findElement(By.name("btn_submit")).click();
 
-		var orders = orderRepository.findByItem(Item.BOX2);
+		List<Order> orders = orderRepository.findByItem(Item.BOX2);
 
 		assertThat(orders).hasSize(1);
 		assertThat(orders.get(0)).usingRecursiveComparison().ignoringFields("id", "user.id")
 				.isEqualTo(new Order(null, Item.BOX2, 500, new User(null, "t username", "t name", "t email", 500)));
+	}
+
+	@Test
+	public void testEditPageUpdateOrder() {
+		User testUser = userRepository.save(new User(null, "t username", "t name", "t email", 1000L));
+		Order testOrder = orderRepository.save(new Order(null, Item.BOX1, 500, testUser));
+
+		driver.get(baseUrl + "/editOrder/" + testOrder.getId());
+
+		final WebElement itemField = driver.findElement(By.name("item"));
+		itemField.clear();
+		itemField.sendKeys("BOX2");
+
+		final WebElement priceField = driver.findElement(By.name("price"));
+		priceField.clear();
+		priceField.sendKeys("300");
+
+		final WebElement userIdField = driver.findElement(By.name("user.id"));
+		userIdField.clear();
+		userIdField.sendKeys(testUser.getId().toString());
+
+		driver.findElement(By.name("btn_submit")).click();
+
+		List<Order> orders = orderRepository.findByItem(Item.BOX2);
+
+		assertThat(orders).hasSize(1);
+		assertThat(orders.get(0)).usingRecursiveComparison().ignoringFields("id", "user.id")
+				.isEqualTo(new Order(null, Item.BOX2, 300, new User(null, "t username", "t name", "t email", 1200)));
+	}
+
+	@Test
+	public void testEditPageUpdateOrderNotFound() {
+		long nonexistentOrderId = 999L;
+
+		driver.get(baseUrl + "/editOrder/" + nonexistentOrderId);
+
+		String bodyText = driver.findElement(By.tagName("body")).getText();
+
+		assertThat(bodyText).contains("No order found with id: " + nonexistentOrderId);
 	}
 }
