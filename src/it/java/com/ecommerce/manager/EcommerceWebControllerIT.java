@@ -163,6 +163,19 @@ public class EcommerceWebControllerIT {
 	}
 
 	@Test
+	public void testHandleBalanceWithdrawNegativeAmountShowsErrorOnHomePage() {
+		User testUser = userRepository.save(new User(null, "t username", "t name", "t email", 1000L));
+
+		driver.get(baseUrl + "/" + testUser.getId() + "/handle_balance");
+		driver.findElement(By.id("withdraw_amount")).sendKeys("-500");
+		driver.findElement(By.name("btn_withdraw")).click();
+
+		WebElement body = driver.findElement(By.tagName("body"));
+
+		assertThat(body.getText()).contains("Withdraw amount cannot be negative");
+	}
+
+	@Test
 	public void testHandleBalanceWithdrawTooMuchShowsErrorOnHomePage() {
 		User testUser = userRepository.save(new User(null, "t username", "t name", "t email", 100L));
 
