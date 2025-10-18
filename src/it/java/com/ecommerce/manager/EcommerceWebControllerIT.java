@@ -116,7 +116,17 @@ public class EcommerceWebControllerIT {
 	}
 
 	@Test
-	public void testEditBalanceDepositSuccess() {
+	public void testEditPageUpdateUserNotFound() {
+		long nonexistentUserId = 999L;
+		driver.get(baseUrl + "/editUser/" + nonexistentUserId);
+
+		String bodyText = driver.findElement(By.tagName("body")).getText();
+
+		assertThat(bodyText).contains("No user found with id: " + nonexistentUserId);
+	}
+
+	@Test
+	public void testHandleBalanceDepositSuccess() {
 		User testUser = userRepository.save(new User(null, "t username", "t name", "t email", 1000L));
 
 		driver.get(baseUrl + "/" + testUser.getId() + "/handle_balance");
@@ -128,7 +138,7 @@ public class EcommerceWebControllerIT {
 	}
 
 	@Test
-	public void testEditBalanceDepositNegativeAmountShowsErrorOnHomePage() {
+	public void testHandleBalanceDepositNegativeAmountShowsErrorOnHomePage() {
 		User testUser = userRepository.save(new User(null, "t username", "t name", "t email", 1000L));
 
 		driver.get(baseUrl + "/" + testUser.getId() + "/handle_balance");
@@ -141,7 +151,7 @@ public class EcommerceWebControllerIT {
 	}
 
 	@Test
-	public void testEditBalanceWithdrawSuccess() {
+	public void testHandleBalanceWithdrawSuccess() {
 		User testUser = userRepository.save(new User(null, "t username", "t name", "t email", 1000L));
 
 		driver.get(baseUrl + "/" + testUser.getId() + "/handle_balance");
@@ -153,7 +163,7 @@ public class EcommerceWebControllerIT {
 	}
 
 	@Test
-	public void testEditBalanceWithdrawTooMuchShowsErrorOnHomePage() {
+	public void testHandleBalanceWithdrawTooMuchShowsErrorOnHomePage() {
 		User testUser = userRepository.save(new User(null, "t username", "t name", "t email", 100L));
 
 		driver.get(baseUrl + "/" + testUser.getId() + "/handle_balance");
@@ -163,5 +173,15 @@ public class EcommerceWebControllerIT {
 		WebElement body = driver.findElement(By.tagName("body"));
 
 		assertThat(body.getText()).contains("Not enough balance to perform withdraw");
+	}
+
+	@Test
+	public void testHandleBalanceUserNotFound() {
+		long nonexistentUserId = 999L;
+
+		driver.get(baseUrl + "/" + nonexistentUserId + "/handle_balance");
+		String bodyText = driver.findElement(By.tagName("body")).getText();
+
+		assertThat(bodyText).contains("No user found with id: " + nonexistentUserId);
 	}
 }
