@@ -16,6 +16,8 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.ecommerce.manager.model.Item;
+import com.ecommerce.manager.model.Order;
 import com.ecommerce.manager.model.User;
 import com.ecommerce.manager.repositories.OrderRepository;
 import com.ecommerce.manager.repositories.UserRepository;
@@ -196,5 +198,24 @@ public class EcommerceWebControllerIT {
 		String bodyText = driver.findElement(By.tagName("body")).getText();
 
 		assertThat(bodyText).contains("No user found with id: " + nonexistentUserId);
+	}
+
+	@Test
+	public void testAllOrdersPageWhenNoOrdersArePresent() {
+		driver.get(baseUrl + "/orders");
+
+		assertThat(driver.findElement(By.tagName("body")).getText()).contains("No Orders");
+	}
+
+	@Test
+	public void testAllOrdersPageWhenOrdersArePresent() {
+		User testUser = userRepository.save(new User(null, "t username", "t name", "t email", 1000));
+		Order testOrder = orderRepository.save(new Order(null, Item.BOX1, 500, testUser));
+
+		driver.get(baseUrl + "/orders");
+
+		assertThat(driver.findElement(By.id("orders_table")).getText()).contains("BOX1", "500", "1", "Edit");
+
+		driver.findElement(By.cssSelector("a[href*='/editOrder/" + testOrder.getId() + "']"));
 	}
 }
