@@ -12,11 +12,11 @@
 		<a th:href="@{/newUser}">New User</a>
 	</div>
 
-	<div th:if="${users.empty}">
+	<div th:if="${#lists.isEmpty(users)}">
 		<div>No Users</div>
 	</div>
 
-	<div th:unless="${users.empty}">
+	<div th:unless="${#lists.isEmpty(users)}">
 		<table id="users_table">
 			<caption>Users</caption>
 			<thead>
