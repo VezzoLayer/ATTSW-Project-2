@@ -114,4 +114,28 @@ public class EcommerceWebControllerIT {
 		assertThat(userRepository.findByUsername("mod username")).usingRecursiveComparison().ignoringFields("id")
 				.isEqualTo(new User(null, "mod username", "mod name", "mod email", 2000L));
 	}
+
+	@Test
+	public void testEditBalanceDepositSuccess() {
+		User testUser = userRepository.save(new User(null, "t username", "t name", "t email", 1000L));
+		driver.get(baseUrl + "/" + testUser.getId() + "/handle_balance");
+
+		driver.findElement(By.id("deposit_amount")).sendKeys("500");
+		driver.findElement(By.name("btn_deposit")).click();
+
+		assertThat(userRepository.findByUsername("t username")).usingRecursiveComparison().ignoringFields("id")
+				.isEqualTo(new User(null, "t username", "t name", "t email", 1500L));
+	}
+
+	@Test
+	public void testEditBalanceWithdrawSuccess() {
+		User testUser = userRepository.save(new User(null, "t username", "t name", "t email", 1000L));
+		driver.get(baseUrl + "/" + testUser.getId() + "/handle_balance");
+
+		driver.findElement(By.id("withdraw_amount")).sendKeys("500");
+		driver.findElement(By.name("btn_withdraw")).click();
+
+		assertThat(userRepository.findByUsername("t username")).usingRecursiveComparison().ignoringFields("id")
+				.isEqualTo(new User(null, "t username", "t name", "t email", 500L));
+	}
 }
