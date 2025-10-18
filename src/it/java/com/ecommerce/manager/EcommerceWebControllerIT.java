@@ -214,8 +214,27 @@ public class EcommerceWebControllerIT {
 
 		driver.get(baseUrl + "/orders");
 
-		assertThat(driver.findElement(By.id("orders_table")).getText()).contains("BOX1", "500", "1", "Edit");
+		assertThat(driver.findElement(By.id("orders_table")).getText()).contains("BOX1", "500",
+				testUser.getId().toString(), "Edit");
 
 		driver.findElement(By.cssSelector("a[href*='/editOrder/" + testOrder.getId() + "']"));
+	}
+
+	@Test
+	public void testEditPageNewOrder() {
+		User savedUser = userRepository.save(new User(null, "t username", "t name", "t email", 1000));
+
+		driver.get(baseUrl + "/newOrder");
+
+		driver.findElement(By.name("item")).sendKeys("BOX2");
+		driver.findElement(By.name("price")).sendKeys("500");
+		driver.findElement(By.name("user.id")).sendKeys(savedUser.getId().toString());
+		driver.findElement(By.name("btn_submit")).click();
+
+		var orders = orderRepository.findByItem(Item.BOX2);
+
+		assertThat(orders).hasSize(1);
+		assertThat(orders.get(0)).usingRecursiveComparison().ignoringFields("id", "user.id")
+				.isEqualTo(new Order(null, Item.BOX2, 500, new User(null, "t username", "t name", "t email", 500)));
 	}
 }
