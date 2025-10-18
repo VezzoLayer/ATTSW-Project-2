@@ -241,6 +241,24 @@ public class EcommerceWebControllerIT {
 	}
 
 	@Test
+	public void testEditPageNewOrderFailsShowsErrorOnAllOrdersPage() {
+		User savedUser = userRepository.save(new User(null, "t username", "t name", "t email", 1000));
+
+		driver.get(baseUrl + "/newOrder");
+
+		driver.findElement(By.name("item")).sendKeys("BOX2");
+
+		// user non ha abbastanza soldi per effettuare l'order
+		driver.findElement(By.name("price")).sendKeys("100000");
+		driver.findElement(By.name("user.id")).sendKeys(savedUser.getId().toString());
+		driver.findElement(By.name("btn_submit")).click();
+
+		WebElement body = driver.findElement(By.tagName("body"));
+
+		assertThat(body.getText()).contains("Unable to insert new order");
+	}
+
+	@Test
 	public void testEditPageUpdateOrder() {
 		User testUser = userRepository.save(new User(null, "t username", "t name", "t email", 1000L));
 		Order testOrder = orderRepository.save(new Order(null, Item.BOX1, 500, testUser));
@@ -266,6 +284,33 @@ public class EcommerceWebControllerIT {
 		assertThat(orders).hasSize(1);
 		assertThat(orders.get(0)).usingRecursiveComparison().ignoringFields("id", "user.id")
 				.isEqualTo(new Order(null, Item.BOX2, 300, new User(null, "t username", "t name", "t email", 1200)));
+	}
+
+	@Test
+	public void testEditPageUpdateOrderFailsShowsErrorOnAllOrdersPage() {
+		User testUser = userRepository.save(new User(null, "t username", "t name", "t email", 1000L));
+		Order testOrder = orderRepository.save(new Order(null, Item.BOX1, 500, testUser));
+
+		driver.get(baseUrl + "/editOrder/" + testOrder.getId());
+
+		final WebElement itemField = driver.findElement(By.name("item"));
+		itemField.clear();
+		itemField.sendKeys("BOX2");
+
+		final WebElement priceField = driver.findElement(By.name("price"));
+		priceField.clear();
+		priceField.sendKeys("300");
+
+		// user.id non è presente nel db
+		final WebElement userIdField = driver.findElement(By.name("user.id"));
+		userIdField.clear();
+		userIdField.sendKeys("9999");
+
+		driver.findElement(By.name("btn_submit")).click();
+
+		WebElement body = driver.findElement(By.tagName("body"));
+
+		assertThat(body.getText()).contains("Unable to update the order");
 	}
 
 	@Test
