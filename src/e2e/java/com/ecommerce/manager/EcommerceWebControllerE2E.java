@@ -20,6 +20,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import com.ecommerce.manager.model.Item;
+
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class EcommerceWebControllerE2E { // NOSONAR not a standard testcase name
@@ -144,12 +146,12 @@ public class EcommerceWebControllerE2E { // NOSONAR not a standard testcase name
 		ResponseEntity<String> answer = new RestTemplate().postForEntity(baseUrl + "/api/users/new", entity,
 				String.class);
 
-		LOGGER.debug("answer for POST: " + answer);
+		LOGGER.debug("answer for POST user: " + answer);
 		return new JSONObject(answer.getBody()).get("id").toString();
 	}
 
 	@Test
-	public void testCreateNewOrder() throws JSONException, InterruptedException {
+	public void testCreateNewOrder() throws JSONException {
 		// Mi assicuro di avere uno user per trovare l'href a /orders
 		String userId = postUser("username for order", "name for order", "email for order", 1000);
 
@@ -172,5 +174,66 @@ public class EcommerceWebControllerE2E { // NOSONAR not a standard testcase name
 		// Si controlla anche che l'user abbia il saldo decrementato
 		assertThat(driver.findElement(By.id("users_table")).getText()).contains("username for order", "name for order",
 				"email for order", "500");
+	}
+
+	@Test
+	public void testEditOrder() throws JSONException {
+		String oldUserId = postUser("username edit order", "name edit order", "email edit order", 2000);
+		String newUserId = postUser("username edit order2", "name edit order2", "email edit order2", 2000);
+		String orderId = postOrder(Item.BOX3, 500, oldUserId);
+
+		driver.get(baseUrl);
+
+		driver.findElement(By.cssSelector("a[href*='/orders']")).click();
+		driver.findElement(By.cssSelector("a[href*='/editOrder/" + orderId + "']")).click();
+
+		final WebElement itemField = driver.findElement(By.name("item"));
+		itemField.clear();
+		itemField.sendKeys("BOX2");
+
+		final WebElement priceField = driver.findElement(By.name("price"));
+		priceField.clear();
+		priceField.sendKeys("1000");
+
+		final WebElement userIdField = driver.findElement(By.name("user.id"));
+		userIdField.clear();
+		userIdField.sendKeys(newUserId);
+
+		driver.findElement(By.name("btn_submit")).click();
+
+		assertThat(driver.findElement(By.id("orders_table")).getText()).contains(orderId, "BOX2", "1000", newUserId);
+
+		// Confronto anche il testo
+		driver.findElement(By.xpath("//a[@href='/' and text()='Show Users']")).click();
+
+		// Si controlla anche che l'user vecchio abbia il saldo originale
+		assertThat(driver.findElement(By.id("users_table")).getText()).contains("username edit order",
+				"name edit order", "email edit order", "1000");
+
+		// Si controlla anche che l'user nuovo abbia il saldo aggiornato
+		assertThat(driver.findElement(By.id("users_table")).getText()).contains("username edit order2",
+				"name edit order2", "email edit order2", "1000");
+	}
+
+	private String postOrder(Item item, long price, String userId) throws JSONException {
+		JSONObject body = new JSONObject();
+
+		JSONObject userObj = new JSONObject();
+		userObj.put("id", userId);
+
+		body.put("item", item);
+		body.put("price", price);
+		body.put("user", userObj);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		HttpEntity<String> entity = new HttpEntity<String>(body.toString(), headers);
+
+		ResponseEntity<String> answer = new RestTemplate().postForEntity(baseUrl + "/api/orders/new", entity,
+				String.class);
+
+		LOGGER.debug("answer for POST order: " + answer);
+		return new JSONObject(answer.getBody()).get("id").toString();
 	}
 }
