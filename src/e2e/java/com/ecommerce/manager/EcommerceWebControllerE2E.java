@@ -147,4 +147,30 @@ public class EcommerceWebControllerE2E { // NOSONAR not a standard testcase name
 		LOGGER.debug("answer for POST: " + answer);
 		return new JSONObject(answer.getBody()).get("id").toString();
 	}
+
+	@Test
+	public void testCreateNewOrder() throws JSONException, InterruptedException {
+		// Mi assicuro di avere uno user per trovare l'href a /orders
+		String userId = postUser("username for order", "name for order", "email for order", 1000);
+
+		driver.get(baseUrl);
+
+		driver.findElement(By.cssSelector("a[href*='/orders']")).click();
+		driver.findElement(By.cssSelector("a[href*='/newOrder']")).click();
+
+		driver.findElement(By.name("item")).sendKeys("BOX1");
+		driver.findElement(By.name("price")).sendKeys("500");
+		driver.findElement(By.name("user.id")).sendKeys(userId);
+
+		driver.findElement(By.name("btn_submit")).click();
+
+		assertThat(driver.findElement(By.id("orders_table")).getText()).contains("BOX1", "500", userId);
+
+		// Confronto anche il testo
+		driver.findElement(By.xpath("//a[@href='/' and text()='Show Users']")).click();
+
+		// Si controlla anche che l'user abbia il saldo decrementato
+		assertThat(driver.findElement(By.id("users_table")).getText()).contains("username for order", "name for order",
+				"email for order", "500");
+	}
 }
