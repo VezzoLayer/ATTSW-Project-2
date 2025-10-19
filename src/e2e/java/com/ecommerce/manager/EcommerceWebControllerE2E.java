@@ -71,6 +71,7 @@ public class EcommerceWebControllerE2E { // NOSONAR not a standard testcase name
 
 		driver.findElement(By.name("btn_submit")).click();
 
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.id("users_table")));
 		assertThat(driver.findElement(By.id("users_table")).getText()).contains("new username", "new name", "new email",
 				"2000");
 	}
@@ -101,6 +102,7 @@ public class EcommerceWebControllerE2E { // NOSONAR not a standard testcase name
 
 		driver.findElement(By.name("btn_submit")).click();
 
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.id("users_table")));
 		assertThat(driver.findElement(By.id("users_table")).getText()).contains(id, "mod username", "mod name",
 				"mod email", "2000");
 	}
@@ -117,6 +119,7 @@ public class EcommerceWebControllerE2E { // NOSONAR not a standard testcase name
 
 		driver.findElement(By.name("btn_withdraw")).click();
 
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.id("users_table")));
 		assertThat(driver.findElement(By.id("users_table")).getText()).contains("username test withdraw",
 				"name test withdraw", "email test withdraw", "500");
 	}
@@ -133,6 +136,7 @@ public class EcommerceWebControllerE2E { // NOSONAR not a standard testcase name
 
 		driver.findElement(By.name("btn_deposit")).click();
 
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.id("users_table")));
 		assertThat(driver.findElement(By.id("users_table")).getText()).contains("username test deposit",
 				"name test deposit", "email test deposit", "1500");
 	}
@@ -173,13 +177,13 @@ public class EcommerceWebControllerE2E { // NOSONAR not a standard testcase name
 
 		driver.findElement(By.name("btn_submit")).click();
 
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.id("orders_table")));
 		assertThat(driver.findElement(By.id("orders_table")).getText()).contains("BOX1", "500", userId);
 
 		// Confronto anche il testo
 		driver.findElement(By.xpath("//a[@href='/' and text()='Show Users']")).click();
 
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.id("users_table")));
-
 		// Si controlla anche che l'user abbia il saldo decrementato
 		assertThat(driver.findElement(By.id("users_table")).getText()).contains(userId, "username for order",
 				"name for order", "email for order", "500");
@@ -210,17 +214,16 @@ public class EcommerceWebControllerE2E { // NOSONAR not a standard testcase name
 
 		driver.findElement(By.name("btn_submit")).click();
 
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.id("orders_table")));
 		assertThat(driver.findElement(By.id("orders_table")).getText()).contains(orderId, "BOX2", "1000", newUserId);
 
 		// Confronto anche il testo
 		driver.findElement(By.xpath("//a[@href='/' and text()='Show Users']")).click();
 
 		wait.until(ExpectedConditions.presenceOfElementLocated(By.id("users_table")));
-
 		// Si controlla anche che l'user vecchio abbia il saldo originale
 		assertThat(driver.findElement(By.id("users_table")).getText()).contains(oldUserId, "username edit order",
 				"name edit order", "email edit order", "1000");
-
 		// Si controlla anche che l'user nuovo abbia il saldo aggiornato
 		assertThat(driver.findElement(By.id("users_table")).getText()).contains(newUserId, "username edit order2",
 				"name edit order2", "email edit order2", "1000");
