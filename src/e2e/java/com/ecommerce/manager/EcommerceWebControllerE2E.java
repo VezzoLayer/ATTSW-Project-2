@@ -12,7 +12,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
-public class EcommerceWebControllerE2E {
+public class EcommerceWebControllerE2E { // NOSONAR not a standard testcase name
 
 	private static int port = Integer.parseInt(System.getProperty("server.port", "8080"));
 
