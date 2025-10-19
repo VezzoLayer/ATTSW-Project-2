@@ -157,7 +157,7 @@ public class EcommerceWebControllerE2E { // NOSONAR not a standard testcase name
 		ResponseEntity<String> answer = new RestTemplate().postForEntity(baseUrl + "/api/users/new", entity,
 				String.class);
 
-		LOGGER.debug("answer for POST user: " + answer);
+		LOGGER.debug("answer for POST user: {}", answer);
 		return new JSONObject(answer.getBody()).get("id").toString();
 	}
 
@@ -247,7 +247,7 @@ public class EcommerceWebControllerE2E { // NOSONAR not a standard testcase name
 		ResponseEntity<String> answer = new RestTemplate().postForEntity(baseUrl + "/api/orders/new", entity,
 				String.class);
 
-		LOGGER.debug("answer for POST order: " + answer);
+		LOGGER.debug("answer for POST order: {}", answer);
 		return new JSONObject(answer.getBody()).get("id").toString();
 	}
 }
