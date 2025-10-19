@@ -96,6 +96,38 @@ public class EcommerceWebControllerE2E { // NOSONAR not a standard testcase name
 				"mod email", "2000");
 	}
 
+	@Test
+	public void testHandleBalancePerformWithdraw() throws JSONException {
+		String userId = postUser("username test withdraw", "name test withdraw", "email test withdraw", 1000);
+
+		driver.get(baseUrl);
+
+		driver.findElement(By.cssSelector("a[href*='/" + userId + "/handle_balance")).click();
+
+		driver.findElement(By.id("withdraw_amount")).sendKeys("500");
+
+		driver.findElement(By.name("btn_withdraw")).click();
+
+		assertThat(driver.findElement(By.id("users_table")).getText()).contains("username test withdraw",
+				"name test withdraw", "email test withdraw", "500");
+	}
+
+	@Test
+	public void testHandleBalancePerformDeposit() throws JSONException {
+		String userId = postUser("username test deposit", "name test deposit", "email test deposit", 1000);
+
+		driver.get(baseUrl);
+
+		driver.findElement(By.cssSelector("a[href*='/" + userId + "/handle_balance")).click();
+
+		driver.findElement(By.id("deposit_amount")).sendKeys("500");
+
+		driver.findElement(By.name("btn_deposit")).click();
+
+		assertThat(driver.findElement(By.id("users_table")).getText()).contains("username test deposit",
+				"name test deposit", "email test deposit", "1500");
+	}
+
 	private String postUser(String username, String name, String email, long balance) throws JSONException {
 		JSONObject body = new JSONObject();
 
@@ -115,5 +147,4 @@ public class EcommerceWebControllerE2E { // NOSONAR not a standard testcase name
 		LOGGER.debug("answer for POST: " + answer);
 		return new JSONObject(answer.getBody()).get("id").toString();
 	}
-
 }
