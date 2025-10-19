@@ -172,8 +172,8 @@ public class EcommerceWebControllerE2E { // NOSONAR not a standard testcase name
 		driver.findElement(By.xpath("//a[@href='/' and text()='Show Users']")).click();
 
 		// Si controlla anche che l'user abbia il saldo decrementato
-		assertThat(driver.findElement(By.id("users_table")).getText()).contains("username for order", "name for order",
-				"email for order", "500");
+		assertThat(driver.findElement(By.id("users_table")).getText()).contains(userId, "username for order",
+				"name for order", "email for order", "500");
 	}
 
 	@Test
@@ -207,11 +207,11 @@ public class EcommerceWebControllerE2E { // NOSONAR not a standard testcase name
 		driver.findElement(By.xpath("//a[@href='/' and text()='Show Users']")).click();
 
 		// Si controlla anche che l'user vecchio abbia il saldo originale
-		assertThat(driver.findElement(By.id("users_table")).getText()).contains("username edit order",
+		assertThat(driver.findElement(By.id("users_table")).getText()).contains(oldUserId, "username edit order",
 				"name edit order", "email edit order", "1000");
 
 		// Si controlla anche che l'user nuovo abbia il saldo aggiornato
-		assertThat(driver.findElement(By.id("users_table")).getText()).contains("username edit order2",
+		assertThat(driver.findElement(By.id("users_table")).getText()).contains(newUserId, "username edit order2",
 				"name edit order2", "email edit order2", "1000");
 	}
 
