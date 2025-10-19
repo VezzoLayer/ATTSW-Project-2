@@ -378,6 +378,7 @@
 	</build>
 
 	<profiles>
+		<!-- Profilo per l'esecuzione di mutation testing -->
 		<profile>
 			<id>mutation-testing</id>
 			<build>
@@ -415,6 +416,7 @@
 			</build>
 		</profile>
 		
+		<!-- Profilo per l'esecuzione di jacoco -->
 		<profile>
 			<id>jacoco</id>
 			<build>
