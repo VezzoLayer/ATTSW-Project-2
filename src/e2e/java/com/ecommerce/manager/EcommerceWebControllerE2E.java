@@ -2,17 +2,29 @@ package com.ecommerce.manager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class EcommerceWebControllerE2E { // NOSONAR not a standard testcase name
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(EcommerceWebControllerE2E.class);
 
 	private static int port = Integer.parseInt(System.getProperty("server.port", "8080"));
 
@@ -52,6 +64,56 @@ public class EcommerceWebControllerE2E { // NOSONAR not a standard testcase name
 
 		assertThat(driver.findElement(By.id("users_table")).getText()).contains("new username", "new name", "new email",
 				"2000");
+	}
+
+	@Test
+	public void testEditUser() throws JSONException {
+		String id = postUser("username to edit", "name to edit", "email to edit", 1000);
+
+		driver.get(baseUrl);
+
+		driver.findElement(By.cssSelector("a[href*='/editUser/" + id + "']")).click();
+
+		final WebElement usernameField = driver.findElement(By.name("username"));
+		usernameField.clear();
+		usernameField.sendKeys("mod username");
+
+		final WebElement nameField = driver.findElement(By.name("name"));
+		nameField.clear();
+		nameField.sendKeys("mod name");
+
+		final WebElement emailField = driver.findElement(By.name("email"));
+		emailField.clear();
+		emailField.sendKeys("mod email");
+
+		final WebElement balanceField = driver.findElement(By.name("balance"));
+		balanceField.clear();
+		balanceField.sendKeys("2000");
+
+		driver.findElement(By.name("btn_submit")).click();
+
+		assertThat(driver.findElement(By.id("users_table")).getText()).contains(id, "mod username", "mod name",
+				"mod email", "2000");
+	}
+
+	private String postUser(String username, String name, String email, long balance) throws JSONException {
+		JSONObject body = new JSONObject();
+
+		body.put("username", username);
+		body.put("name", name);
+		body.put("email", email);
+		body.put("balance", balance);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		HttpEntity<String> entity = new HttpEntity<String>(body.toString(), headers);
+
+		ResponseEntity<String> answer = new RestTemplate().postForEntity(baseUrl + "/api/users/new", entity,
+				String.class);
+
+		LOGGER.debug("answer for POST: " + answer);
+		return new JSONObject(answer.getBody()).get("id").toString();
 	}
 
 }
