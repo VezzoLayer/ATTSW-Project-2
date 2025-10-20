@@ -194,6 +194,12 @@
 	</dependencies>
 
 	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -247,6 +253,7 @@
 			<plugin>
 				<groupId>io.fabric8</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.46.0</version>
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -344,48 +351,6 @@
 					<artifactId>sonar-maven-plugin</artifactId>
 					<version>5.2.0.4988</version>
 				</plugin>
-				<plugin>
-					<groupId>io.fabric8</groupId>
-					<artifactId>docker-maven-plugin</artifactId>
-					<version>0.46.0</version>
-					<configuration>
-						<images>
-							<image>
-								<name>mariadb:11</name>
-								<run>
-									<ports>
-										<port>3306:3306</port>
-									</ports>
-									<env>
-										<MARIADB_DATABASE>e-commercedb</MARIADB_DATABASE>
-										<MARIADB_USER>user</MARIADB_USER>
-										<MARIADB_PASSWORD>pass</MARIADB_PASSWORD>
-										<MARIADB_ROOT_PASSWORD>rootpass</MARIADB_ROOT_PASSWORD>
-									</env>
-									<wait>
-										<time>10000</time>
-									</wait>
-								</run>
-							</image>
-						</images>
-					</configuration>
-					<executions>
-						<execution>
-							<id>docker-start</id>
-							<phase>pre-integration-test</phase>
-							<goals>
-								<goal>start</goal>
-							</goals>
-						</execution>
-						<execution>
-							<id>docker-stop</id>
-							<phase>post-integration-test</phase>
-							<goals>
-								<goal>stop</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -441,7 +406,165 @@
 				</plugins>
 			</build>
 		</profile>
+		
+		<profile>
+			<id>postgresql</id>
+			<properties>
+				<activeProfile>postgresql</activeProfile>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>io.fabric8</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+						<version>0.46.0</version>
+						<configuration>
+							<images>
+								<image>
+									<name>postgres:13.22</name>
+									<run>
+										<ports>
+											<port>5432:5432</port>
+										</ports>
+										<env>
+											<POSTGRES_DB>e-commercedb</POSTGRES_DB>
+											<POSTGRES_USER>user</POSTGRES_USER>
+											<POSTGRES_PASSWORD>pass</POSTGRES_PASSWORD>
+										</env>
+										<wait>
+											<time>5000</time>
+										</wait>
+									</run>
+								</image>
+							</images>
+						</configuration>
+						<executions>
+							<execution>
+								<id>docker-start</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>start</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>docker-stop</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>stop</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 
+		<profile>
+			<id>mysql</id>
+			<properties>
+				<activeProfile>mysql</activeProfile>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>io.fabric8</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+						<version>0.46.0</version>
+						<configuration>
+							<images>
+								<image>
+									<name>mysql:9.4.0</name>
+									<run>
+										<ports>
+											<port>3306:3306</port>
+										</ports>
+										<env>
+											<MYSQL_DATABASE>e-commercedb</MYSQL_DATABASE>
+											<MYSQL_USER>user</MYSQL_USER>
+											<MYSQL_PASSWORD>pass</MYSQL_PASSWORD>
+											<MYSQL_ROOT_PASSWORD>rootpass</MYSQL_ROOT_PASSWORD>
+										</env>
+										<wait>
+											<time>10000</time>
+										</wait>
+									</run>
+								</image>
+							</images>
+						</configuration>
+						<executions>
+							<execution>
+								<id>docker-start</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>start</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>docker-stop</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>stop</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>mariadb</id>
+			<properties>
+				<activeProfile>mariadb</activeProfile>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>io.fabric8</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+						<version>0.46.0</version>
+						<configuration>
+							<images>
+								<image>
+									<name>mariadb:11</name>
+									<run>
+										<ports>
+											<port>3306:3306</port>
+										</ports>
+										<env>
+											<MARIADB_DATABASE>e-commercedb</MARIADB_DATABASE>
+											<MARIADB_USER>user</MARIADB_USER>
+											<MARIADB_PASSWORD>pass</MARIADB_PASSWORD>
+											<MARIADB_ROOT_PASSWORD>rootpass</MARIADB_ROOT_PASSWORD>
+										</env>
+										<wait>
+											<time>10000</time>
+										</wait>
+									</run>
+								</image>
+							</images>
+						</configuration>
+						<executions>
+							<execution>
+								<id>docker-start</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>start</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>docker-stop</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>stop</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		
 		<!-- Profilo per l'esecuzione solitaria e2e-tests -->
 		<profile>
 			<id>e2e-tests</id>
