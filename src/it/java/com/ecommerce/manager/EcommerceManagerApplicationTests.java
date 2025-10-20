@@ -8,6 +8,7 @@ class EcommerceManagerApplicationTests {
 
 	@Test
 	void contextLoads() {
+		// Verifica che il contesto di spring si avvii correttamente
 	}
 
 }
