@@ -351,19 +351,19 @@
 					<configuration>
 						<images>
 							<image>
-								<name>mysql:9.4.0</name>
+								<name>mariadb:11</name>
 								<run>
 									<ports>
 										<port>3306:3306</port>
 									</ports>
 									<env>
-										<MYSQL_DATABASE>e-commercedb</MYSQL_DATABASE>
-										<MYSQL_USER>user</MYSQL_USER>
-										<MYSQL_PASSWORD>pass</MYSQL_PASSWORD>
-										<MYSQL_ROOT_PASSWORD>rootpass</MYSQL_ROOT_PASSWORD>
+										<MARIADB_DATABASE>e-commercedb</MARIADB_DATABASE>
+										<MARIADB_USER>user</MARIADB_USER>
+										<MARIADB_PASSWORD>pass</MARIADB_PASSWORD>
+										<MARIADB_ROOT_PASSWORD>rootpass</MARIADB_ROOT_PASSWORD>
 									</env>
 									<wait>
-										<time>10000</time> <!-- mysql è lento -->
+										<time>10000</time>
 									</wait>
 								</run>
 							</image>
