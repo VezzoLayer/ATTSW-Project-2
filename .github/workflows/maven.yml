@@ -17,7 +17,7 @@ jobs:
         include:
           - os: ubuntu-latest
             java: 17
-            db-profile: postgresql
+            db-profile: mysql
 
     name: Build with Java ${{ matrix.java }} on ${{ matrix.os }}
     steps:
