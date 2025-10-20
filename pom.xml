@@ -29,10 +29,10 @@
 
 	<properties>
 		<java.version>17</java.version>
-		
+
 		<skip.unit-tests>false</skip.unit-tests>
 		<skip.integration-tests>false</skip.integration-tests>
-		
+
 		<!-- Configurazione Sonar -->
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.organization>vezzolayer</sonar.organization>
@@ -254,6 +254,22 @@
 				<groupId>io.fabric8</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
 				<version>0.46.0</version>
+				<executions>
+					<execution>
+						<id>docker-start</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>start</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>docker-stop</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>stop</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -409,7 +425,8 @@
 				</plugins>
 			</build>
 		</profile>
-		
+
+		<!-- Profilo per l'attivazione di postgresql -->
 		<profile>
 			<id>postgresql</id>
 			<properties>
@@ -441,27 +458,12 @@
 								</image>
 							</images>
 						</configuration>
-						<executions>
-							<execution>
-								<id>docker-start</id>
-								<phase>pre-integration-test</phase>
-								<goals>
-									<goal>start</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>docker-stop</id>
-								<phase>post-integration-test</phase>
-								<goals>
-									<goal>stop</goal>
-								</goals>
-							</execution>
-						</executions>
 					</plugin>
 				</plugins>
 			</build>
 		</profile>
 
+		<!-- Profilo per l'attivazione di mysql -->
 		<profile>
 			<id>mysql</id>
 			<properties>
@@ -494,27 +496,12 @@
 								</image>
 							</images>
 						</configuration>
-						<executions>
-							<execution>
-								<id>docker-start</id>
-								<phase>pre-integration-test</phase>
-								<goals>
-									<goal>start</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>docker-stop</id>
-								<phase>post-integration-test</phase>
-								<goals>
-									<goal>stop</goal>
-								</goals>
-							</execution>
-						</executions>
 					</plugin>
 				</plugins>
 			</build>
 		</profile>
 
+		<!-- Profilo per l'attivazione di mariadb -->
 		<profile>
 			<id>mariadb</id>
 			<properties>
@@ -547,27 +534,11 @@
 								</image>
 							</images>
 						</configuration>
-						<executions>
-							<execution>
-								<id>docker-start</id>
-								<phase>pre-integration-test</phase>
-								<goals>
-									<goal>start</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>docker-stop</id>
-								<phase>post-integration-test</phase>
-								<goals>
-									<goal>stop</goal>
-								</goals>
-							</execution>
-						</executions>
 					</plugin>
 				</plugins>
 			</build>
 		</profile>
-		
+
 		<!-- Profilo per l'esecuzione solitaria e2e-tests -->
 		<profile>
 			<id>e2e-tests</id>
