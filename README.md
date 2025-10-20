@@ -1,6 +1,10 @@
-[![Build and Test](https://github.com/VezzoLayer/ATTSW-Project-2/actions/workflows/maven.yml/badge.svg)](https://github.com/VezzoLayer/ATTSW-Project-2/actions/workflows/maven.yml)
-[![Coverage Status](https://coveralls.io/repos/github/VezzoLayer/ATTSW-Project-2/badge.svg?branch=main)](https://coveralls.io/github/VezzoLayer/ATTSW-Project-2?branch=main)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=VezzoLayer_ATTSW-Project-2&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=VezzoLayer_ATTSW-Project-2)
+Una semplice applicazione per la gestione di un e-commerce, sviluppata per il progetto di ATTSW a scopo didattico.
+
+GitHub Actions: [![Build and Test](https://github.com/VezzoLayer/ATTSW-Project-2/actions/workflows/maven.yml/badge.svg)](https://github.com/VezzoLayer/ATTSW-Project-2/actions/workflows/maven.yml)
+
+Coveralls: [![Coverage Status](https://coveralls.io/repos/github/VezzoLayer/ATTSW-Project-2/badge.svg?branch=main)](https://coveralls.io/github/VezzoLayer/ATTSW-Project-2?branch=main)
+
+SonarCloud: [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=VezzoLayer_ATTSW-Project-2&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=VezzoLayer_ATTSW-Project-2)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=VezzoLayer_ATTSW-Project-2&metric=bugs)](https://sonarcloud.io/summary/new_code?id=VezzoLayer_ATTSW-Project-2)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=VezzoLayer_ATTSW-Project-2&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=VezzoLayer_ATTSW-Project-2)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=VezzoLayer_ATTSW-Project-2&metric=coverage)](https://sonarcloud.io/summary/new_code?id=VezzoLayer_ATTSW-Project-2)
