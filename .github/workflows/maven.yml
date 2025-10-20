@@ -17,7 +17,7 @@ jobs:
         include:
           - os: ubuntu-latest
             java: 17
-            db-profile: mysql
+            db-profile: mariadb
 
     name: Build with Java ${{ matrix.java }} on ${{ matrix.os }}
     steps:

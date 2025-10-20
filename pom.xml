@@ -275,6 +275,9 @@
 						<excludes>
 							<exclude>**/EcommerceManagerApplication.*</exclude>
 							<exclude>**/model/*</exclude>
+							<!-- The following is just to avoid the instrumentation error
+							when running htmlunit due to the class StyleAttributes$Definition (method too large) -->
+							<exclude>com/gargoylesoftware/**</exclude>
 						</excludes>
 					</configuration>
 					<executions>
