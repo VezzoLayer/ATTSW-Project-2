@@ -351,16 +351,20 @@
 					<configuration>
 						<images>
 							<image>
-								<name>postgres:13.22</name>
+								<name>mysql:9.4.0</name>
 								<run>
 									<ports>
-										<port>5432:5432</port>
+										<port>3306:3306</port>
 									</ports>
 									<env>
-										<POSTGRES_DB>e-commercedb</POSTGRES_DB>
-										<POSTGRES_USER>user</POSTGRES_USER>
-										<POSTGRES_PASSWORD>pass</POSTGRES_PASSWORD>
+										<MYSQL_DATABASE>e-commercedb</MYSQL_DATABASE>
+										<MYSQL_USER>user</MYSQL_USER>
+										<MYSQL_PASSWORD>pass</MYSQL_PASSWORD>
+										<MYSQL_ROOT_PASSWORD>rootpass</MYSQL_ROOT_PASSWORD>
 									</env>
+									<wait>
+										<time>10000</time> <!-- mysql è lento -->
+									</wait>
 								</run>
 							</image>
 						</images>
