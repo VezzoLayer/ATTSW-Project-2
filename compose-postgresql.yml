@@ -3,8 +3,8 @@ services:
     image: 'postgres:13.22'
     container_name: 'postgresql'
     environment:
-      - POSTGRES_DB=bookdb
-      - POSTGRES_USER=bookuser
-      - POSTGRES_PASSWORD=bookpass
+      - POSTGRES_DB=e-commercedb
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
     ports:
       - "5432:5432"
