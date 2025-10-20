@@ -65,6 +65,7 @@
 		</sonar.coverage.exclusions>
 		<sonar.issue.ignore.multicriteria>e12</sonar.issue.ignore.multicriteria>
 		<!-- Disabilita "Credentials should not be hard-coded" -->
+		<!-- Dato che è un progetto accademico e non ci sono reali informazioni confidenziali si disabilita questa issue -->
 		<sonar.issue.ignore.multicriteria.e12.ruleKey>java:S6437</sonar.issue.ignore.multicriteria.e12.ruleKey>
 		<sonar.issue.ignore.multicriteria.e12.resourceKey>**/application*</sonar.issue.ignore.multicriteria.e12.resourceKey>
 
